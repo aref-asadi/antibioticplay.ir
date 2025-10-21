@@ -17,4 +17,12 @@ export default {
   getQuizDetails(quizId) {
     return apiClient.get(`/quizzes/${quizId}`);
   },
+
+  submitAnswer(quizId, questionId, answer) {
+    return apiClient.post('/quizzes/submit', {
+      quizId: quizId,
+      questionId: questionId,
+      answer: answer,
+    });
+  },
 };

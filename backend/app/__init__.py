@@ -3,32 +3,49 @@
 from flask import Flask
 from flask_pymongo import PyMongo
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager # <-- ایمپورت جدید
+from flask_jwt_extended import JWTManager
 from config import Config
 
+# ساخت نمونه‌های پکیج‌ها به صورت گلوبال
 mongo = PyMongo()
-jwt = JWTManager() # <-- ساخت نمونه جدید
+jwt = JWTManager()
 
 def create_app():
+    """
+    Application Factory: یک نمونه از اپلیکیشن Flask را می‌سازد و برمی‌گرداند.
+    """
     app = Flask(__name__)
+    
+    # بارگذاری تنظیمات از فایل config.py
     app.config.from_object(Config)
 
+    # فعال‌سازی CORS برای اجازه دسترسی از فرانت‌اند
     CORS(app)
+    
+    # اتصال پکیج‌ها به اپلیکیشن
     mongo.init_app(app)
-    jwt.init_app(app) # <-- مقداردهی اولیه JWT با اپلیکیشن
+    jwt.init_app(app)
 
+    # --- ثبت Blueprintها ---
+    
+    # ایمپورت کردن Blueprintها از پکیج routes
     from .routes import auth_bp
+    from .routes import quiz_bp
+    from .routes import leaderboard_bp
+    
+    # ثبت Blueprint احراز هویت
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
-    # --- ثبت Blueprint آزمون ---
-    from .routes import quiz_bp # <-- ایمپورت جدید
+    # ثبت Blueprint آزمون
     app.register_blueprint(quiz_bp, url_prefix='/api/quizzes')
 
-    # روت‌های تست را می‌توانیم حذف کنیم یا نگه داریم
+    app.register_blueprint(leaderboard_bp, url_prefix='/api/leaderboard')
+
+    # --- روت‌های تست (اختیاری) ---
     @app.route('/api/ping')
     def ping():
         return "Pong!"
-
+        
     @app.route('/api/db-check')
     def db_check():
         try:
