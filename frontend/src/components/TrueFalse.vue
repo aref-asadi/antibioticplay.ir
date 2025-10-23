@@ -71,93 +71,16 @@ watch(() => props.question, (newQuestion) => {
 </script>
 
 <style scoped>
-.instruction {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.statements-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.statement-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #fff;
-  border: 2px solid #e5e5e5;
-  border-radius: 12px;
-  padding: 1rem 1.5rem;
-  transition: border-color 0.3s, background-color 0.3s;
-}
-
-.statement-text {
-  flex-grow: 1;
-  margin: 0;
-  text-align: right;
-  line-height: 1.6;
-  color: #4b4b4b;
-}
-
-.button-group {
-  display: flex;
-  gap: 0.5rem;
-  margin-right: 1.5rem; /* فاصله بین متن و دکمه‌ها */
-}
-
-.tf-button {
-  border: 2px solid #e5e5e5;
-  border-bottom-width: 4px;
-  background-color: #fff;
-  padding: 0.75rem 1rem;
-  min-width: 80px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 1rem;
-  color: #777;
-  transition: all 0.1s;
-}
-.tf-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-.tf-button:active:not(:disabled) {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
-}
-
-/* --- حالت‌های دکمه‌ها --- */
-.true-button.selected {
-  background-color: #d7ffb8;
-  border-color: #84e100;
-  color: #58a700;
-}
-.false-button.selected {
-  background-color: #ffdfe0;
-  border-color: #ffc1c3;
-  color: #ea2b2b;
-}
-
-/* --- حالت‌های بازخورد ردیف --- */
-.statement-row.correct {
-  background-color: #f0fff0;
-  border-color: #84e100;
-}
-.statement-row.incorrect {
-  background-color: #fff0f0;
-  border-color: #ffc1c3;
-}
-
-/* وقتی جواب اشتباه بوده، دکمه درست را هم هایلایت کن */
-.statement-row.incorrect .true-button.selected {
-  opacity: 0.5;
-}
-.statement-row.incorrect .false-button.selected {
-   opacity: 0.5;
-}
-
+  .instruction { font-size: 1.2rem; margin-bottom: 2rem; text-align: center; color: var(--color-text); }
+  .statements-list { display: flex; flex-direction: column; gap: 1rem; }
+  .statement-row { display: flex; justify-content: space-between; align-items: center; background-color: var(--color-background-light); border: 2px solid var(--color-border); border-radius: 12px; padding: 1rem 1.5rem; transition: border-color 0.3s, background-color 0.3s; }
+  .statement-text { flex-grow: 1; margin: 0 0 0 1.5rem; /* Add margin-left */ text-align: right; line-height: 1.6; color: var(--color-text); }
+  .button-group { display: flex; gap: 0.5rem; /* margin-right removed */ }
+  .tf-button { padding: 0.75rem 1rem; min-width: 80px; font-size: 1rem; } /* Removed conflicting base button styles */
+  .true-button.selected { background-color: #d7ffb8; border-color: var(--color-primary); color: var(--color-primary-dark); }
+  .false-button.selected { background-color: #ffdfe0; border-color: var(--color-danger); color: var(--color-danger-dark); }
+  .statement-row.correct { background-color: #f0fff0; border-color: var(--color-primary); }
+  .statement-row.incorrect { background-color: #fff0f0; border-color: var(--color-danger); }
+  .statement-row.incorrect .true-button.selected,
+  .statement-row.incorrect .false-button.selected { opacity: 0.6; }
 </style>

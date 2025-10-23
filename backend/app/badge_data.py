@@ -11,14 +11,14 @@ BADGES = {
             "count": 1
         }
     },
-    "score_100": {
-        "id": "score_100",
+    "score_30": {
+        "id": "score_30",
         "name": "امتیاز آور",
-        "description": "به ۱۰۰ امتیاز کل رسیدید.",
+        "description": "به ۳۰ امتیاز کل رسیدید.",
         "icon": "fas fa-star",
         "criteria": {
             "type": "reach_score",
-            "score": 100
+            "score": 30
         }
     },
     "level_5": {

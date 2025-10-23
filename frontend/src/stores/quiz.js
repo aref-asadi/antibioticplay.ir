@@ -1,26 +1,19 @@
-// File: frontend/src/stores/quiz.js
-
 import { defineStore } from 'pinia';
 import quizService from '../services/quizService';
+import { useNotificationStore } from './notificationStore';
 
 export const useQuizStore = defineStore('quiz', {
-  // 1. State
   state: () => ({
-    modules: [], // لیست ماژول‌های آزمون
-    currentQuiz: null, // آبجکت کامل آزمون فعلی (شامل سوالات)
+    modules: [],
+    currentQuiz: null,
     loading: false,
     error: null,
     currentSessionScore: 0,
     lastSubmissionResult: null,
     newlyEarnedBadges: [],
-    badgeToShowNotification: null,
   }),
 
-  // 2. Actions
   actions: {
-    /**
-     * دریافت لیست تمام ماژول‌های آزمون از سرور.
-     */
     async fetchModules() {
       this.loading = true;
       this.error = null;
@@ -35,9 +28,6 @@ export const useQuizStore = defineStore('quiz', {
       }
     },
 
-    /**
-     * دریافت جزئیات و سوالات یک ماژول آزمون خاص.
-     */
     async fetchQuizDetails(quizId) {
       this.loading = true;
       this.error = null;
@@ -56,13 +46,9 @@ export const useQuizStore = defineStore('quiz', {
       }
     },
 
-    /**
-     * ارسال پاسخ کاربر به سرور و برگرداندن نتیجه (بازخورد و امتیاز).
-     */
-    async submitAnswer(quizId, questionId, answer, isLastQuestion) { // <-- Add isLastQuestion
+    async submitAnswer(quizId, questionId, answer, isLastQuestion) {
       if (!this.currentQuiz) throw new Error("No active quiz.");
       try {
-        // --- *** Pass isLastQuestion to the service *** ---
         const response = await quizService.submitAnswer(quizId, questionId, answer, isLastQuestion);
         this.lastSubmissionResult = response.data;
         return response;
@@ -74,28 +60,30 @@ export const useQuizStore = defineStore('quiz', {
     },
 
     setNewlyEarnedBadges(badges) {
+      const notificationStore = useNotificationStore();
       let firstNewBadge = null;
       badges.forEach(newBadge => {
         if (!this.newlyEarnedBadges.some(existing => existing.id === newBadge.id)) {
           this.newlyEarnedBadges.push(newBadge);
           if (!firstNewBadge) {
-            firstNewBadge = newBadge; // اولین نشان جدید را نگه دار
+            firstNewBadge = newBadge;
           }
         }
       });
-      // --- *** نمایش اعلان برای اولین نشان جدید *** ---
       if (firstNewBadge) {
-        this.badgeToShowNotification = firstNewBadge;
+        // Use timeout to show badge notification slightly after feedback notification closes
+        setTimeout(() => {
+            notificationStore.showNewBadge(firstNewBadge);
+        }, 400); // Delay slightly longer than feedback animation
       }
     },
 
-    // --- *** اکشن جدید برای بستن اعلان *** ---
-    clearBadgeNotification() {
-      this.badgeToShowNotification = null;
-    },
-
     addSessionScore(score) {
-      this.currentSessionScore += score;
+      if(typeof score === 'number' && !isNaN(score)){
+         this.currentSessionScore += score;
+      } else {
+         console.warn("Attempted to add non-numeric score:", score);
+      }
     }
   },
 });

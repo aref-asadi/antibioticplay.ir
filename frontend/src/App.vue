@@ -2,7 +2,7 @@
   <div id="main-container">
     <router-view />
 
-    <NewBadgeNotification
+    <NotificationDisplay
       :badge="quizStore.badgeToShowNotification"
       @close="quizStore.clearBadgeNotification"
     />
@@ -10,22 +10,22 @@
 </template>
 
 <script setup>
-import { useQuizStore } from './stores/quiz'; // <-- *** ایمپورت quizStore ***
-import NewBadgeNotification from './components/NewBadgeNotification.vue'; // <-- *** ایمپورت کامپوننت ***
+import { useQuizStore } from './stores/quiz';
+// --- *** استفاده از نام صحیح کامپوننت *** ---
+import NotificationDisplay from './components/NotificationDisplay.vue';
+// --- *** پایان تغییر *** ---
 
-const quizStore = useQuizStore(); // <-- *** استفاده از store ***
+const quizStore = useQuizStore();
 </script>
 
 <style>
 /* ... (استایل‌های قبلی App.vue) ... */
 #main-container {
-  /* font-family and text-align are inherited from style.css */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  /* margin-top: 60px; */ /* Removed margin-top for potentially full-page layouts */
   padding: 1rem;
-  min-height: 100vh; /* Ensure container takes full height */
+  min-height: 100vh;
   box-sizing: border-box;
 }
 </style>

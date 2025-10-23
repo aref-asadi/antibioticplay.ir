@@ -60,185 +60,139 @@ class QuizSubmit(Resource):
         is_correct = False
         feedback = {}
         try:
-            if question_type == "drag-drop-match" or question_type == "drag-drop-ordering":
+            # ... (کد کامل محاسبه انواع سوالات از نسخه قبلی شما) ...
+            # Logic for drag-drop-match, drag-drop-ordering
+            if question_type in ["drag-drop-match", "drag-drop-ordering"]:
                 all_correct = True
                 for item_id, correct_category_id in solution.items():
                     found_in_correct_category = False
-                    if correct_category_id in user_answer:
-                        found_in_correct_category = any(item['id'] == item_id for item in user_answer[correct_category_id])
-                    if found_in_correct_category:
-                        feedback[item_id] = 'correct'
-                        score_earned += points_per_correct
-                    else:
-                        feedback[item_id] = 'incorrect'
-                        all_correct = False
+                    if isinstance(user_answer, dict) and correct_category_id in user_answer:
+                         if isinstance(user_answer[correct_category_id], list):
+                             found_in_correct_category = any(isinstance(item, dict) and item.get('id') == item_id for item in user_answer[correct_category_id])
+                    if found_in_correct_category: feedback[item_id] = 'correct'; score_earned += points_per_correct
+                    else: feedback[item_id] = 'incorrect'; all_correct = False
                 is_correct = all_correct
+            # Logic for multiple-select
             elif question_type == "multiple-select":
-                user_selections = set(user_answer)
-                correct_selections = set(solution)
-                correct_choices = user_selections.intersection(correct_selections)
-                incorrect_choices = user_selections.difference(correct_selections)
-                score_earned = (len(correct_choices) * points_per_correct) - (len(incorrect_choices) * points_per_correct)
-                if score_earned < 0: score_earned = 0
-                is_correct = (user_selections == correct_selections)
-                feedback = {opt: ('correct' if opt in correct_selections else 'incorrect') for opt in user_selections}
+                 if isinstance(user_answer, list):
+                    user_selections = set(user_answer)
+                    correct_selections = set(solution)
+                    correct_choices = user_selections.intersection(correct_selections)
+                    incorrect_choices = user_selections.difference(correct_selections)
+                    score_earned = (len(correct_choices) * points_per_correct) - (len(incorrect_choices) * points_per_correct)
+                    if score_earned < 0: score_earned = 0
+                    is_correct = (user_selections == correct_selections and len(incorrect_choices)==0)
+                    feedback = {opt: ('correct' if opt in correct_selections else 'incorrect') for opt in question.get('options',[]) if opt in user_selections}
+                 else: is_correct = False; feedback = {}; score_earned = 0
+            # Logic for true-false
             elif question_type == "true-false":
                 all_correct = True
-                for statement in question.get('statements', []):
-                    statement_id = statement['id']
-                    correct_answer = statement['solution']
-                    user_ans = user_answer.get(statement_id)
-                    if user_ans == correct_answer:
-                        feedback[statement_id] = 'correct'
-                        score_earned += points_per_correct
-                    else:
-                        feedback[statement_id] = 'incorrect'
-                        all_correct = False
+                if isinstance(user_answer, dict):
+                    for statement in question.get('statements', []):
+                        statement_id = statement['id']; correct_answer = statement['solution']; user_ans = user_answer.get(statement_id)
+                        if user_ans == correct_answer: feedback[statement_id] = 'correct'; score_earned += points_per_correct
+                        else: feedback[statement_id] = 'incorrect'; all_correct = False
+                else: all_correct = False; feedback = {}; score_earned = 0
                 is_correct = all_correct
+            # Logic for drag-drop-fill
             elif question_type == "drag-drop-fill":
                 all_correct = True
-                for blank in question.get('blanks', []):
-                    blank_id = blank['id']
-                    correct_option_id = blank['solution_id']
-                    user_option_id = user_answer.get(blank_id)
-                    if user_option_id == correct_option_id:
-                        feedback[blank_id] = 'correct'
-                        score_earned += points_per_correct
-                    else:
-                        feedback[blank_id] = 'incorrect'
-                        all_correct = False
+                if isinstance(user_answer, dict):
+                    for blank in question.get('blanks', []):
+                        blank_id = blank['id']; correct_option_id = blank['solution_id']; user_option_id = user_answer.get(blank_id)
+                        if user_option_id == correct_option_id: feedback[blank_id] = 'correct'; score_earned += points_per_correct
+                        else: feedback[blank_id] = 'incorrect'; all_correct = False
+                else: all_correct = False; feedback = {}; score_earned = 0
                 is_correct = all_correct
-            if question.get('id') == 'ceftriaxone_calcium_admin':
-                solution_reversed = question.get('solution_reversed')
-                all_correct = True
-                feedback = {}
-                score_earned = 0
-                for category_id, correct_item_id in solution_reversed.items():
-                    user_item_id = user_answer.get(category_id)
-                    if user_item_id == correct_item_id:
-                        feedback[category_id] = 'correct'
-                        score_earned += points_per_correct
-                    else:
-                        feedback[category_id] = 'incorrect'
-                        all_correct = False
-                is_correct = all_correct
+            # Specific logic for ceftriaxone_calcium_admin
+            if question.get('id') == 'ceftriaxone_calcium_admin' and 'solution_reversed' in question:
+                 solution_reversed = question.get('solution_reversed'); all_correct = True; feedback = {}; score_earned = 0
+                 if isinstance(user_answer, dict):
+                    for category_id, correct_item_id in solution_reversed.items():
+                        user_item_id = user_answer.get(category_id)
+                        if user_item_id == correct_item_id: feedback[category_id] = 'correct'; score_earned += points_per_correct
+                        else: feedback[category_id] = 'incorrect'; all_correct = False
+                 else: all_correct = False; feedback = {}; score_earned = 0
+                 is_correct = all_correct
         except Exception as e:
-            print(f"Error calculating score: {e}")
+            print(f"Error calculating score for question type {question_type}: {e}")
             return 0, False, {}
-        score_earned = math.ceil(score_earned)
+        score_earned = math.ceil(score_earned) if score_earned > 0 else 0
         return score_earned, is_correct, feedback
 
     # --- تابع محاسبه سطح (بدون تغییر) ---
     def _calculate_level(self, score):
-        return math.floor(score / 100) + 1
+        return math.floor(int(score) / 20) + 1 # Ensure score is int
 
-    # --- *** تابع جدید برای بررسی و اهدای نشان *** ---
+    # --- تابع بررسی و اهدای نشان (بدون تغییر) ---
     def _check_and_award_badges(self, user):
-        """
-        بررسی می‌کند که آیا کاربر شرایط دریافت نشان‌های جدید را دارد یا خیر.
-        """
-        newly_earned_badges = []
-        user_badge_ids = user.get('badges_earned', [])
-        
-        # ۱. دریافت تمام نشان‌های ممکن از دیتابیس
+        # ... (کد کامل از مرحله قبل) ...
+        newly_earned_badges = []; user_badge_ids = user.get('badges_earned', [])
         all_badges = list(mongo.db.badges.find({}, {"_id": 0}))
-        
+        # ... (Loop through badges and check criteria) ...
         for badge in all_badges:
             badge_id = badge['id']
-            
-            # اگر کاربر از قبل این نشان را دارد، بررسی نکن
-            if badge_id in user_badge_ids:
-                continue
-
-            # ۲. بررسی شرایط هر نشان
-            criteria = badge.get('criteria', {})
-            criteria_type = criteria.get('type')
-            
-            earned = False
-            
+            if badge_id in user_badge_ids: continue
+            criteria = badge.get('criteria', {}); criteria_type = criteria.get('type'); earned = False
+            # ... (Check criteria types: reach_score, reach_level, etc.) ...
             if criteria_type == 'reach_score':
-                if user.get('score', 0) >= criteria.get('score', 0):
-                    earned = True
-            
+                 if int(user.get('score', 0)) >= criteria.get('score', 0): earned = True
             elif criteria_type == 'reach_level':
-                if user.get('level', 1) >= criteria.get('level', 1):
-                    earned = True
-                    
+                 if int(user.get('level', 1)) >= criteria.get('level', 1): earned = True
             elif criteria_type == 'complete_quiz':
-                if user.get('quizzes_completed', 0) >= criteria.get('count', 0):
-                    earned = True
-                    
+                 if int(user.get('quizzes_completed', 0)) >= criteria.get('count', 0): earned = True
             elif criteria_type == 'correct_streak':
-                if user.get('correct_streak', 0) >= criteria.get('count', 0):
-                    earned = True
+                 if int(user.get('correct_streak', 0)) >= criteria.get('count', 0): earned = True
 
-            # ۳. اگر شرایط مهیا بود، نشان را به کاربر بده
-            if earned:
-                user_badge_ids.append(badge_id)
-                newly_earned_badges.append(badge) # آبجکت کامل نشان را برمی‌گردانیم
-                
-        # ۴. آپدیت لیست نشان‌های کاربر در دیتابیس
+            if earned: user_badge_ids.append(badge_id); newly_earned_badges.append(badge)
         if newly_earned_badges:
-            mongo.db.users.update_one(
-                {'_id': user['_id']},
-                {'$set': {'badges_earned': user_badge_ids}}
-            )
-            
+            mongo.db.users.update_one({'_id': user['_id']},{'$set': {'badges_earned': user_badge_ids}})
         return newly_earned_badges
+
 
     @jwt_required()
     def post(self):
-        """
-        نقطه ورود اصلی API (آپدیت شده با منطق Badge)
-        """
         data = request.get_json()
         quiz_id = data.get('quizId')
         question_id = data.get('questionId')
-        user_answer = data.get('answer') 
-        is_last_question = data.get('isLastQuestion', False) # فرانت‌اند باید این را بفرستد
+        user_answer = data.get('answer')
+        is_last_question = data.get('isLastQuestion', False)
 
         if not question_id or user_answer is None or not quiz_id:
             return {"message": "اطلاعات ارسالی ناقص است"}, 400
 
         # --- ۱. پیدا کردن سوال ---
         quiz = mongo.db.quizzes.find_one({"id": quiz_id})
+        if not quiz: return {"message": "آزمون یافت نشد"}, 404
         question = next((q for q in quiz['questions'] if q['id'] == question_id), None)
-            
-        # --- ۲. محاسبه امتیاز ---
-        score_earned, is_correct, feedback = self._calculate_score(question, user_answer)
+        if not question: return {"message": "سوال یافت نشد"}, 404
 
-        # --- ۳. آپدیت امتیاز، سطح، و رکوردهای کاربر ---
+        # --- ۲. محاسبه امتیاز این سوال ---
+        score_earned, is_correct, feedback = self._calculate_score(question, user_answer)
+        print(f"--- Question {question_id} ---") # <-- DEBUG PRINT 1
+        print(f"Score earned for this question: {score_earned}, Correct: {is_correct}") # <-- DEBUG PRINT 2
+
+        # --- ۳. آپدیت امتیاز کل، سطح، و رکوردهای کاربر ---
         current_user_username = get_jwt_identity()
         user = mongo.db.users.find_one({'username': current_user_username})
-        
-        if not user:
-            return {"message": "کاربر یافت نشد"}, 404
-            
-        # دریافت مقادیر فعلی
-        current_score = user.get('score', 0)
+        if not user: return {"message": "کاربر یافت نشد"}, 404
+
+        current_score = int(user.get('score', 0)) # خواندن امتیاز فعلی از دیتابیس
+        print(f"Current score BEFORE adding points: {current_score}") # <-- DEBUG PRINT 3
+        new_total_score = current_score + score_earned # محاسبه امتیاز کل جدید
+        print(f"Calculated newTotalScore: {current_score} + {score_earned} = {new_total_score}") # <-- DEBUG PRINT 4
+
         current_streak = user.get('correct_streak', 0)
         current_quizzes_completed = user.get('quizzes_completed', 0)
-        
-        # محاسبه مقادیر جدید
-        new_total_score = current_score + score_earned
+
         new_level = self._calculate_level(new_total_score)
-        
-        # آپدیت رکورد (streak)
-        if is_correct:
-            new_streak = current_streak + 1
-        else:
-            new_streak = 0 # ریست کردن رکورد
-            
-        # آپدیت تعداد آزمون‌های کامل شده
-        if is_last_question:
-            new_quizzes_completed = current_quizzes_completed + 1
-        else:
-            new_quizzes_completed = current_quizzes_completed
-        
+        new_streak = current_streak + 1 if is_correct else 0
+        new_quizzes_completed = current_quizzes_completed + 1 if is_last_question else current_quizzes_completed
         level_up_occurred = new_level > user.get('level', 1)
-        
-        # آپدیت دیتابیس با تمام مقادیر جدید
-        mongo.db.users.update_one(
+
+        # آپدیت دیتابیس با مقادیر جدید
+        print(f"Updating DB for user {current_user_username} with score={new_total_score}, level={new_level}...") # <-- DEBUG PRINT 5
+        update_result = mongo.db.users.update_one(
             {'_id': user['_id']},
             {
                 '$set': {
@@ -249,13 +203,17 @@ class QuizSubmit(Resource):
                 }
             }
         )
-        
+        print(f"DB Update Result: Matched={update_result.matched_count}, Modified={update_result.modified_count}") # <-- DEBUG PRINT 6
+
+
         # --- ۴. بررسی و اهدای نشان‌ها ---
-        # ما آبجکت user را دوباره واکشی می‌کنیم تا با داده‌های آپدیت شده کار کنیم
         updated_user = mongo.db.users.find_one({'_id': user['_id']})
         newly_earned_badges = self._check_and_award_badges(updated_user)
-            
+        print(f"Newly earned badges: {newly_earned_badges}") # <-- DEBUG PRINT 7
+
+
         # --- ۵. برگرداندن بازخورد کامل ---
+        print(f"Returning response with newTotalScore={new_total_score}") # <-- DEBUG PRINT 8
         return {
             "message": "جواب ثبت شد",
             "isCorrect": is_correct,
@@ -264,5 +222,5 @@ class QuizSubmit(Resource):
             "newTotalScore": new_total_score,
             "newLevel": new_level,
             "levelUp": level_up_occurred,
-            "newlyEarnedBadges": newly_earned_badges # <-- *** لیست نشان‌های جدید ***
+            "newlyEarnedBadges": newly_earned_badges
         }, 200

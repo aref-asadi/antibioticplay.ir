@@ -65,70 +65,23 @@ watch(() => props.question, () => {
 </script>
 
 <style scoped>
-.instruction {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.options-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.option-card {
-  background-color: #fff;
-  border: 2px solid #e5e5e5;
-  border-bottom-width: 4px; /* سبک دکمه‌ای دولینگو */
-  border-radius: 12px;
-  padding: 1.5rem 1rem;
-  cursor: pointer;
-  user-select: none;
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #4b4b4b;
-  transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
-}
-
-.option-card:hover:not(.disabled) {
-  background-color: #f7f7f7;
-}
-
-.option-card:active:not(.disabled) {
-  transform: translateY(2px); /* حس فشرده شدن دکمه */
-  border-bottom-width: 2px;
-}
-
-/* حالت انتخاب شده */
-.option-card.selected {
-  background-color: #d7ffb8;
-  border-color: #84e100;
-  color: #58a700;
-}
-
-/* حالت‌های بازخورد بعد از بررسی */
-.option-card.correct {
-  background-color: #d7ffb8;
-  border-color: #84e100;
-  color: #58a700;
-}
-
-.option-card.incorrect {
-  background-color: #ffdfe0;
-  border-color: #ffc1c3;
-  color: #ea2b2b;
-  opacity: 0.8;
-}
-
-.option-card.disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-/* وقتی جوابی بررسی شده و این گزینه انتخاب نشده بود */
-.option-card.disabled:not(.selected):not(.correct):not(.incorrect) {
-   background-color: #f7f7f7;
-   opacity: 0.5;
-}
+  .instruction { font-size: 1.2rem; margin-bottom: 1.5rem; text-align: center; color: var(--color-text); }
+  .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+  .option-card { /* Base styles from .card in style.css */
+    padding: 1rem !important; /* Slightly override card padding */
+    cursor: pointer;
+    user-select: none;
+    font-size: 1rem; /* Slightly smaller text */
+    font-weight: bold;
+    color: var(--color-text-light); /* Default gray text */
+    border-color: var(--color-border); /* Default border color */
+    background-color: var(--color-background-light); /* Default white */
+    text-align: center; /* Center text */
+  }
+  .option-card:active:not(.disabled) { transform: translateY(1px); border-bottom-width: 3px; } /* Adjust press effect */
+  .option-card.selected { background-color: #e8f8d7; border-color: var(--color-primary); color: var(--color-primary-dark); }
+  .option-card.correct { background-color: #d7ffb8 !important; border-color: var(--color-primary-dark) !important; color: var(--color-primary-dark) !important; }
+  .option-card.incorrect { background-color: #ffdfe0 !important; border-color: var(--color-danger-dark) !important; color: var(--color-danger-dark) !important; opacity: 0.8; }
+  .option-card.disabled { cursor: not-allowed; opacity: 0.7; }
+  .option-card.disabled:not(.selected):not(.correct):not(.incorrect) { background-color: var(--color-background-page); opacity: 0.6; }
 </style>

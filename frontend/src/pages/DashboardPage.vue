@@ -122,126 +122,22 @@ const startQuiz = async (quizId) => {
 </script>
 
 <style scoped>
-.dashboard-container {
-  max-width: 900px;
-  margin: 20px auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--color-border); /* Use global variable */
-}
-
-/* Remove .logout-button base styles, use .btn-danger in template */
-
-.stats-and-leaderboard {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
-}
-.stats {
-  flex-grow: 1;
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-}
-
-/* Apply .card class in template for stat cards */
-.stat-card {
-  min-width: 120px;
-  /* Keep specific min-width */
-}
-
-/* Ensure span takes space for animation */
-.stats p span {
-  display: inline-block;
-}
-
-/* Apply btn-secondary styles (or similar) to leaderboard link in template */
-.leaderboard-link {
-  display: inline-flex; /* Keep flex for icon alignment */
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none; /* Keep */
-  /* Remove other button-like styles, apply btn-* class in template */
-}
-
-.badges-section {
-  margin-top: 2.5rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--color-border); /* Use global variable */
-}
-.badges-section h2 {
-  margin-bottom: 1.5rem;
-  color: var(--color-text); /* Use global variable */
-}
-.badges-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.divider {
-  margin: 2.5rem 0;
-  border: none;
-  border-top: 1px solid var(--color-border); /* Use global variable */
-}
-
-.quiz-selection h2 {
-  margin-bottom: 1.5rem;
-  color: var(--color-text); /* Use global variable */
-}
-
-.modules-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-/* Apply .card class in template for module cards */
-.module-card {
-  display: flex; /* Keep layout styles */
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  /* Padding comes from .card */
-}
-
-.module-icon {
-  font-size: 3rem;
-  color: var(--color-primary); /* Use global variable */
-  margin-bottom: 1rem;
-}
-
-.module-card h3 {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  color: var(--color-text); /* Use global variable */
-  text-align: center;
-}
-
-/* Remove module button base styles, use .btn-primary in template */
-
-.loading-message {
-  font-size: 1.2rem;
-  color: var(--color-text-light); /* Use global variable */
-}
-
-.error-message {
-  font-size: 1.2rem;
-  color: var(--color-danger); /* Use global variable */
-}
-
-/* Animation class refers to global style.css */
-/* .score-pop-animation { ... } */
+  .dashboard-container { max-width: 900px; margin: 20px auto; padding: 2rem; text-align: center; }
+  .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-border); }
+  .stats-and-leaderboard { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .stats { flex-grow: 1; display: flex; justify-content: center; gap: 1rem; }
+  .stat-card { min-width: 110px; padding: 1rem 1.5rem !important; /* Override card padding slightly */ }
+  .stats p span { display: inline-block; }
+  .leaderboard-link { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+  .badges-section { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--color-border); }
+  .badges-section h2 { margin-bottom: 1.5rem; color: var(--color-text); }
+  .badges-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
+  .divider { margin: 2.5rem 0; border: none; border-top: 1px solid var(--color-border); }
+  .quiz-selection h2 { margin-bottom: 1.5rem; color: var(--color-text); }
+  .modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.5rem; }
+  .module-card { display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+  .module-icon { font-size: 3rem; color: var(--color-primary); margin-bottom: 1rem; }
+  .module-card h3 { margin-top: 0; margin-bottom: 1.5rem; color: var(--color-text); text-align: center; font-size: 1.1rem; }
+  .loading-message { font-size: 1.2rem; color: var(--color-text-light); }
+  .error-message { font-size: 1.2rem; color: var(--color-danger); }
 </style>

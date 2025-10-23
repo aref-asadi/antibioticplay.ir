@@ -35,6 +35,7 @@ QUIZZES = {
         "id": "classification-structure",
         "title": "Classification & Structure",
         "icon": "sitemap",
+        "total_possible_score": 15,
         "questions": [
             {
                 "id": "penicillin_classification",
@@ -109,6 +110,7 @@ QUIZZES = {
         "id": "dosage-forms",
         "title": "Dosage Forms",
         "icon": "pills",
+        "total_possible_score": 58,
         "questions": [
             {
                 "id": "inhibitor_combinations",
@@ -372,6 +374,7 @@ QUIZZES = {
         "id": "clinical-application",
         "title": "Clinical Application",
         "icon": "stethoscope",
+        "total_possible_score": 75,
         "questions": [
             {
                 "id": "anaerobic_coverage",
