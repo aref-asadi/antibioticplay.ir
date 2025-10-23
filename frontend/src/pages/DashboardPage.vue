@@ -1,9 +1,9 @@
 <template>
   <div class="dashboard-container">
-    
+
     <header class="dashboard-header">
-      <h1 v-if="authStore.user">
-        خوش آمدید، {{ authStore.user.username }}!
+      <h1 v-if="user">
+        خوش آمدید، {{ user.username }}!
       </h1>
       <button @click="handleLogout" class="logout-button">خروج</button>
     </header>
@@ -14,11 +14,15 @@
         <div class="stats">
             <div class="stat-card">
                 <h3>امتیاز</h3>
-                <p>{{ authStore.user.score || 0 }}</p>
+                <p>
+                  <span :class="{ 'score-pop-animation': scoreJustUpdated }">
+                    {{ score || 0 }}
+                  </span>
+                </p>
             </div>
             <div class="stat-card">
                 <h3>سطح</h3>
-                <p>{{ authStore.user.level || 1 }}</p>
+                <p>{{ level || 1 }}</p>
             </div>
         </div>
 
@@ -27,24 +31,32 @@
           مشاهده جدول امتیازات
         </router-link>
       </div>
+
+      <div v-if="earnedBadges.length > 0" class="badges-section">
+        <h2>🏆 نشان‌های شما 🏆</h2>
+        <div v-if="loadingBadges" class="loading-message">در حال بارگذاری نشان‌ها...</div>
+        <div v-else class="badges-grid">
+          <BadgeDisplay
+            v-for="badge in earnedBadges"
+            :key="badge.id"
+            :badge="badge"
+          />
+        </div>
+      </div>
+
       <hr class="divider">
-      
+
       <div class="quiz-selection">
         <h2>یک آزمون را انتخاب کنید</h2>
-        
-        <div v-if="quizStore.loading" class="loading-message">
-          در حال بارگذاری آزمون‌ها...
-        </div>
-        <div v-if="quizStore.error" class="error-message">
-          {{ quizStore.error }}
-        </div>
-        
+        <div v-if="quizStore.loading && !quizStore.modules.length" class="loading-message">در حال بارگذاری آزمون‌ها...</div>
+        <div v-if="quizStore.error" class="error-message">{{ quizStore.error }}</div>
         <div v-if="!quizStore.loading && quizStore.modules.length > 0" class="modules-grid">
-          <div 
-            v-for="module in quizStore.modules" 
-            :key="module.id" 
+          <div
+            v-for="module in quizStore.modules"
+            :key="module.id"
             class="module-card"
           >
+            <font-awesome-icon :icon="['fas', module.icon || 'question']" class="module-icon" />
             <h3>{{ module.title }}</h3>
             <button @click="startQuiz(module.id)">شروع آزمون</button>
           </div>
@@ -56,32 +68,53 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useQuizStore } from '../stores/quiz';
+import badgeService from '../services/badgeService';
+import BadgeDisplay from '../components/BadgeDisplay.vue';
 
-// نمونه‌سازی از storeها و روتر
 const authStore = useAuthStore();
 const quizStore = useQuizStore();
 const router = useRouter();
 
-// دریافت لیست ماژول‌های آزمون به محض باز شدن صفحه
-onMounted(() => {
+const { user, score, level } = storeToRefs(authStore);
+
+const earnedBadges = ref([]);
+const loadingBadges = ref(false);
+const scoreJustUpdated = ref(false);
+
+onMounted(async () => {
+  if (authStore.triggerScoreAnimation === true) {
+    scoreJustUpdated.value = true;
+    authStore.resetScoreAnimationTrigger();
+
+    setTimeout(() => {
+      scoreJustUpdated.value = false;
+    }, 600);
+  }
+  
   quizStore.fetchModules();
+
+  loadingBadges.value = true;
+  try {
+    const response = await badgeService.getEarnedBadges();
+    earnedBadges.value = response.data;
+  } catch (error) {
+    console.error("Failed to fetch earned badges:", error);
+  } finally {
+    loadingBadges.value = false;
+  }
 });
 
-// تابع برای خروج از سیستم
 const handleLogout = () => {
   authStore.logout();
 };
 
-// تابع برای شروع آزمون
 const startQuiz = async (quizId) => {
-  // ۱. دریافت سوالات آزمون از سرور
   await quizStore.fetchQuizDetails(quizId);
-  
-  // ۲. اگر خطایی وجود نداشت، کاربر را به صفحه آزمون هدایت کن
   if (!quizStore.error) {
     router.push({ name: 'Quiz', params: { id: quizId } });
   }
@@ -102,45 +135,71 @@ const startQuiz = async (quizId) => {
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-border); /* Use global variable */
 }
 
-.logout-button {
-  padding: 0.5rem 1rem;
-  background-color: #e74c3c; /* Red */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-.logout-button:hover {
-    background-color: #c0392b;
-}
+/* Remove .logout-button base styles, use .btn-danger in template */
 
+.stats-and-leaderboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
 .stats {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-top: 1rem;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
 }
 
+/* Apply .card class in template for stat cards */
 .stat-card {
-    padding: 1rem 2rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    min-width: 120px;
+  min-width: 120px;
+  /* Keep specific min-width */
+}
+
+/* Ensure span takes space for animation */
+.stats p span {
+  display: inline-block;
+}
+
+/* Apply btn-secondary styles (or similar) to leaderboard link in template */
+.leaderboard-link {
+  display: inline-flex; /* Keep flex for icon alignment */
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none; /* Keep */
+  /* Remove other button-like styles, apply btn-* class in template */
+}
+
+.badges-section {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-border); /* Use global variable */
+}
+.badges-section h2 {
+  margin-bottom: 1.5rem;
+  color: var(--color-text); /* Use global variable */
+}
+.badges-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .divider {
   margin: 2.5rem 0;
   border: none;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--color-border); /* Use global variable */
 }
 
 .quiz-selection h2 {
   margin-bottom: 1.5rem;
+  color: var(--color-text); /* Use global variable */
 }
 
 .modules-grid {
@@ -149,46 +208,40 @@ const startQuiz = async (quizId) => {
   gap: 1.5rem;
 }
 
+/* Apply .card class in template for module cards */
 .module-card {
-  padding: 1.5rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: transform 0.2s, box-shadow 0.2s;
-  background-color: #fff;
+  display: flex; /* Keep layout styles */
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  /* Padding comes from .card */
 }
-.module-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+
+.module-icon {
+  font-size: 3rem;
+  color: var(--color-primary); /* Use global variable */
+  margin-bottom: 1rem;
 }
 
 .module-card h3 {
   margin-top: 0;
   margin-bottom: 1.5rem;
-  color: #333;
+  color: var(--color-text); /* Use global variable */
+  text-align: center;
 }
 
-.module-card button {
-  padding: 0.6rem 1.2rem;
-  background-color: #42b983; /* Green */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-}
-.module-card button:hover {
-  background-color: #369d6e;
-}
+/* Remove module button base styles, use .btn-primary in template */
 
 .loading-message {
   font-size: 1.2rem;
-  color: #777;
+  color: var(--color-text-light); /* Use global variable */
 }
 
 .error-message {
   font-size: 1.2rem;
-  color: #e74c3c;
+  color: var(--color-danger); /* Use global variable */
 }
+
+/* Animation class refers to global style.css */
+/* .score-pop-animation { ... } */
 </style>

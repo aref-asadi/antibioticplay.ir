@@ -28,18 +28,12 @@ def create_app():
 
     # --- ثبت Blueprintها ---
     
-    # ایمپورت کردن Blueprintها از پکیج routes
-    from .routes import auth_bp
-    from .routes import quiz_bp
-    from .routes import leaderboard_bp
+    from .routes import auth_bp, quiz_bp, leaderboard_bp, badge_bp
     
-    # ثبت Blueprint احراز هویت
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
-
-    # ثبت Blueprint آزمون
     app.register_blueprint(quiz_bp, url_prefix='/api/quizzes')
-
     app.register_blueprint(leaderboard_bp, url_prefix='/api/leaderboard')
+    app.register_blueprint(badge_bp, url_prefix='/api/badges')
 
     # --- روت‌های تست (اختیاری) ---
     @app.route('/api/ping')

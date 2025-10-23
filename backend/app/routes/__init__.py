@@ -6,7 +6,8 @@ from flask_restful import Api
 # ایمپورت کلاس‌های API از فایل‌های مربوطه
 from .auth import UserRegistration, UserLogin, UserProfile
 from .quiz import QuizList, QuizDetail, QuizSubmit
-from .leaderboard import Leaderboard # <-- *** ایمپورت جدید ***
+from .leaderboard import Leaderboard
+from .badge_routes import AllBadges, EarnedBadges
 
 # --- Blueprint احراز هویت (Authentication) ---
 auth_bp = Blueprint('auth_bp', __name__)
@@ -25,4 +26,9 @@ quiz_api.add_resource(QuizSubmit, '/submit')
 # --- *** Blueprint جدید لیدربورد *** ---
 leaderboard_bp = Blueprint('leaderboard_bp', __name__)
 leaderboard_api = Api(leaderboard_bp)
-leaderboard_api.add_resource(Leaderboard, '/') # مسیر /api/leaderboard/
+leaderboard_api.add_resource(Leaderboard, '/')
+
+badge_bp = Blueprint('badge_bp', __name__)
+badge_api = Api(badge_bp)
+badge_api.add_resource(AllBadges, '/all')
+badge_api.add_resource(EarnedBadges, '/earned')

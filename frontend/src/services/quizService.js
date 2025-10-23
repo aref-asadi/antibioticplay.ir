@@ -18,11 +18,12 @@ export default {
     return apiClient.get(`/quizzes/${quizId}`);
   },
 
-  submitAnswer(quizId, questionId, answer) {
+  submitAnswer(quizId, questionId, answer, isLastQuestion) {
     return apiClient.post('/quizzes/submit', {
       quizId: quizId,
       questionId: questionId,
       answer: answer,
+      isLastQuestion: isLastQuestion // <-- *** Send the flag ***
     });
   },
 };

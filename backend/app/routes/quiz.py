@@ -6,22 +6,22 @@ from app import mongo
 from bson.objectid import ObjectId
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import math # برای رند کردن امتیاز
-import pymongo # برای استفاده از جهت سورت
+import pymongo
 
 class QuizList(Resource):
-    """
-    API برای دریافت لیست تمام ماژول‌های آزمون.
-    (این بخش بدون تغییر است)
-    """
     @jwt_required()
     def get(self):
         try:
-            # فقط فیلدهای مورد نیاز برای لیست را برمی‌گردانیم
-            quizzes = list(mongo.db.quizzes.find({}, {"_id": 1, "id": 1, "title": 1}))
-            
+            # --- *** Update projection to include 'icon' *** ---
+            quizzes = list(mongo.db.quizzes.find(
+                {},
+                {"_id": 1, "id": 1, "title": 1, "icon": 1} # <-- Add "icon": 1
+            ))
+            # --- *** End Update *** ---
+
             for quiz in quizzes:
-                quiz["_id"] = str(quiz["_id"]) # تبدیل ObjectId به رشته
-                
+                quiz["_id"] = str(quiz["_id"])
+
             return quizzes, 200
         except Exception as e:
             return {"message": str(e)}, 500
@@ -46,31 +46,26 @@ class QuizDetail(Resource):
 
 class QuizSubmit(Resource):
     """
-    API برای ثبت پاسخ کاربر، محاسبه امتیاز و آپدیت پروفایل کاربر.
-    این API اکنون از انواع مختلف سوالات و سیستم Level Up پشتیبانی می‌کند.
+    API برای ثبت پاسخ، محاسبه امتیاز، آپدیت سطح، و اهدای نشان.
     """
     
+    # --- تابع محاسبه امتیاز (بدون تغییر) ---
     def _calculate_score(self, question, user_answer):
-        """
-        یک تابع کمکی برای محاسبه امتیاز بر اساس نوع سوال.
-        """
+        # (این تابع که در فاز ۶ ساختیم، بدون تغییر باقی می‌ماند)
+        # (منطق کامل محاسبه امتیاز برای انواع سوالات)
         question_type = question.get('type')
         solution = question.get('solution')
         points_per_correct = question.get('points_per_correct', 1)
-        
         score_earned = 0
         is_correct = False
         feedback = {}
-
         try:
-            # --- منطق برای سوالات تطبیقی (کشیدن و رها کردن) ---
             if question_type == "drag-drop-match" or question_type == "drag-drop-ordering":
                 all_correct = True
                 for item_id, correct_category_id in solution.items():
                     found_in_correct_category = False
                     if correct_category_id in user_answer:
                         found_in_correct_category = any(item['id'] == item_id for item in user_answer[correct_category_id])
-                    
                     if found_in_correct_category:
                         feedback[item_id] = 'correct'
                         score_earned += points_per_correct
@@ -78,31 +73,21 @@ class QuizSubmit(Resource):
                         feedback[item_id] = 'incorrect'
                         all_correct = False
                 is_correct = all_correct
-
-            # --- منطق برای سوالات چند انتخابی ---
             elif question_type == "multiple-select":
                 user_selections = set(user_answer)
                 correct_selections = set(solution)
-                
                 correct_choices = user_selections.intersection(correct_selections)
                 incorrect_choices = user_selections.difference(correct_selections)
-                
                 score_earned = (len(correct_choices) * points_per_correct) - (len(incorrect_choices) * points_per_correct)
-                
-                if score_earned < 0:
-                    score_earned = 0
-                    
+                if score_earned < 0: score_earned = 0
                 is_correct = (user_selections == correct_selections)
                 feedback = {opt: ('correct' if opt in correct_selections else 'incorrect') for opt in user_selections}
-
-            # --- منطق برای سوالات درست/نادرست ---
             elif question_type == "true-false":
                 all_correct = True
                 for statement in question.get('statements', []):
                     statement_id = statement['id']
                     correct_answer = statement['solution']
                     user_ans = user_answer.get(statement_id)
-                    
                     if user_ans == correct_answer:
                         feedback[statement_id] = 'correct'
                         score_earned += points_per_correct
@@ -110,15 +95,12 @@ class QuizSubmit(Resource):
                         feedback[statement_id] = 'incorrect'
                         all_correct = False
                 is_correct = all_correct
-                
-            # --- منطق برای سوالات جای خالی ---
             elif question_type == "drag-drop-fill":
                 all_correct = True
                 for blank in question.get('blanks', []):
                     blank_id = blank['id']
                     correct_option_id = blank['solution_id']
                     user_option_id = user_answer.get(blank_id)
-                    
                     if user_option_id == correct_option_id:
                         feedback[blank_id] = 'correct'
                         score_earned += points_per_correct
@@ -126,8 +108,6 @@ class QuizSubmit(Resource):
                         feedback[blank_id] = 'incorrect'
                         all_correct = False
                 is_correct = all_correct
-
-            # --- منطق خاص برای سوال ceftriaxone_calcium_admin ---
             if question.get('id') == 'ceftriaxone_calcium_admin':
                 solution_reversed = question.get('solution_reversed')
                 all_correct = True
@@ -142,77 +122,140 @@ class QuizSubmit(Resource):
                         feedback[category_id] = 'incorrect'
                         all_correct = False
                 is_correct = all_correct
-
         except Exception as e:
             print(f"Error calculating score: {e}")
             return 0, False, {}
-
-        # امتیاز نهایی را رند می‌کنیم
         score_earned = math.ceil(score_earned)
-        
         return score_earned, is_correct, feedback
 
+    # --- تابع محاسبه سطح (بدون تغییر) ---
     def _calculate_level(self, score):
-        """
-        تابع کمکی برای محاسبه سطح بر اساس امتیاز.
-        منطق: سطح ۱ پایه است. به ازای هر ۱۰۰ امتیاز، ۱ سطح اضافه می‌شود.
-        """
         return math.floor(score / 100) + 1
+
+    # --- *** تابع جدید برای بررسی و اهدای نشان *** ---
+    def _check_and_award_badges(self, user):
+        """
+        بررسی می‌کند که آیا کاربر شرایط دریافت نشان‌های جدید را دارد یا خیر.
+        """
+        newly_earned_badges = []
+        user_badge_ids = user.get('badges_earned', [])
+        
+        # ۱. دریافت تمام نشان‌های ممکن از دیتابیس
+        all_badges = list(mongo.db.badges.find({}, {"_id": 0}))
+        
+        for badge in all_badges:
+            badge_id = badge['id']
+            
+            # اگر کاربر از قبل این نشان را دارد، بررسی نکن
+            if badge_id in user_badge_ids:
+                continue
+
+            # ۲. بررسی شرایط هر نشان
+            criteria = badge.get('criteria', {})
+            criteria_type = criteria.get('type')
+            
+            earned = False
+            
+            if criteria_type == 'reach_score':
+                if user.get('score', 0) >= criteria.get('score', 0):
+                    earned = True
+            
+            elif criteria_type == 'reach_level':
+                if user.get('level', 1) >= criteria.get('level', 1):
+                    earned = True
+                    
+            elif criteria_type == 'complete_quiz':
+                if user.get('quizzes_completed', 0) >= criteria.get('count', 0):
+                    earned = True
+                    
+            elif criteria_type == 'correct_streak':
+                if user.get('correct_streak', 0) >= criteria.get('count', 0):
+                    earned = True
+
+            # ۳. اگر شرایط مهیا بود، نشان را به کاربر بده
+            if earned:
+                user_badge_ids.append(badge_id)
+                newly_earned_badges.append(badge) # آبجکت کامل نشان را برمی‌گردانیم
+                
+        # ۴. آپدیت لیست نشان‌های کاربر در دیتابیس
+        if newly_earned_badges:
+            mongo.db.users.update_one(
+                {'_id': user['_id']},
+                {'$set': {'badges_earned': user_badge_ids}}
+            )
+            
+        return newly_earned_badges
 
     @jwt_required()
     def post(self):
         """
-        نقطه ورود اصلی API برای ثبت امتیاز (آپدیت شده با منطق Level Up)
+        نقطه ورود اصلی API (آپدیت شده با منطق Badge)
         """
         data = request.get_json()
         quiz_id = data.get('quizId')
         question_id = data.get('questionId')
         user_answer = data.get('answer') 
+        is_last_question = data.get('isLastQuestion', False) # فرانت‌اند باید این را بفرستد
 
         if not question_id or user_answer is None or not quiz_id:
             return {"message": "اطلاعات ارسالی ناقص است"}, 400
 
         # --- ۱. پیدا کردن سوال ---
         quiz = mongo.db.quizzes.find_one({"id": quiz_id})
-        if not quiz:
-            return {"message": "آزمون یافت نشد"}, 404
-        
         question = next((q for q in quiz['questions'] if q['id'] == question_id), None)
-        if not question:
-            return {"message": "سوال یافت نشد"}, 404
             
-        # --- ۲. محاسبه امتیاز (فراخوانی تابع کمکی) ---
+        # --- ۲. محاسبه امتیاز ---
         score_earned, is_correct, feedback = self._calculate_score(question, user_answer)
 
-        # --- ۳. آپدیت امتیاز و سطح کاربر ---
+        # --- ۳. آپدیت امتیاز، سطح، و رکوردهای کاربر ---
         current_user_username = get_jwt_identity()
         user = mongo.db.users.find_one({'username': current_user_username})
         
         if not user:
             return {"message": "کاربر یافت نشد"}, 404
             
-        # محاسبه سطح قدیمی
+        # دریافت مقادیر فعلی
         current_score = user.get('score', 0)
-        old_level = self._calculate_level(current_score)
+        current_streak = user.get('correct_streak', 0)
+        current_quizzes_completed = user.get('quizzes_completed', 0)
         
-        # محاسبه امتیاز و سطح جدید
+        # محاسبه مقادیر جدید
         new_total_score = current_score + score_earned
         new_level = self._calculate_level(new_total_score)
         
-        level_up_occurred = new_level > old_level
+        # آپدیت رکورد (streak)
+        if is_correct:
+            new_streak = current_streak + 1
+        else:
+            new_streak = 0 # ریست کردن رکورد
+            
+        # آپدیت تعداد آزمون‌های کامل شده
+        if is_last_question:
+            new_quizzes_completed = current_quizzes_completed + 1
+        else:
+            new_quizzes_completed = current_quizzes_completed
         
-        # آپدیت دیتابیس با امتیاز و سطح جدید
+        level_up_occurred = new_level > user.get('level', 1)
+        
+        # آپدیت دیتابیس با تمام مقادیر جدید
         mongo.db.users.update_one(
-            {'username': current_user_username},
+            {'_id': user['_id']},
             {
                 '$set': {
                     'score': new_total_score,
-                    'level': new_level
+                    'level': new_level,
+                    'correct_streak': new_streak,
+                    'quizzes_completed': new_quizzes_completed
                 }
             }
         )
+        
+        # --- ۴. بررسی و اهدای نشان‌ها ---
+        # ما آبجکت user را دوباره واکشی می‌کنیم تا با داده‌های آپدیت شده کار کنیم
+        updated_user = mongo.db.users.find_one({'_id': user['_id']})
+        newly_earned_badges = self._check_and_award_badges(updated_user)
             
-        # --- ۴. برگرداندن بازخورد کامل ---
+        # --- ۵. برگرداندن بازخورد کامل ---
         return {
             "message": "جواب ثبت شد",
             "isCorrect": is_correct,
@@ -220,5 +263,6 @@ class QuizSubmit(Resource):
             "scoreEarned": score_earned,
             "newTotalScore": new_total_score,
             "newLevel": new_level,
-            "levelUp": level_up_occurred # <-- پرچم Level Up
+            "levelUp": level_up_occurred,
+            "newlyEarnedBadges": newly_earned_badges # <-- *** لیست نشان‌های جدید ***
         }, 200

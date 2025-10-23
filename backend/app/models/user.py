@@ -10,7 +10,6 @@ class User:
     def __init__(self, username, email, password):
         self.username = username
         self.email = email
-        # هرگز رمز عبور را به صورت متن ساده ذخیره نکنید!
         self.password_hash = generate_password_hash(password)
 
     def save(self):
@@ -19,9 +18,13 @@ class User:
             'username': self.username,
             'email': self.email,
             'password_hash': self.password_hash,
-            # اطلاعات گیمیفیکیشن در آینده اینجا اضافه می‌شود
+            # --- فیلدهای گیمیفیکیشن ---
             'score': 0,
-            'level': 1
+            'level': 1,
+            # --- *** فیلدهای جدید برای نشان‌ها *** ---
+            'badges_earned': [], # لیستی از ID نشان‌های کسب شده
+            'quizzes_completed': 0, # تعداد آزمون‌های کامل شده
+            'correct_streak': 0 # تعداد جواب‌های صحیح پشت سر هم
         })
 
     @staticmethod

@@ -12,6 +12,8 @@ export const useQuizStore = defineStore('quiz', {
     error: null,
     currentSessionScore: 0,
     lastSubmissionResult: null,
+    newlyEarnedBadges: [],
+    badgeToShowNotification: null,
   }),
 
   // 2. Actions
@@ -43,6 +45,7 @@ export const useQuizStore = defineStore('quiz', {
       try {
         this.currentSessionScore = 0;
         this.lastSubmissionResult = null;
+        this.newlyEarnedBadges = [];
         const response = await quizService.getQuizDetails(quizId);
         this.currentQuiz = response.data;
       } catch (err) {
@@ -56,19 +59,43 @@ export const useQuizStore = defineStore('quiz', {
     /**
      * ارسال پاسخ کاربر به سرور و برگرداندن نتیجه (بازخورد و امتیاز).
      */
-    async submitAnswer(quizId, questionId, answer) {
+    async submitAnswer(quizId, questionId, answer, isLastQuestion) { // <-- Add isLastQuestion
       if (!this.currentQuiz) throw new Error("No active quiz.");
       try {
-        const response = await quizService.submitAnswer(quizId, questionId, answer);
-        // --- *** بخش آپدیت شده *** ---
-        // نتیجه کامل رو در store ذخیره می‌کنیم
+        // --- *** Pass isLastQuestion to the service *** ---
+        const response = await quizService.submitAnswer(quizId, questionId, answer, isLastQuestion);
         this.lastSubmissionResult = response.data;
-        return response; 
+        return response;
       } catch (error) {
         console.error("Error submitting answer:", error);
         this.lastSubmissionResult = null;
         throw error;
       }
     },
+
+    setNewlyEarnedBadges(badges) {
+      let firstNewBadge = null;
+      badges.forEach(newBadge => {
+        if (!this.newlyEarnedBadges.some(existing => existing.id === newBadge.id)) {
+          this.newlyEarnedBadges.push(newBadge);
+          if (!firstNewBadge) {
+            firstNewBadge = newBadge; // اولین نشان جدید را نگه دار
+          }
+        }
+      });
+      // --- *** نمایش اعلان برای اولین نشان جدید *** ---
+      if (firstNewBadge) {
+        this.badgeToShowNotification = firstNewBadge;
+      }
+    },
+
+    // --- *** اکشن جدید برای بستن اعلان *** ---
+    clearBadgeNotification() {
+      this.badgeToShowNotification = null;
+    },
+
+    addSessionScore(score) {
+      this.currentSessionScore += score;
+    }
   },
 });
