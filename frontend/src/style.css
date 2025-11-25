@@ -1,27 +1,23 @@
-/* File: frontend/src/style.css */
 @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
 
 :root {
-  /* --- Duolingo Inspired Color Palette (Refined) --- */
-  --color-primary: #58cc02;      /* Duolingo Green */
-  --color-primary-dark: #4aa500;  /* Darker shade for border */
-  --color-secondary: #1cb0f6;    /* Duolingo Blue */
-  --color-secondary-dark: #148ac8; /* Darker blue */
-  --color-danger: #ff4b4b;       /* Duolingo Red */
-  --color-danger-dark: #e54040;   /* Darker red */
-  --color-warning: #ffc800;      /* Duolingo Yellow */
-  --color-warning-dark: #cc9f00;
-  --color-text: #4b4b4b;          /* Dark gray text */
-  --color-text-light: #afafaf;    /* Lighter gray text */
-  --color-border: #e5e5e5;        /* Light gray border */
-  --color-background-light: #ffffff;
-  --color-background-page: #f7f7f7;   /* Off-white page background */
-
-  /* --- Button Styles (Refined) --- */
-  --button-border-radius: 16px; /* More rounded */
-  --button-padding: 0.9rem 1.5rem; /* Slightly taller */
-  --button-font-weight: 700;    /* Bold */
-  --button-bottom-border: 4px;
+  /* --- Duolingo Palette --- */
+  --color-primary: #58cc02;       /* Green */
+  --color-primary-shadow: #58a700;
+  --color-secondary: #1cb0f6;     /* Blue */
+  --color-secondary-shadow: #1899d6;
+  --color-danger: #ff4b4b;        /* Red */
+  --color-danger-shadow: #ea2b2b;
+  --color-warning: #ffc800;       /* Yellow */
+  --color-warning-shadow: #d6a900;
+  
+  --color-hero-bg: #235390;       /* Duolingo Dark Navy */
+  --color-text: #3c3c3c;
+  --color-text-light: #777777;
+  --color-border: #e5e5e5;
+  --color-background-page: #ffffff; /* Main body is usually white in Duo */
+  
+  --button-radius: 16px;
 }
 
 html {
@@ -31,13 +27,11 @@ html {
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Vazirmatn', sans-serif; /* Keep Vazirmatn */
+  font-family: 'Vazirmatn', sans-serif;
   text-align: right;
-  line-height: 1.6;
   background-color: var(--color-background-page);
   color: var(--color-text);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 /* --- Basic Element Styling (Refined) --- */
@@ -61,61 +55,68 @@ input:focus, textarea:focus {
 }
 
 /* --- Base Button Style (Refined) --- */
-button {
+button, .btn,
+a[class*="btn-"] { 
   cursor: pointer;
-  padding: var(--button-padding);
-  font-weight: var(--button-font-weight);
-  border-radius: var(--button-border-radius);
-  border: none; /* Remove default border */
-  border-bottom: var(--button-bottom-border) solid transparent; /* Bottom border for depth */
-  transition: transform 0.1s ease-out, background-color 0.2s, border-color 0.2s;
+  border: none;
+  border-radius: var(--button-radius);
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700; /* Bold text */
   text-transform: uppercase;
-  line-height: 1.2; /* Prevent text jumping on press */
-  background-color: #fff; /* Default background */
-  border-color: var(--color-border); /* Default bottom border */
-  color: var(--color-text-light); /* Default text color */
+  letter-spacing: 0.5px;
+  transition: filter 0.2s, transform 0.1s, border-bottom-width 0.1s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* For router-links acting as buttons */
+  box-sizing: border-box;
+  border-bottom-width: 4px;
+  border-bottom-style: solid;
+  min-width: 150px;
 }
-button:active:not(:disabled) {
+
+button:active, .btn:active {
   transform: translateY(2px);
   border-bottom-width: 2px;
-}
-button:disabled {
-  background-color: #ebebeb !important; /* Lighter gray for disabled */
-  border-color: #d1d1d1 !important;
-  color: var(--color-text-light) !important;
-  cursor: not-allowed;
-  opacity: 0.7;
-  transform: none; /* Disable press effect */
+  margin-top: 2px; /* To keep position stable */
 }
 
-/* --- Primary Button (Green) --- */
+/* --- Button Variants --- */
 .btn-primary {
   background-color: var(--color-primary);
-  border-color: var(--color-primary-dark);
   color: white;
+  border-bottom-color: var(--color-primary-shadow);
 }
-.btn-primary:hover:not(:disabled) {
-  background-color: #61e002; /* Slightly lighter green on hover */
+.btn-primary:hover {
+  filter: brightness(1.1);
 }
 
-/* --- Secondary Button (Blue) --- */
 .btn-secondary {
   background-color: var(--color-secondary);
-  border-color: var(--color-secondary-dark);
   color: white;
+  border-bottom-color: var(--color-secondary-shadow);
 }
-.btn-secondary:hover:not(:disabled) {
-  background-color: #24bfff; /* Lighter blue */
+.btn-secondary:hover {
+  filter: brightness(1.1);
 }
 
-/* --- Danger Button (Red) --- */
 .btn-danger {
   background-color: var(--color-danger);
-  border-color: var(--color-danger-dark);
+  color: white;
+  border-bottom-color: var(--color-danger-shadow);
+}
+
+/* Outline Button (For "I already have an account") */
+.btn-outline {
+  background-color: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-bottom-width: 4px;
   color: white;
 }
-.btn-danger:hover:not(:disabled) {
-  background-color: #ff6262; /* Lighter red */
+.btn-outline:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 1);
 }
 
 /* --- Base Card Style (Refined) --- */
@@ -139,6 +140,138 @@ button:disabled {
 /* --- Utility Classes --- */
 .text-left {
   text-align: left !important;
+}
+
+/* --- Auth Pages Styles (Login/Register) --- */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: white; /* Clean white background */
+}
+
+.auth-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+}
+
+.close-btn {
+  font-size: 1.5rem;
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.close-btn:hover {
+  color: var(--color-text);
+}
+
+.auth-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.auth-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.duo-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Input Styles */
+.input-group {
+  position: relative;
+  width: 100%;
+}
+
+.duo-input {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  font-size: 1.1rem;
+  background-color: #f7f7f7; /* Light gray bg like Duolingo */
+  border: 2px solid var(--color-border);
+  border-radius: 16px; /* Rounded corners */
+  color: var(--color-text);
+  transition: border-color 0.2s, background-color 0.2s;
+  box-sizing: border-box;
+  text-align: right; /* RTL */
+}
+
+.duo-input::placeholder {
+  color: #afafaf;
+}
+
+.duo-input:focus {
+  background-color: white;
+  border-color: var(--color-secondary); /* Blue border on focus */
+  outline: none;
+}
+
+.duo-input.error {
+  border-color: var(--color-danger);
+  background-color: #ffdfe0;
+}
+
+/* Forgot Password Link inside input */
+.forgot-link {
+  position: absolute;
+  left: 15px; /* Left side for RTL layout usually, check visual */
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+.forgot-link:hover {
+  color: var(--color-secondary);
+}
+
+/* Submit Button (Blue) */
+.btn-submit {
+  background-color: var(--color-secondary); /* Duolingo Blue */
+  color: white;
+  border-bottom-color: var(--color-secondary-shadow);
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+.btn-submit:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+/* Footer Terms Text */
+.auth-footer-text {
+  margin-top: 2rem;
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 350px;
+}
+.auth-footer-text strong {
+  font-weight: 700;
+  cursor: pointer;
 }
 
 /* --- Animation Definitions (Keep previous ones) --- */

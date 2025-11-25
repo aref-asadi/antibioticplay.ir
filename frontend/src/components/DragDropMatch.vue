@@ -60,10 +60,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:answer']);
 
-// { 'cat-1': [item1], 'bank': [item2, item3] }
 const itemPositions = ref({});
 
-// --- راه‌اندازی اولیه ---
 watch(() => props.question, (newQuestion) => {
   if (newQuestion) {
     itemPositions.value = {
@@ -73,14 +71,12 @@ watch(() => props.question, (newQuestion) => {
   }
 }, { immediate: true });
 
-// --- Getters ---
 const itemsInBank = computed(() => itemPositions.value.bank || []);
 const itemsInCategories = computed(() => {
   const { bank, ...cats } = itemPositions.value;
   return cats;
 });
 
-// --- توابع Drag & Drop ---
 const onDragStart = (event, item) => {
   if (props.disabled) return;
   event.dataTransfer.dropEffect = 'move';
@@ -88,15 +84,12 @@ const onDragStart = (event, item) => {
   event.dataTransfer.setData('itemId', item.id);
 };
 
-// --- *** [ رفع باگ ۲ ] *** ---
-// منطق onDrop به طور کامل اصلاح شد
 const onDrop = (event, targetCategoryId) => {
   const itemId = event.dataTransfer.getData('itemId');
   if (props.disabled || !itemId) return;
 
   let itemToMove;
   
-  // ۱. پیدا کردن و حذف آیتم از مکان فعلی (چه بانک چه دسته دیگر)
   for (const categoryId in itemPositions.value) {
     const index = itemPositions.value[categoryId].findIndex(item => item.id === itemId);
     if (index > -1) {
@@ -105,8 +98,6 @@ const onDrop = (event, targetCategoryId) => {
     }
   }
 
-  // ۲. اضافه کردن آیتم به مکان جدید (مقصد)
-  // این منطق دیگر اهمیتی نمی‌دهد که مبدأ و مقصد یکی باشند
   if (itemToMove) {
     if (!itemPositions.value[targetCategoryId]) {
       itemPositions.value[targetCategoryId] = [];
@@ -115,10 +106,8 @@ const onDrop = (event, targetCategoryId) => {
   }
   
   event.target.closest('.droppable').classList.remove('drag-over');
-  // ارسال جواب جدید به والد
   emit('update:answer', itemPositions.value);
 };
-// --- *** [ پایان رفع باگ ] *** ---
 
 const onDragOver = (event) => {
   if (props.disabled) return;
@@ -131,8 +120,6 @@ const onDragLeave = (event) => {
 </script>
 
 <style scoped>
-/* استایل‌ها بدون تغییر باقی می‌مانند */
-/* ... (کد استایل‌های قبلی را اینجا کپی کنید) ... */
 .drag-drop-container {
   width: 100%;
 }
@@ -150,7 +137,7 @@ const onDragLeave = (event) => {
 .categories {
   flex-grow: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr; /* دو ستونه */
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
 
@@ -162,7 +149,6 @@ const onDragLeave = (event) => {
   min-height: 150px;
 }
 
-/* این کلاس عنوان دسته را نمایش می‌دهد */
 .category-title {
   font-weight: bold;
   color: #777;
@@ -202,7 +188,6 @@ const onDragLeave = (event) => {
   background-color: #f9f9f9;
 }
 
-/* بازخوردها */
 .item-card.correct {
   border-color: #58a700;
   color: #58a700;

@@ -5,7 +5,7 @@
         <h2>{{ notificationStore.title }}</h2>
 
         <img v-if="notificationStore.imageSrc" :src="notificationStore.imageSrc" class="notification-image" alt="Notification Image"/>
-        <font-awesome-icon v-else-if="notificationStore.badgeIcon" :icon="['fas', badgeIconName]" class="badge-icon-large" />
+        <font-awesome-icon v-else-if="notificationStore.badgeIcon" :icon="badgeIconArray" class="badge-icon-large" />
 
         <p class="notification-message">{{ notificationStore.message }}</p>
         <button @click="close" class="close-button btn-primary">ادامه</button>
@@ -20,12 +20,9 @@ import { useNotificationStore } from '../stores/notificationStore';
 
 const notificationStore = useNotificationStore();
 
-const badgeIconName = computed(() => {
-  if (notificationStore.badgeIcon) {
-    const parts = notificationStore.badgeIcon.split(' ');
-    return parts.length > 1 ? parts[1] : parts[0];
-  }
-  return 'question';
+const badgeIconArray = computed(() => {
+  const iconString = notificationStore.badgeIcon || 'fas fa-question';
+  return iconString.split(' ');
 });
 
 const close = () => {
@@ -34,13 +31,13 @@ const close = () => {
 </script>
 
 <style scoped>
-/* Styles similar to NewBadgeNotification, but adjusted */
-.notification-overlay { /* ... (same as before) ... */
+
+.notification-overlay {
   position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.6);
   display: flex; align-items: center; justify-content: center;
   z-index: 1000; direction: rtl;
 }
-.notification-card { /* ... (same as before) ... */
+.notification-card {
   background-color: var(--color-background-light); padding: 2rem 3rem; border-radius: 16px;
   text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); max-width: 400px;
   width: 90%; border: 2px solid var(--color-border); border-bottom-width: 4px;
@@ -51,7 +48,7 @@ const close = () => {
 .notification-message { color: var(--color-text-light); margin-bottom: 2rem; font-size: 1.1rem; line-height: 1.7; }
 .close-button { min-width: 120px; }
 
-/* --- Transition Animations (same as before) --- */
+/* --- Transition Animations --- */
 .fade-bounce-enter-active { animation: fadeBounceIn 0.4s ease-out; }
 .fade-bounce-leave-active { animation: fadeBounceOut 0.3s ease-in; }
 @keyframes fadeBounceIn { /* ... */ from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }

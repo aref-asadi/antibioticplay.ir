@@ -56,8 +56,7 @@ export const useNotificationStore = defineStore('notification', {
         this.showNotification({
             title: "🏆 نشان جدید!",
             message: badge.description,
-            badgeIcon: badge.icon || 'fas fa-question', // Pass FontAwesome class string
-            imageSrc: null // Don't use character image for badges
+            imageSrc: badgeDefaultIcon, // Don't use character image for badges
         });
     },
     hideNotification() {

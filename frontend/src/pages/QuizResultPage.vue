@@ -1,23 +1,56 @@
 <template>
-  <div class="result-container">
-    <div class="result-card card">
-      <h1>🎉 آزمون کامل شد! 🎉</h1>
-
-      <div v-if="didLevelUp" class="level-up-banner">
-         <h2>🥳 تبریک! سطح شما بالا رفت!</h2>
-         <p>شما به سطح <span class="new-level">{{ authStore.level }}</span> رسیدید.</p>
+  <div class="result-page">
+    
+    <div class="result-header">
+      <h1 class="completion-title">درس تمام شد!</h1>
+      <div class="result-image-wrapper">
+        <img :src="resultImage" class="result-img" alt="Result" />
       </div>
-
-      <p class="result-summary">
-        شما در این آزمون <span class="highlight">{{ quizStore.currentSessionScore }}</span> امتیاز کسب کردید.
-      </p>
-
-      <div class="total-score">
-        امتیاز کل شما: <span class="highlight-total">{{ finalTotalScore }}</span>
-      </div>
-
-      <router-link to="/dashboard" class="back-button btn-primary">بازگشت به داشبورد</router-link>
     </div>
+
+    <div class="stats-grid">
+      
+      <div class="stat-card xp-card">
+        <div class="stat-label">امتیاز کسب شده</div>
+        <div class="stat-value text-warning">
+          <font-awesome-icon icon="fas fa-plus" class="small-icon" />
+          {{ quizStore.currentSessionScore }}
+        </div>
+      </div>
+
+      <div class="stat-card streak-card">
+        <div class="stat-label">روزهای متوالی</div>
+        <div class="stat-value text-fire">
+          <font-awesome-icon icon="fas fa-fire" />
+          {{ authStore.user?.correct_streak || 0 }}
+        </div>
+      </div>
+
+      <div class="stat-card feedback-card">
+        <div class="stat-label">عملکرد</div>
+        <div class="stat-value text-primary">
+          {{ performanceLabel }}
+        </div>
+      </div>
+
+    </div>
+
+    <div v-if="didLevelUp" class="level-up-banner slide-up-animation">
+      <div class="level-content">
+        <font-awesome-icon icon="fas fa-arrow-up" class="level-icon" />
+        <div>
+          <h3>ارتقای سطح!</h3>
+          <p>تبریک! شما به سطح {{ authStore.level }} رسیدید.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer class="result-footer">
+      <router-link to="/dashboard" class="btn btn-primary continue-btn">
+        ادامه
+      </router-link>
+    </footer>
+
   </div>
 </template>
 
@@ -25,48 +58,187 @@
 import { computed, onMounted } from 'vue';
 import { useQuizStore } from '../stores/quiz';
 import { useAuthStore } from '../stores/auth';
-import { useNotificationStore } from '../stores/notificationStore';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faFire, faPlus, faArrowUp } from '@fortawesome/free-solid-svg-icons';
+
+// Import images
+import resultGoodImg from '../assets/result_good.jpg';
+import resultBadImg from '../assets/result_bad.jpg';
+
+library.add(faFire, faPlus, faArrowUp);
 
 const quizStore = useQuizStore();
 const authStore = useAuthStore();
-const notificationStore = useNotificationStore();
 
-onMounted(() => {
-  const sessionScore = quizStore.currentSessionScore;
-  const totalScore = finalTotalScore.value;
-  const possibleScore = quizStore.currentQuiz?.total_possible_score;
+// تعیین تصویر و متن بر اساس عملکرد
+const performanceLabel = computed(() => {
+  const score = quizStore.currentSessionScore;
+  const possible = quizStore.currentQuiz?.total_possible_score || 10;
+  const percentage = (score / possible) * 100;
 
-  console.log(`[QuizResultPage] Possible score for this quiz: ${possibleScore}`); // <-- لاگ جدید
-  
-  if (possibleScore && sessionScore >= possibleScore / 2) {
-      notificationStore.showGoodResult(sessionScore, totalScore);
-      console.log('[QuizResultPage] Showing GOOD result notification.'); // <-- لاگ جدید
-  } else {
-      notificationStore.showBadResult(sessionScore, totalScore);
-      console.log('[QuizResultPage] Showing BAD result notification.'); // <-- لاگ جدید
-  }
+  if (percentage >= 80) return 'عالی!';
+  if (percentage >= 50) return 'خوب';
+  return 'تلاش بیشتر';
 });
 
-const finalTotalScore = computed(() => {
-  return quizStore.lastSubmissionResult?.newTotalScore ?? authStore.score;
+const resultImage = computed(() => {
+  const score = quizStore.currentSessionScore;
+  const possible = quizStore.currentQuiz?.total_possible_score || 10;
+  // اگر بیش از نصف نمره را گرفته باشد، تصویر خوشحال
+  return (score >= possible / 2) ? resultGoodImg : resultBadImg;
 });
 
 const didLevelUp = computed(() => {
   return quizStore.lastSubmissionResult && quizStore.lastSubmissionResult.levelUp;
 });
 
+// حذف لاجیک نوتیفیکیشن پاپ‌آپ از اینجا
 </script>
 
 <style scoped>
-.result-container { display: flex; align-items: center; justify-content: center; min-height: 80vh; text-align: center; }
-.result-card { /* Base styles from .card in style.css */ padding: 3rem !important; }
-h1 { color: var(--color-text); margin-bottom: 2rem; }
-.level-up-banner { background-color: #fffbeb; border: 2px solid var(--color-warning); border-radius: 12px; padding: 1rem; margin-bottom: 2rem; }
-.level-up-banner h2 { color: var(--color-warning-dark); margin-top: 0; }
-.new-level { font-weight: bold; font-size: 1.2em; }
-.result-summary { font-size: 1.5rem; color: var(--color-text-light); margin-bottom: 1rem; }
-.total-score { font-size: 1.2rem; color: var(--color-text-light); margin-bottom: 2.5rem; }
-.highlight { font-weight: bold; color: var(--color-primary); font-size: 1.8rem; }
-.highlight-total { font-weight: bold; color: var(--color-text); }
-.back-button { text-decoration: none; } /* Base styles from .btn-primary */
+.result-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* --- Header --- */
+.result-header {
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+}
+.completion-title {
+  color: var(--color-warning); /* Gold/Yellow color */
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.result-image-wrapper {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+.result-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* Add a subtle float animation */
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* --- Stats Grid --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background-color: #fff;
+  border: 2px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 0 var(--color-border); /* 3D effect */
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* Colors */
+.text-warning { color: var(--color-warning); }
+.text-fire { color: #ff9600; }
+.text-primary { color: var(--color-primary); }
+.small-icon { font-size: 1rem; }
+
+/* --- Level Up Banner --- */
+.level-up-banner {
+  background-color: #d7ffb8;
+  border: 2px solid var(--color-primary);
+  border-radius: 16px;
+  padding: 1rem 2rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+}
+.level-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: right;
+}
+.level-icon {
+  font-size: 2rem;
+  color: var(--color-primary);
+  background: white;
+  padding: 10px;
+  border-radius: 50%;
+}
+.level-content h3 { margin: 0 0 0.2rem 0; color: var(--color-primary-dark); }
+.level-content p { margin: 0; color: var(--color-text); font-size: 0.95rem; }
+
+/* --- Footer --- */
+.result-footer {
+  margin-top: auto; /* Push to bottom */
+  width: 100%;
+  max-width: 600px;
+  padding-bottom: 2rem;
+}
+.continue-btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+}
+
+/* --- Animations --- */
+.slide-up-animation {
+  animation: slideUp 0.5s ease-out;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: 1fr; /* Stack cards on mobile */
+  }
+  .stat-card {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+  }
+  .stat-label { margin-bottom: 0; }
+}
 </style>

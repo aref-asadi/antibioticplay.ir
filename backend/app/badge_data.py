@@ -1,11 +1,9 @@
-# File: backend/app/badge_data.py
-
 BADGES = {
     "first_quiz": {
         "id": "first_quiz",
         "name": "شروع کننده",
         "description": "اولین آزمون خود را کامل کردید.",
-        "icon": "fas fa-play", # (از آیکون‌های Font Awesome استفاده خواهیم کرد)
+        "icon": "fas fa-play",
         "criteria": {
             "type": "complete_quiz",
             "count": 1
@@ -41,5 +39,4 @@ BADGES = {
             "count": 3
         }
     }
-    # ... می‌توان نشان‌های بیشتری برای ماژول‌های خاص اضافه کرد ...
 }

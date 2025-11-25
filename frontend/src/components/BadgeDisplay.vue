@@ -1,6 +1,6 @@
 <template>
   <div class="badge-item" :title="badge.description">
-    <font-awesome-icon :icon="['fas', badge.icon.split(' ')[1]]" class="badge-icon" />
+    <font-awesome-icon :icon="badge.icon.split(' ')" class="badge-icon" />
     <span class="badge-name">{{ badge.name }}</span>
   </div>
 </template>

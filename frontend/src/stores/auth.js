@@ -8,6 +8,8 @@ export const useAuthStore = defineStore('auth', {
     user: JSON.parse(localStorage.getItem('user')) || null,
     returnUrl: null,
     triggerScoreAnimation: false,
+    correct_streak: 0,
+    quizzes_completed: 0,
   }),
 
   getters: {
@@ -15,6 +17,8 @@ export const useAuthStore = defineStore('auth', {
     username: (state) => state.user?.username,
     score: (state) => state.user?.score || 0,
     level: (state) => state.user?.level || 1,
+    streak: (state) => state.correct_streak,
+    completedQuizzes: (state) => state.quizzes_completed,
   },
 
   actions: {
@@ -23,6 +27,10 @@ export const useAuthStore = defineStore('auth', {
         const response = await authService.getProfile();
         this.user = response.data;
         localStorage.setItem('user', JSON.stringify(this.user));
+        
+        this.correct_streak = response.data.correct_streak || 0;
+        this.quizzes_completed = response.data.quizzes_completed || 0;
+        
       } catch (error) {
         console.error('Failed to fetch user profile:', error);
         this.logout();
@@ -57,6 +65,9 @@ export const useAuthStore = defineStore('auth', {
       this.user = null;
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      // Reset streak and completed quizzes on logout
+      this.correct_streak = 0;
+      this.quizzes_completed = 0;
       router.push('/login');
     },
 
@@ -76,6 +87,14 @@ export const useAuthStore = defineStore('auth', {
          this.user.level = newLevel;
          localStorage.setItem('user', JSON.stringify(this.user));
        }
+    },
+
+    updateUserStreak(newStreak) {
+      this.correct_streak = newStreak;
+    },
+    
+    updateUserQuizzesCompleted(newCompleted) {
+      this.quizzes_completed = newCompleted;
     },
 
     resetScoreAnimationTrigger() {

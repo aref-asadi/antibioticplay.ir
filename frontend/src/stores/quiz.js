@@ -9,8 +9,10 @@ export const useQuizStore = defineStore('quiz', {
     loading: false,
     error: null,
     currentSessionScore: 0,
+    currentQuizPossibleScore: 0,
     lastSubmissionResult: null,
     newlyEarnedBadges: [],
+    pendingBadgeToShow: null,
   }),
 
   actions: {
@@ -38,6 +40,8 @@ export const useQuizStore = defineStore('quiz', {
         this.newlyEarnedBadges = [];
         const response = await quizService.getQuizDetails(quizId);
         this.currentQuiz = response.data;
+        // مقداردهی امتیاز کل ممکن آزمون
+        this.currentQuizPossibleScore = response.data.total_possible_score || 0; 
       } catch (err) {
         this.error = 'خطا در دریافت سوالات آزمون.';
         console.error(err);
@@ -71,11 +75,12 @@ export const useQuizStore = defineStore('quiz', {
         }
       });
       if (firstNewBadge) {
-        // Use timeout to show badge notification slightly after feedback notification closes
-        setTimeout(() => {
-            notificationStore.showNewBadge(firstNewBadge);
-        }, 400); // Delay slightly longer than feedback animation
+        this.pendingBadgeToShow = firstNewBadge;
       }
+    },
+
+    clearPendingBadge() {
+        this.pendingBadgeToShow = null;
     },
 
     addSessionScore(score) {

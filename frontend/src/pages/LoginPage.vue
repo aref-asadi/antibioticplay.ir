@@ -1,34 +1,70 @@
 <template>
-  <div class="login-container">
-    <h2>ورود به antibioticplay.ir</h2>
-    <form @submit.prevent="handleLogin">
-      <div class="form-group">
-        <label for="username">نام کاربری</label>
-        <input type="text" id="username" v-model="username" required />
-      </div>
-      <div class="form-group">
-        <label for="password">رمز عبور</label>
-        <input type="password" id="password" v-model="password" required />
-      </div>
-      <div v-if="error" class="error-message">{{ error }}</div>
-      <button type="submit" :disabled="loading">
-        {{ loading ? 'در حال ورود...' : 'ورود' }}
-      </button>
-    </form>
-     <p class="register-link">
-        حساب کاربری ندارید؟ <router-link to="/register">ثبت نام کنید</router-link>
-    </p>
+  <div class="auth-wrapper">
+    
+    <header class="auth-header">
+      <router-link to="/" class="close-btn">
+        <font-awesome-icon icon="fas fa-times" />
+      </router-link>
+      <router-link to="/register" class="btn btn-outline" style="color: var(--color-secondary); border-color: var(--color-border);">
+        ثبت نام
+      </router-link>
+    </header>
+
+    <div class="auth-content">
+      <h2 class="auth-title">ورود</h2>
+
+      <form @submit.prevent="handleLogin" class="duo-form">
+        
+        <div class="input-group">
+          <input 
+            type="text" 
+            class="duo-input" 
+            :class="{ 'error': error }"
+            placeholder="نام کاربری یا ایمیل" 
+            v-model="username" 
+            required 
+          />
+        </div>
+
+        <div class="input-group">
+          <input 
+            type="password" 
+            class="duo-input" 
+            :class="{ 'error': error }"
+            placeholder="رمز عبور" 
+            v-model="password" 
+            required 
+          />
+          <router-link to="/forgot-password" class="forgot-link">فراموشی؟</router-link>
+        </div>
+
+        <div v-if="error" class="error-message text-center" style="color: var(--color-danger); margin-top: 0.5rem;">
+          {{ error }}
+        </div>
+
+        <button type="submit" class="btn btn-submit" :disabled="loading">
+          {{ loading ? 'در حال ورود...' : 'ورود' }}
+        </button>
+
+      </form>
+
+      <p class="auth-footer-text">
+        با ورود به AntibioticPlay، شما با <strong>شرایط</strong> و <strong>حریم خصوصی</strong> ما موافقت می‌کنید.
+      </p>
+    </div>
+
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
-// استفاده از store احراز هویت
+library.add(faTimes);
+
 const authStore = useAuthStore();
-
-// متغیرهای محلی برای نگهداری مقادیر فرم
 const username = ref('');
 const password = ref('');
 const loading = ref(false);
@@ -38,62 +74,11 @@ const handleLogin = async () => {
   loading.value = true;
   error.value = null;
   try {
-    // فراخوانی اکشن لاگین از store
     await authStore.login(username.value, password.value);
-    // هدایت به صفحه بعد در خود store انجام می‌شود
   } catch (err) {
-    // مدیریت خطاهای احتمالی از سمت سرور
-    error.value = 'نام کاربری یا رمز عبور نامعتبر است.';
-    console.error(err);
+    error.value = 'نام کاربری یا رمز عبور اشتباه است.';
   } finally {
     loading.value = false;
   }
 };
 </script>
-
-<style scoped>
-.login-container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 2rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-.form-group {
-  margin-bottom: 1rem;
-  text-align: right;
-}
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-}
-input {
-  width: 100%;
-  padding: 0.5rem;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #42b983;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-button:disabled {
-  background-color: #a5d6c1;
-}
-.error-message {
-    color: #e74c3c;
-    margin-bottom: 1rem;
-}
-.register-link {
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-}
-</style>

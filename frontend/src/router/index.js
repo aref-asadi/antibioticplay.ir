@@ -7,6 +7,7 @@ import { useAuthStore } from '../stores/auth';
 import HomePage from '../pages/HomePage.vue';
 import LoginPage from '../pages/LoginPage.vue';
 import RegisterPage from '../pages/RegisterPage.vue';
+import ForgotPasswordPage from '../pages/ForgotPasswordPage.vue';
 import DashboardPage from '../pages/DashboardPage.vue';
 import QuizPage from '../pages/QuizPage.vue';
 import LeaderboardPage from '../pages/LeaderboardPage.vue';
@@ -16,6 +17,7 @@ const routes = [
   { path: '/', name: 'Home', component: HomePage },
   { path: '/login', name: 'Login', component: LoginPage },
   { path: '/register', name: 'Register', component: RegisterPage },
+  { path: '/forgot-password', name: 'ForgotPassword', component: ForgotPasswordPage },
   { path: '/dashboard', name: 'Dashboard', component: DashboardPage, meta: { requiresAuth: true } },
   { path: '/quiz/:id', name: 'Quiz', component: QuizPage, meta: { requiresAuth: true } },
   { path: '/leaderboard', name: 'Leaderboard', component: LeaderboardPage, meta: { requiresAuth: true } },

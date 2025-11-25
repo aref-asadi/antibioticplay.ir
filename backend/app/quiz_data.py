@@ -110,7 +110,7 @@ QUIZZES = {
         "id": "dosage-forms",
         "title": "Dosage Forms",
         "icon": "pills",
-        "total_possible_score": 58,
+        "total_possible_score": 89,
         "questions": [
             {
                 "id": "inhibitor_combinations",
@@ -374,7 +374,7 @@ QUIZZES = {
         "id": "clinical-application",
         "title": "Clinical Application",
         "icon": "stethoscope",
-        "total_possible_score": 75,
+        "total_possible_score": 216,
         "questions": [
             {
                 "id": "anaerobic_coverage",
@@ -463,28 +463,24 @@ QUIZZES = {
                 "title": "تجویز همزمان سفتریاکسون و کلسیم",
                 "instruction": "هر گروه سنی را به روش صحیح تجویز این دو دارو وصل کنید.",
                 "items": [
-                    {"id": "cc-item-1", "text": "تزریق یکی از دو دارو فلاشینگ لاین و سپس تزریق داروی دیگر"},
-                    {"id": "cc-item-2", "text": "امکان تجویز دو دارو در یک دوره درمانی وجود ندارد"},
-                    {"id": "cc-item-3", "text": "تزریق همزمان دو دارو از دو لاین مختلف"},
-                    {"id": "cc-item-4", "text": "تزریق همزمان دارو از یک لاین و در یک سرم"}
+                    {"id": "cc-item-1", "text": "بزرگسالان"},
+                    {"id": "cc-item-2", "text": "کودکان با سن ۲-۶ سال"},
+                    {"id": "cc-item-3", "text": "نوزادان با سن زیر ۴ هفته"},
+                    {"id": "cc-item-4", "text": "اطفال با سن ۱ ماه تا ۲ سال"}
                 ],
                 "categories": [
-                    {"id": "cc-cat-1", "text": "بزرگسالان"},
-                    {"id": "cc-cat-2", "text": "کودکان با سن ۲-۶ سال"},
-                    {"id": "cc-cat-3", "text": "نوزادان با سن زیر ۴ هفته"},
-                    {"id": "cc-cat-4", "text": "اطفال با سن ۱ ماه تا ۲ سال"}
+                    {"id": "cc-cat-1", "text": "تزریق یکی از دو دارو فلاشینگ لاین و سپس تزریق داروی دیگر"},
+                    {"id": "cc-cat-2", "text": "امکان تجویز دو دارو در یک دوره درمانی وجود ندارد"},
+                    {"id": "cc-cat-3", "text": "تزریق همزمان دو دارو از دو لاین مختلف"},
+                    {"id": "cc-cat-4", "text": "تزریق همزمان دارو از یک لاین و در یک سرم"}
                 ],
                 "solution": {
                     "cc-item-1": "cc-cat-1",
-                    "cc-item-1": "cc-cat-2", # PDF shows one item to two cats, my model doesn't support this. Reversing.
+                    "cc-item-2": "cc-cat-1",
+                    "cc-item-3": "cc-cat-2",
+                    "cc-item-4": "cc-cat-3"
                 },
-                "solution_reversed": { # PDF shows Cat -> Item, so I will reverse the logic for this question
-                    "cc-cat-1": "cc-item-1",
-                    "cc-cat-2": "cc-item-1",
-                    "cc-cat-3": "cc-item-2",
-                    "cc-cat-4": "cc-item-3"
-                },
-                "points_per_correct": 2 # This question needs custom logic in the frontend
+                "points_per_correct": 2
             },
             {
                 "id": "cdiff_risk_factors",

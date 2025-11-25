@@ -1,33 +1,75 @@
 <template>
-  <div class="register-container">
-    <h2>ثبت نام در antibioticplay.ir</h2>
-    <form @submit.prevent="handleRegister">
-      <div class="form-group">
-        <label for="username">نام کاربری</label>
-        <input type="text" id="username" v-model="username" required />
-      </div>
-       <div class="form-group">
-        <label for="email">ایمیل</label>
-        <input type="email" id="email" v-model="email" required />
-      </div>
-      <div class="form-group">
-        <label for="password">رمز عبور</label>
-        <input type="password" id="password" v-model="password" required />
-      </div>
-      <div v-if="error" class="error-message">{{ error }}</div>
-      <button type="submit" :disabled="loading">
-        {{ loading ? 'در حال ثبت نام...' : 'ثبت نام' }}
-      </button>
-    </form>
-    <p class="login-link">
-        قبلاً ثبت نام کرده‌اید؟ <router-link to="/login">وارد شوید</router-link>
-    </p>
+  <div class="auth-wrapper">
+    
+    <header class="auth-header">
+      <router-link to="/" class="close-btn">
+        <font-awesome-icon icon="fas fa-times" />
+      </router-link>
+      <router-link to="/login" class="btn btn-outline" style="color: var(--color-secondary); border-color: var(--color-border);">
+        ورود
+      </router-link>
+    </header>
+
+    <div class="auth-content">
+      <h2 class="auth-title">ایجاد حساب کاربری</h2>
+
+      <form @submit.prevent="handleRegister" class="duo-form">
+        
+        <div class="input-group">
+          <input 
+            type="text" 
+            class="duo-input" 
+            placeholder="نام (نام کاربری)" 
+            v-model="username" 
+            required 
+          />
+        </div>
+
+        <div class="input-group">
+          <input 
+            type="email" 
+            class="duo-input" 
+            placeholder="ایمیل" 
+            v-model="email" 
+            required 
+          />
+        </div>
+
+        <div class="input-group">
+          <input 
+            type="password" 
+            class="duo-input" 
+            placeholder="رمز عبور" 
+            v-model="password" 
+            required 
+          />
+        </div>
+
+        <div v-if="error" class="error-message text-center" style="color: var(--color-danger); margin-top: 0.5rem;">
+          {{ error }}
+        </div>
+
+        <button type="submit" class="btn btn-submit" :disabled="loading">
+          {{ loading ? 'در حال ساخت حساب...' : 'ایجاد حساب' }}
+        </button>
+
+      </form>
+
+      <p class="auth-footer-text">
+        با ثبت نام در AntibioticPlay، شما با <strong>شرایط</strong> و <strong>حریم خصوصی</strong> ما موافقت می‌کنید.
+      </p>
+    </div>
+
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+
+library.add(faTimes);
 
 const authStore = useAuthStore();
 const username = ref('');
@@ -41,60 +83,10 @@ const handleRegister = async () => {
   error.value = null;
   try {
     await authStore.register(username.value, email.value, password.value);
-    // هدایت به داشبورد بعد از لاگین خودکار انجام می‌شود
   } catch (err) {
-    error.value = 'ثبت نام ناموفق بود. این نام کاربری یا ایمیل ممکن است قبلاً استفاده شده باشد.';
-    console.error(err);
+    error.value = 'ثبت نام ناموفق بود. ممکن است این نام کاربری قبلاً گرفته شده باشد.';
   } finally {
     loading.value = false;
   }
 };
 </script>
-
-<style scoped>
-/* استایل‌ها مشابه صفحه ورود هستند و می‌توان آن‌ها را در یک فایل مشترک قرار داد */
-.register-container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 2rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-.form-group {
-  margin-bottom: 1rem;
-  text-align: right;
-}
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-}
-input {
-  width: 100%;
-  padding: 0.5rem;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #42b983;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-button:disabled {
-  background-color: #a5d6c1;
-}
-.error-message {
-    color: #e74c3c;
-    margin-bottom: 1rem;
-}
-.login-link {
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-}
-</style>
