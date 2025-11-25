@@ -11,10 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # 1. بیلد کردن فرانت‌اند
+      # 1. تنظیم نسخه نود روی ۲۲ برای رفع خطای crypto.hash
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '22'
+
       - name: Build Frontend
         run: |
           cd frontend
@@ -30,7 +31,7 @@ jobs:
       - name: Install Liara CLI
         run: npm i -g @liara/cli
 
-      # 4. استقرار پوشه backend (که الان شامل فرانت هم هست)
+      # 4. استقرار پوشه backend
       - name: Deploy to Liara
         env:
           LIARA_TOKEN: ${{ secrets.LIARA_API_TOKEN }}
