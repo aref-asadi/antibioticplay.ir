@@ -1,33 +1,23 @@
-# File: backend/app/__init__.py
-
-from flask import Flask
+from flask import Flask, send_from_directory, render_template
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from config import Config
+import os
 
-# ساخت نمونه‌های پکیج‌ها به صورت گلوبال
 mongo = PyMongo()
 jwt = JWTManager()
 
 def create_app():
-    """
-    Application Factory: یک نمونه از اپلیکیشن Flask را می‌سازد و برمی‌گرداند.
-    """
-    app = Flask(__name__)
+    dist_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'dist'))
     
-    # بارگذاری تنظیمات از فایل config.py
+    app = Flask(__name__, static_folder=f"{dist_folder}/assets", template_folder=dist_folder)
+    
     app.config.from_object(Config)
-
-    # فعال‌سازی CORS برای اجازه دسترسی از فرانت‌اند
     CORS(app)
-    
-    # اتصال پکیج‌ها به اپلیکیشن
     mongo.init_app(app)
     jwt.init_app(app)
 
-    # --- ثبت Blueprintها ---
-    
     from .routes import auth_bp, quiz_bp, leaderboard_bp, badge_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
@@ -35,17 +25,11 @@ def create_app():
     app.register_blueprint(leaderboard_bp, url_prefix='/api/leaderboard')
     app.register_blueprint(badge_bp, url_prefix='/api/badges')
 
-    # --- روت‌های تست (اختیاری) ---
-    @app.route('/api/ping')
-    def ping():
-        return "Pong!"
-        
-    @app.route('/api/db-check')
-    def db_check():
-        try:
-            mongo.db.command('ping')
-            return "Database connection successful!"
-        except Exception as e:
-            return f"Database connection failed: {e}", 500
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
+    def serve_vue(path):
+        if path and os.path.exists(os.path.join(dist_folder, path)):
+            return send_from_directory(dist_folder, path)
+        return render_template('index.html')
 
     return app

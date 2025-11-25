@@ -1,0 +1,39 @@
+name: Liara CD (Monolithic)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # 1. بیلد کردن فرانت‌اند
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+      
+      # 2. انتقال فایل‌های بیلد شده به پوشه بک‌اند
+      - name: Move Frontend Build
+        run: |
+          mv frontend/dist backend/dist
+
+      # 3. نصب ابزار لیارا
+      - name: Install Liara CLI
+        run: npm i -g @liara/cli
+
+      # 4. استقرار پوشه backend (که الان شامل فرانت هم هست)
+      - name: Deploy to Liara
+        env:
+          LIARA_TOKEN: ${{ secrets.LIARA_API_TOKEN }}
+        run: |
+          cd backend
+          liara deploy --api-token="$LIARA_TOKEN" --detach

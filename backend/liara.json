@@ -1,0 +1,11 @@
+{
+  "platform": "python",
+  "app": "antibioticplay",
+  "port": 8000,
+  "args": [
+    "gunicorn",
+    "-b",
+    "0.0.0.0:8000",
+    "run:app"
+  ]
+}
