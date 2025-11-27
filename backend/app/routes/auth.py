@@ -29,22 +29,25 @@ class UserRegistration(Resource):
 class UserLogin(Resource):
     def post(self):
         data = request.get_json()
-        username = data.get('username')
+        identifier = data.get('username')
         password = data.get('password')
         
-        user_data = User.find_by_username(username)
+        user_data = User.find_by_username(identifier)
+
+        if not user_data:
+            user_data = User.find_by_email(identifier)
 
         if user_data and User.check_password(user_data['password_hash'], password):
-            access_token = create_access_token(identity=username)
-            refresh_token = create_refresh_token(identity=username)
+            access_token = create_access_token(identity=user_data['username'])
+            refresh_token = create_refresh_token(identity=user_data['username'])
             
             return {
-                'message': f'ورود موفقیت آمیز بود. خوش آمدید {username}!',
+                'message': f'ورود موفقیت آمیز بود. خوش آمدید {user_data["username"]}!',
                 'access_token': access_token,
                 'refresh_token': refresh_token
             }, 200
         
-        return {'message': 'نام کاربری یا رمز عبور نامعتبر است'}, 401
+        return {'message': 'نام کاربری/ایمیل یا رمز عبور نامعتبر است'}, 401
 
 class UserProfile(Resource):
     @jwt_required()

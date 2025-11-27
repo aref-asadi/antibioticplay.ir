@@ -13,6 +13,7 @@ import QuizPage from '../pages/QuizPage.vue';
 import LeaderboardPage from '../pages/LeaderboardPage.vue';
 import QuizResultPage from '../pages/QuizResultPage.vue';
 import RulesPage from '../pages/RulesPage.vue';
+import ReviewPage from '../pages/ReviewPage.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
@@ -24,6 +25,7 @@ const routes = [
   { path: '/leaderboard', name: 'Leaderboard', component: LeaderboardPage, meta: { requiresAuth: true } },
   { path: '/quiz/result', name: 'QuizResult', component: QuizResultPage, meta: { requiresAuth: true } },
   { path: '/rules', name: 'Rules', component: RulesPage, meta: { requiresAuth: true } },
+  { path: '/review', name: 'Review', component: ReviewPage, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({

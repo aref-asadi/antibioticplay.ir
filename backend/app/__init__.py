@@ -9,7 +9,6 @@ mongo = PyMongo()
 jwt = JWTManager()
 
 def create_app():
-    # مسیر پوشه dist
     dist_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'dist'))
     
     app = Flask(__name__, static_folder=f"{dist_folder}/assets", template_folder=dist_folder)
@@ -40,12 +39,13 @@ def create_app():
             'error': 'authorization_required'
         }), 401
 
-    from .routes import auth_bp, quiz_bp, leaderboard_bp, badge_bp
+    from .routes import auth_bp, quiz_bp, leaderboard_bp, badge_bp, bookmarks_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(quiz_bp, url_prefix='/api/quizzes')
     app.register_blueprint(leaderboard_bp, url_prefix='/api/leaderboard')
     app.register_blueprint(badge_bp, url_prefix='/api/badges')
+    app.register_blueprint(bookmarks_bp, url_prefix='/api/bookmarks')
 
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')

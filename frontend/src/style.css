@@ -328,54 +328,49 @@ input::placeholder {
 .error-message { color: var(--color-danger); }
 
 /* --- Mobile Drag & Drop Critical Fixes --- */
+.dnd-poly-drag-image { pointer-events: none !important; opacity: 0.7 !important; z-index: 9999 !important; transform: scale(1.1); }
+.dnd-poly-drag-icon { display: none !important; }
+.draggable { touch-action: none !important; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; cursor: grab; }
+.draggable:active { cursor: grabbing; opacity: 0.5; }
+.droppable { pointer-events: auto !important; }
+.item-card.selected-mode { border-color: var(--color-secondary) !important; background-color: var(--color-secondary-light) !important; color: var(--color-secondary-shadow) !important; transform: scale(1.05); box-shadow: 0 4px 10px rgba(28, 176, 246, 0.3); z-index: 10; }
+.droppable.highlight-target { border-color: var(--color-secondary); border-style: solid; background-color: #f0faff; cursor: pointer; }
 
-.dnd-poly-drag-image {
-  pointer-events: none !important; /* مهمترین خط */
-  opacity: 0.7 !important;
-  z-index: 9999 !important;
-  transform: scale(1.1);
-}
+/* --- Mobile Optimization (Scaling Down) --- */
+@media (max-width: 600px) {
+  html {
+    font-size: 14px;
+  }
 
-/* 2. آیکون پیش‌فرض مرورگر */
-.dnd-poly-drag-icon {
-  display: none !important;
-}
+  .card, .unit-card, .sidebar-widget {
+    padding: 1rem !important;
+  }
 
-/* 3. آیتم‌های قابل کشیدن */
-.draggable {
-  /* جلوگیری از هایلایت آبی یا اسکرول */
-  touch-action: none !important;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-  cursor: grab;
-}
+  .node-button {
+    width: 65px;
+    height: 65px;
+  }
+  .node-icon {
+    font-size: 1.8rem;
+  }
 
-.draggable:active {
-  cursor: grabbing;
-  opacity: 0.5; /* فیدبک بصری به کاربر که آیتم گرفته شده */
-}
-
-/* 4. باکس‌های مقصد */
-.droppable {
-  /* باکس‌ها باید بتوانند رویداد تاچ را بگیرند */
-  pointer-events: auto !important;
-}
-
-/* --- Click-to-Move Styles --- */
-.item-card.selected-mode {
-  border-color: var(--color-secondary) !important;
-  background-color: var(--color-secondary-light) !important;
-  color: var(--color-secondary-shadow) !important;
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(28, 176, 246, 0.3);
-  z-index: 10;
-}
-
-/* وقتی آیتمی انتخاب شده، باکس‌های مقصد کمی تغییر کنند تا کاربر بفهمد کجا باید کلیک کند */
-.droppable.highlight-target {
-  border-color: var(--color-secondary);
-  border-style: solid;
-  background-color: #f0faff;
-  cursor: pointer;
+  .quiz-header {
+    padding: 0.8rem 1rem;
+    height: 60px;
+  }
+  
+  .quiz-body {
+    padding-bottom: 120px !important;
+  }
+  
+  .question-title {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .item-card, .option-card {
+    padding: 0.6rem !important;
+    font-size: 0.9rem !important;
+    min-height: auto;
+  }
 }

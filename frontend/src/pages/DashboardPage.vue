@@ -86,6 +86,16 @@
           </div>
         </div>
 
+        <div class="sidebar-widget review-widget">
+          <div class="widget-header">
+            <h3>مرور</h3>
+          </div>
+          <router-link to="/review" class="btn btn-outline review-link-btn" style="width: 100%; color: var(--color-secondary); border-color: var(--color-border);">
+            <font-awesome-icon icon="fas fa-bookmark" />
+            سوالات نشان‌دار
+          </router-link>
+        </div>
+
         <div class="sidebar-widget leaderboard-widget">
           <div class="widget-header">
             <h3>لیگ {{ user?.league?.name || 'برنز' }}</h3>
