@@ -135,7 +135,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2023 AntibioticPlay. تمامی حقوق محفوظ است.</p>
+        <p>© 2025 AntibioticPlay. تمامی حقوق محفوظ است.</p>
       </div>
     </footer>
 

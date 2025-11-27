@@ -9,7 +9,7 @@
         
         <div class="stats-bar">
           <div class="stat-item" title="سطح شما">
-            <img src="https://d35aaqx5ub95lt.cloudfront.net/images/flags/en.svg" class="flag-icon" alt="Level" /> 
+            <font-awesome-icon icon="fas fa-flag" class="flag-icon" />
             <span>سطح {{ level || 1 }}</span>
           </div>
 
@@ -213,7 +213,7 @@ const startQuiz = async (quizId) => {
   cursor: default;
 }
 .stat-item:hover { filter: brightness(0.9); }
-.flag-icon { width: 30px; height: auto; border-radius: 4px; }
+.flag-icon { width: auto; height: auto; }
 .icon-fire { color: #ff9600; font-size: 1.2rem; }
 .icon-gem { color: #1cb0f6; font-size: 1.2rem; }
 .btn-ghost {
