@@ -12,12 +12,10 @@ class QuizList(Resource):
         try:
             quizzes = list(mongo.db.quizzes.find(
                 {},
-                {"_id": 1, "id": 1, "title": 1, "icon": 1}
+                {"_id": 1, "id": 1, "title": 1, "icon": 1, "description": 1}
             ))
-
             for quiz in quizzes:
                 quiz["_id"] = str(quiz["_id"])
-
             return quizzes, 200
         except Exception as e:
             return {"message": str(e)}, 500
@@ -137,7 +135,6 @@ class QuizSubmit(Resource):
             mongo.db.users.update_one({'_id': user['_id']},{'$set': {'badges_earned': user_badge_ids}})
         return newly_earned_badges
 
-
     @jwt_required()
     def post(self):
         data = request.get_json()
@@ -145,40 +142,78 @@ class QuizSubmit(Resource):
         question_id = data.get('questionId')
         user_answer = data.get('answer')
         is_last_question = data.get('isLastQuestion', False)
+        time_taken = data.get('timeTaken', 30)
+        explanation_text = question.get('explanation', '')
 
         if not question_id or user_answer is None or not quiz_id:
-            return {"message": "اطلاعات ارسالی ناقص است"}, 400
+            return {"message": "اطلاعات ناقص است"}, 400
 
         quiz = mongo.db.quizzes.find_one({"id": quiz_id})
         if not quiz: return {"message": "آزمون یافت نشد"}, 404
         question = next((q for q in quiz['questions'] if q['id'] == question_id), None)
         if not question: return {"message": "سوال یافت نشد"}, 404
 
-        score_earned, is_correct, feedback = self._calculate_score(question, user_answer)
+        base_score, is_correct, feedback = self._calculate_score(question, user_answer)
+        
+        speed_bonus = 0
+        streak_bonus = 0
         
         current_user_username = get_jwt_identity()
         user = mongo.db.users.find_one({'username': current_user_username})
-        if not user: return {"message": "کاربر یافت نشد"}, 404
-
-        current_score = int(user.get('score', 0))
-        new_total_score = current_score + score_earned
-
+        
         current_streak = user.get('correct_streak', 0)
-        current_quizzes_completed = user.get('quizzes_completed', 0)
-
-        new_level = self._calculate_level(new_total_score)
         new_streak = current_streak + 1 if is_correct else 0
-        new_quizzes_completed = current_quizzes_completed + 1 if is_last_question else current_quizzes_completed
+
+        if is_correct:
+            if time_taken < 5: speed_bonus = 5
+            elif time_taken < 10: speed_bonus = 4
+            elif time_taken < 15: speed_bonus = 3
+            elif time_taken < 20: speed_bonus = 2
+            elif time_taken < 30: speed_bonus = 1
+            
+            if new_streak > 0 and new_streak % 5 == 0:
+                streak_bonus = 20
+
+        total_question_score = base_score + speed_bonus + streak_bonus
+
+        quiz_progress = user.get('quiz_progress', {})
+        if quiz_id not in quiz_progress:
+            quiz_progress[quiz_id] = {'best_score': 0, 'current_session_score': 0, 'attempts': 0}
+        
+        user_quiz_data = quiz_progress[quiz_id]
+        
+        user_quiz_data['current_session_score'] = user_quiz_data.get('current_session_score', 0) + total_question_score
+        
+        current_total_score = int(user.get('score', 0))
+        xp_gained_this_step = 0
+        
+        if is_last_question:
+            previous_best = user_quiz_data.get('best_score', 0)
+            new_session_score = user_quiz_data['current_session_score']
+            
+            if new_session_score > previous_best:
+                xp_gained_this_step = new_session_score - previous_best
+                user_quiz_data['best_score'] = new_session_score
+            
+            user_quiz_data['attempts'] = user_quiz_data.get('attempts', 0) + 1
+            user_quiz_data['current_session_score'] = 0 # ریست
+            
+            mongo.db.users.update_one({'_id': user['_id']}, {'$inc': {'quizzes_completed': 1}})
+
+        quiz_progress[quiz_id] = user_quiz_data
+        
+        new_total_score = current_total_score + xp_gained_this_step
+        new_level = self._calculate_level(new_total_score)
         level_up_occurred = new_level > user.get('level', 1)
 
-        update_result = mongo.db.users.update_one(
+        mongo.db.users.update_one(
             {'_id': user['_id']},
             {
                 '$set': {
                     'score': new_total_score,
                     'level': new_level,
                     'correct_streak': new_streak,
-                    'quizzes_completed': new_quizzes_completed
+                    'quiz_progress': quiz_progress
                 }
             }
         )
@@ -190,11 +225,13 @@ class QuizSubmit(Resource):
             "message": "جواب ثبت شد",
             "isCorrect": is_correct,
             "feedback": feedback,
-            "scoreEarned": score_earned,
+            "scoreEarned": total_question_score,
+            "xpGained": xp_gained_this_step,
+            "speedBonus": speed_bonus,
+            "streakBonus": streak_bonus,
             "newTotalScore": new_total_score,
             "newLevel": new_level,
             "levelUp": level_up_occurred,
             "newlyEarnedBadges": newly_earned_badges,
-            "newStreak": new_streak,
-            "newQuizzesCompleted": new_quizzes_completed
+            "explanation": explanation_text
         }, 200

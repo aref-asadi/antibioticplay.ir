@@ -50,10 +50,10 @@ export const useQuizStore = defineStore('quiz', {
       }
     },
 
-    async submitAnswer(quizId, questionId, answer, isLastQuestion) {
+    async submitAnswer(quizId, questionId, answer, isLastQuestion, timeTaken) { 
       if (!this.currentQuiz) throw new Error("No active quiz.");
       try {
-        const response = await quizService.submitAnswer(quizId, questionId, answer, isLastQuestion);
+        const response = await quizService.submitAnswer(quizId, questionId, answer, isLastQuestion, timeTaken);
         this.lastSubmissionResult = response.data;
         return response;
       } catch (error) {

@@ -11,10 +11,10 @@
     <div class="stats-grid">
       
       <div class="stat-card xp-card">
-        <div class="stat-label">امتیاز کسب شده</div>
+        <div class="stat-label">XP دریافتی</div>
         <div class="stat-value text-warning">
           <font-awesome-icon icon="fas fa-plus" class="small-icon" />
-          {{ quizStore.currentSessionScore }}
+          {{ xpGainedDisplay }}
         </div>
       </div>
 
@@ -69,6 +69,12 @@ library.add(faFire, faPlus, faArrowUp);
 
 const quizStore = useQuizStore();
 const authStore = useAuthStore();
+
+const xpGainedDisplay = computed(() => {
+  // این مقدار را باید از آخرین پاسخ سرور بگیریم
+  // اگر مقدار وجود نداشت (مثلا رفرش صفحه)، صفر نشان بده
+  return quizStore.lastSubmissionResult?.xpGained || 0;
+});
 
 // تعیین تصویر و متن بر اساس عملکرد
 const performanceLabel = computed(() => {

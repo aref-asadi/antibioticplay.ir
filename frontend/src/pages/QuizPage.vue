@@ -92,7 +92,10 @@
           </div>
           <div class="feedback-text">
             <h3 v-if="quizState === 'correct'">عالی بود!</h3>
-            <h3 v-else>جواب درست: ...</h3> </div>
+            <h3 v-else>اشتباه بود!</h3>
+            
+            <p v-if="explanationText" class="explanation-text">{{ explanationText }}</p>
+          </div>
         </div>
 
         <div class="action-button-wrapper">
@@ -128,6 +131,7 @@ import { useQuizStore } from '../stores/quiz';
 import { useAuthStore } from '../stores/auth';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faTimes, faCheck, faFire } from '@fortawesome/free-solid-svg-icons';
+import { watch } from 'vue';
 
 // Import Images
 import correctImg from '../assets/feedback_correct.jpg';
@@ -145,13 +149,22 @@ const router = useRouter();
 const quizStore = useQuizStore();
 const authStore = useAuthStore();
 const quizBody = ref(null);
-
+const explanationText = ref('');
 const currentQuestionIndex = ref(0);
 const userAnswer = ref(null);
 const feedback = ref({});
 const quizState = ref('answering');
 const currentStreak = ref(0);
 const applyShake = ref(false);
+const questionStartTime = ref(Date.now());
+
+watch(currentQuestion, () => {
+  questionStartTime.value = Date.now();
+});
+
+const data = response.data;
+feedback.value = data.feedback;
+explanationText.value = data.explanation;
 
 onMounted(() => {
   const quizId = route.params.id;
@@ -204,10 +217,11 @@ const scrollToBottom = () => {
 
 const checkAnswer = async () => {
   if (!currentQuestion.value) return;
+  const timeTaken = Math.floor((Date.now() - questionStartTime.value) / 1000);
   const isLast = currentQuestionIndex.value >= quizStore.currentQuiz.questions.length - 1;
 
   try {
-    const response = await quizStore.submitAnswer(quizStore.currentQuiz.id, currentQuestion.value.id, userAnswer.value, isLast);
+    const response = await quizStore.submitAnswer(quizStore.currentQuiz.id, currentQuestion.value.id, userAnswer.value, isLast, timeTaken);
     const data = response.data;
     feedback.value = data.feedback;
     authStore.updateUserScore(data.newTotalScore);
@@ -381,6 +395,14 @@ const confirmExit = () => {
 /* Colors & Transitions */
 .footer-correct { background-color: #d7ffb8; border-color: #d7ffb8; }
 .footer-incorrect { background-color: #ffdfe0; border-color: #ffdfe0; }
+
+.explanation-text {
+  font-size: 0.95rem;
+  color: #555;
+  margin-top: 0.5rem;
+  max-width: 600px;
+  line-height: 1.5;
+}
 
 .slide-up-enter-active, .slide-up-leave-active { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .slide-up-enter-from, .slide-up-leave-to { opacity: 0; transform: translateY(100px); }

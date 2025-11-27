@@ -1,24 +1,29 @@
-# File: backend/seed_db.py
-
 from app import create_app, mongo
 from app.quiz_data import QUIZZES
-from app.badge_data import BADGES # <-- *** ایمپورت جدید ***
+from app.badge_data import BADGES
 
 app = create_app()
 
 with app.app_context():
-    # --- Seed Quizzes (بدون تغییر) ---
-    mongo.db.quizzes.drop()
-    print("Existing quizzes collection dropped.")
-    all_quizzes = list(QUIZZES.values())
-    mongo.db.quizzes.insert_many(all_quizzes)
-    count_q = mongo.db.quizzes.count_documents({})
-    print(f"Successfully inserted {count_q} quiz modules.")
+    print("--- Starting Database Reset ---")
 
-    # --- *** بخش جدید: Seed Badges *** ---
+    mongo.db.quizzes.drop()
+    print("✅ Existing quizzes collection dropped.")
+    
     mongo.db.badges.drop()
-    print("Existing badges collection dropped.")
+    print("✅ Existing badges collection dropped.")
+
+    mongo.db.users.drop()
+    print("✅ Users collection dropped (Fresh Start).")
+
+    all_quizzes = list(QUIZZES.values())
+    if all_quizzes:
+        mongo.db.quizzes.insert_many(all_quizzes)
+    print(f"🚀 Successfully inserted {len(all_quizzes)} quiz modules.")
+
     all_badges = list(BADGES.values())
-    mongo.db.badges.insert_many(all_badges)
-    count_b = mongo.db.badges.count_documents({})
-    print(f"Successfully inserted {count_b} badges.")
+    if all_badges:
+        mongo.db.badges.insert_many(all_badges)
+    print(f"🚀 Successfully inserted {len(all_badges)} badges.")
+
+    print("--- Database Reset Complete ---")

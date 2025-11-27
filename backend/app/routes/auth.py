@@ -55,11 +55,14 @@ class UserProfile(Resource):
         if not user_data:
             return {'message': 'کاربر یافت نشد'}, 404
         
+        score = user_data.get('score', 0)
+        league_info = User.get_league_info(score)
+
         return {
             'username': user_data['username'],
             'email': user_data['email'],
-            'score': user_data.get('score', 0),
+            'score': score,
             'level': user_data.get('level', 1),
-            'correct_streak': user_data.get('correct_streak', 0),
-            'quizzes_completed': user_data.get('quizzes_completed', 0)
+            'correct_streak': user_data.get('correct_streak', 0), # استریک هم اضافه شد
+            'league': league_info # ارسال اطلاعات لیگ
         }, 200

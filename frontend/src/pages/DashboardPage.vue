@@ -8,17 +8,22 @@
         </div>
         
         <div class="stats-bar">
-          <div class="stat-item" title="سطح شما">
-            <font-awesome-icon icon="fas fa-flag" class="flag-icon" />
-            <span>سطح {{ level || 1 }}</span>
+  
+          <div class="stat-item" :title="'لیگ: ' + (user?.league?.name || 'برنز')">
+            <font-awesome-icon 
+              :icon="user?.league?.icon || 'fas fa-medal'" 
+              class="flag-icon"
+              :style="{ color: user?.league?.color || '#cd7f32' }" 
+            />
+            <span>{{ user?.league?.name || 'برنز' }}</span>
           </div>
 
-          <div class="stat-item" title="استریک (توالی پاسخ صحیح)">
-            <font-awesome-icon icon="fas fa-fire" class="icon-fire" />
+          <div class="stat-item" title="زنجیره پاسخ‌های صحیح">
+            <font-awesome-icon icon="fas fa-fire" class="icon-fire" :class="{ 'animate-fire': (user?.correct_streak || 0) > 0 }" />
             <span>{{ user?.correct_streak || 0 }}</span>
           </div>
 
-          <div class="stat-item" title="امتیاز کل">
+          <div class="stat-item">
             <font-awesome-icon icon="fas fa-star" class="icon-gem" />
             <span :class="{ 'score-pop-animation': scoreJustUpdated }">
               {{ score || 0 }}
@@ -48,7 +53,7 @@
           >
             <header class="unit-header" :style="{ backgroundColor: getModuleColor(index) }">
               <h3>بخش {{ index + 1 }}: {{ module.title }}</h3>
-              <p>توضیحات کوتاه درباره این بخش...</p> </header>
+              <p>{{ module.description }}</p> </header>
             
             <div class="unit-body">
               <div class="path-node">
@@ -213,7 +218,7 @@ const startQuiz = async (quizId) => {
   cursor: default;
 }
 .stat-item:hover { filter: brightness(0.9); }
-.flag-icon { width: auto; height: auto; font-size: 1.2rem; color: var(--color-danger); }
+.flag-icon { font-size: 1.2rem; color: var(--color-danger); }
 .icon-fire { color: #ff9600; font-size: 1.2rem; }
 .icon-gem { color: #1cb0f6; font-size: 1.2rem; }
 .btn-ghost {
