@@ -326,3 +326,6 @@ input::placeholder {
   color: var(--color-text-light);
 }
 .error-message { color: var(--color-danger); }
+
+.draggable { touch-action: none; cursor: grab; }
+.draggable:active { cursor: grabbing; }

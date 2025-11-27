@@ -219,6 +219,20 @@ const fetchData = async () => {
 
 .loading-state, .empty-state { padding: 3rem; text-align: center; color: #999; }
 
+.leaderboard-body { 
+  flex: 1; 
+  display: flex; 
+  justify-content: center; 
+  padding: 0 1rem 2rem; 
+}
+
+@media (max-width: 850px) {
+  .leaderboard-body {
+    /* فضای خالی برای نوار پایین */
+    padding-bottom: 100px; 
+  }
+}
+
 @media (max-width: 600px) {
   .header-content { flex-direction: column; }
   .league-tabs { width: 100%; justify-content: space-between; }

@@ -1,5 +1,6 @@
 <template>
-  <div class="quiz-layout">
+  <div class="quiz-layout" :style="layoutStyles">
+    <div class="bg-pattern-overlay"></div>
 
     <header class="quiz-header">
       <button class="close-btn" @click="confirmExit">
@@ -12,9 +13,10 @@
           @click="toggleHint" 
           :disabled="hintsRemaining <= 0 && !showHint"
           title="راهنمایی"
+          :style="{ borderColor: themeColor, color: themeColor }"
         >
           <font-awesome-icon icon="fas fa-lightbulb" :class="{ 'bulb-on': showHint }" />
-          <span class="hint-count">{{ hintsRemaining }}</span>
+          <span class="hint-count" :style="{ backgroundColor: themeColor }">{{ hintsRemaining }}</span>
         </button>
         <transition name="fade">
           <div v-if="showHint" class="hint-bubble-top">
@@ -24,7 +26,7 @@
       </div>
 
       <div class="progress-container">
-        <div class="progress-bar" :style="{ width: progressPercentage + '%' }">
+        <div class="progress-bar" :style="{ width: progressPercentage + '%', backgroundColor: themeColor }">
           <div class="progress-highlight"></div>
         </div>
       </div>
@@ -110,7 +112,6 @@
           <div class="feedback-text">
             <h3 v-if="quizState === 'correct'">عالی بود!</h3>
             <h3 v-else>اشتباه بود!</h3>
-            
             <p v-if="explanationText" class="explanation-text">{{ explanationText }}</p>
           </div>
         </div>
@@ -119,7 +120,8 @@
           <button
             v-if="quizState === 'answering'"
             @click="checkAnswer"
-            class="btn btn-primary check-btn"
+            class="btn check-btn"
+            :style="checkButtonStyle"
             :disabled="!isAnswerComplete"
           >
             بررسی
@@ -147,9 +149,8 @@ import { useRoute, useRouter } from 'vue-router';
 import { useQuizStore } from '../stores/quiz';
 import { useAuthStore } from '../stores/auth';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faTimes, faCheck, faFire, faLightbulb } from '@fortawesome/free-solid-svg-icons'; // <-- Added faLightbulb
+import { faTimes, faCheck, faFire, faLightbulb } from '@fortawesome/free-solid-svg-icons';
 
-// Import Images
 import correctImg from '../assets/feedback_correct.jpg';
 import incorrectImg from '../assets/feedback_wrong.avif';
 
@@ -166,7 +167,6 @@ const quizStore = useQuizStore();
 const authStore = useAuthStore();
 const quizBody = ref(null);
 
-// State Variables
 const currentQuestionIndex = ref(0);
 const userAnswer = ref(null);
 const feedback = ref({});
@@ -175,12 +175,43 @@ const currentStreak = ref(0);
 const applyShake = ref(false);
 const explanationText = ref('');
 const questionStartTime = ref(Date.now());
-
-// Hint State
 const hintsRemaining = ref(3);
 const showHint = ref(false);
 
-// Computed
+// --- Theme Logic ---
+const themeColor = computed(() => {
+  return route.query.theme || '#58cc02'; // رنگ پیش‌فرض سبز
+});
+
+// ایجاد استایل پس‌زمینه با پترن دارویی
+const layoutStyles = computed(() => {
+  // یک پترن SVG ساده (به صورت Data URI) شامل کپسول و دایره
+  // رنگ پترن را کمی تیره‌تر از پس‌زمینه (که خود رنگ روشن شده‌ی تم است) می‌کنیم
+  const color = encodeURIComponent(themeColor.value);
+  const svgPattern = `data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E`;
+  
+  return {
+    // زمینه اصلی یک تینت بسیار روشن از رنگ تم است (شفافیت ۱۰٪ روی سفید)
+    backgroundColor: `${themeColor.value}1a`, // Hex transparency ~10%
+    backgroundImage: `url("${svgPattern}")`
+  };
+});
+
+const checkButtonStyle = computed(() => {
+  return {
+    backgroundColor: themeColor.value,
+    color: 'white',
+    borderBottomColor: adjustColor(themeColor.value, -20) // کمی تیره‌تر برای سایه
+  };
+});
+
+// تابع کمکی برای تیره کردن رنگ (برای بوردر دکمه)
+function adjustColor(color, amount) {
+    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+}
+
+// --- End Theme Logic ---
+
 const currentQuestion = computed(() => {
   if (quizStore.currentQuiz && quizStore.currentQuiz.questions) {
     return quizStore.currentQuiz.questions[currentQuestionIndex.value];
@@ -206,10 +237,9 @@ const isAnswerComplete = computed(() => {
     return true;
 });
 
-// Watchers
 watch(currentQuestion, () => {
   questionStartTime.value = Date.now();
-  showHint.value = false; // مخفی کردن راهنما برای سوال جدید
+  showHint.value = false;
 });
 
 onMounted(() => {
@@ -219,7 +249,6 @@ onMounted(() => {
   }
 });
 
-// Methods
 const toggleHint = () => {
   if (showHint.value) {
     showHint.value = false;
@@ -313,28 +342,43 @@ const confirmExit = () => {
 <style scoped>
 /* Layout */
 .quiz-layout {
-  display: flex; flex-direction: column; height: 100vh; height: 100dvh; background-color: white; overflow: hidden;
+  display: flex; flex-direction: column; height: 100vh; height: 100dvh; 
+  /* رنگ پس‌زمینه به صورت داینامیک در استایل اینلاین ست می‌شود */
+  overflow: hidden;
+  position: relative;
+}
+
+/* Background Pattern Overlay */
+.bg-pattern-overlay {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  /* پترن در استایل اینلاین پرنت ست می‌شود، اینجا فقط برای لایه‌بندی است */
 }
 
 /* Header */
 .quiz-header {
-  flex: 0 0 auto; padding: 1.5rem 2rem; display: flex; align-items: center; gap: 1.5rem; background-color: white; z-index: 20; border-bottom: 1px solid #f0f0f0;
+  flex: 0 0 auto; padding: 1.5rem 2rem; display: flex; align-items: center; gap: 1.5rem; 
+  background-color: transparent; /* هدر شفاف باشد تا رنگ پس‌زمینه دیده شود */
+  z-index: 20; 
+  /* حذف بوردر پایین برای یکپارچگی بیشتر */
+  /* border-bottom: 1px solid rgba(0,0,0,0.05); */
 }
-.close-btn { background: none; border: none; color: #e5e5e5; font-size: 1.5rem; cursor: pointer; padding: 0; min-width: auto; border-bottom: none; }
-.close-btn:hover { color: var(--color-text-light); }
+.close-btn { background: none; border: none; color: rgba(0,0,0,0.3); font-size: 1.5rem; cursor: pointer; padding: 0; min-width: auto; border-bottom: none; }
+.close-btn:hover { color: rgba(0,0,0,0.6); }
 
 /* Hint Styles */
 .hint-wrapper { position: relative; }
 .hint-btn {
-  background: none; border: 2px solid #e5e5e5; border-radius: 50%; width: 40px; height: 40px;
-  display: flex; justify-content: center; align-items: center; cursor: pointer; color: #e5e5e5;
+  background: white; border: 2px solid; border-radius: 50%; width: 40px; height: 40px;
+  display: flex; justify-content: center; align-items: center; cursor: pointer; 
   transition: all 0.2s; position: relative; border-bottom-width: 4px; padding: 0; min-width: auto;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-.hint-btn:not(:disabled) { border-color: #ffd700; color: #ffd700; background: #fffdf0; }
 .hint-btn:active:not(:disabled) { transform: translateY(2px); border-bottom-width: 2px; }
-.bulb-on { color: #ffc800; filter: drop-shadow(0 0 5px #ffd700); }
+.bulb-on { filter: drop-shadow(0 0 5px currentColor); }
 .hint-count {
-  position: absolute; top: -5px; right: -5px; background: var(--color-primary); color: white;
+  position: absolute; top: -5px; right: -5px; color: white;
   font-size: 0.7rem; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold;
 }
 .hint-bubble-top {
@@ -345,27 +389,17 @@ const confirmExit = () => {
   content: ''; position: absolute; top: -6px; right: 30px; width: 12px; height: 12px; background: #333; transform: rotate(45deg);
 }
 
-.progress-container { flex-grow: 1; height: 16px; background-color: #e5e5e5; border-radius: 10px; overflow: hidden; }
-.progress-bar { height: 100%; background-color: var(--color-primary); border-radius: 10px; position: relative; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+.progress-container { flex-grow: 1; height: 16px; background-color: rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; }
+.progress-bar { height: 100%; border-radius: 10px; position: relative; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 .progress-highlight { position: absolute; top: 20%; left: 5%; right: 5%; height: 30%; background-color: rgba(255,255,255,0.3); border-radius: 10px; }
 .quiz-stats { display: flex; align-items: center; gap: 0.5rem; color: #ff9600; font-weight: bold; font-size: 1.2rem; }
 
 /* Main Body */
 .quiz-body {
-  flex: 1 1 auto; overflow-y: auto; padding: 1rem 2rem; padding-bottom: 2rem; display: flex; justify-content: center; position: relative; scroll-behavior: smooth;
+  flex: 1 1 auto; overflow-y: auto; padding: 1rem 2rem; padding-bottom: 2rem; display: flex; justify-content: center; position: relative; scroll-behavior: smooth; z-index: 10;
 }
 .question-container { width: 100%; max-width: 800px; text-align: center; margin-top: 1rem; }
 .question-title { font-size: 1.8rem; color: var(--color-text); margin-bottom: 2rem; text-align: right; }
-
-/* Styles for Question Cards (Visual Polish) */
-.question-container {
-  background: white; /* یا #ffffff اگر پس زمینه صفحه رنگی باشد */
-  /* برای برجسته شدن کارت */
-  /* border: 2px solid #e5e5e5; */ /* اختیاری: اگر می‌خواهید کادر داشته باشد */
-  /* border-radius: 20px; */
-  /* padding: 2rem; */
-  /* box-shadow: 0 4px 0 #e5e5e5; */ /* حالت سه‌بعدی */
-}
 
 /* Character Animation */
 .character-popup { position: fixed; bottom: 140px; right: 20px; z-index: 90; display: flex; align-items: flex-end; gap: 10px; pointer-events: none; }
@@ -374,7 +408,7 @@ const confirmExit = () => {
 .correct-bubble { color: var(--color-primary); border-color: var(--color-primary); }
 
 /* Footer */
-.quiz-footer { flex: 0 0 auto; width: 100%; padding: 2rem; border-top: 2px solid #e5e5e5; background-color: white; transition: background-color 0.2s, border-color 0.2s; z-index: 100; position: relative; }
+.quiz-footer { flex: 0 0 auto; width: 100%; padding: 2rem; border-top: 2px solid rgba(0,0,0,0.05); background-color: white; transition: background-color 0.2s, border-color 0.2s; z-index: 100; position: relative; }
 .footer-content { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
 .feedback-message { display: flex; align-items: center; gap: 1rem; animation: slideRight 0.3s ease-out; }
 @keyframes slideRight { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
@@ -386,7 +420,8 @@ const confirmExit = () => {
 .footer-incorrect .feedback-text { color: var(--color-danger-dark); }
 .explanation-text { font-size: 0.95rem; color: #555; margin-top: 0.5rem; max-width: 600px; line-height: 1.5; text-align: right; }
 .action-button-wrapper { margin-right: auto; }
-.check-btn, .continue-btn { min-width: 150px; padding: 1rem 2rem; font-size: 1.1rem; width: 100%; }
+.check-btn, .continue-btn { min-width: 150px; padding: 1rem 2rem; font-size: 1.1rem; width: 100%; transition: filter 0.2s; }
+.check-btn:hover { filter: brightness(1.1); }
 
 /* Mobile Adjustments */
 @media (max-width: 600px) {
