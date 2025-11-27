@@ -361,3 +361,21 @@ input::placeholder {
   /* باکس‌ها باید بتوانند رویداد تاچ را بگیرند */
   pointer-events: auto !important;
 }
+
+/* --- Click-to-Move Styles --- */
+.item-card.selected-mode {
+  border-color: var(--color-secondary) !important;
+  background-color: var(--color-secondary-light) !important;
+  color: var(--color-secondary-shadow) !important;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(28, 176, 246, 0.3);
+  z-index: 10;
+}
+
+/* وقتی آیتمی انتخاب شده، باکس‌های مقصد کمی تغییر کنند تا کاربر بفهمد کجا باید کلیک کند */
+.droppable.highlight-target {
+  border-color: var(--color-secondary);
+  border-style: solid;
+  background-color: #f0faff;
+  cursor: pointer;
+}
