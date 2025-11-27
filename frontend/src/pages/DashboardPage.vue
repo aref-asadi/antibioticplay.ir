@@ -228,13 +228,23 @@ const startQuiz = async (quizId, index) => {
 /* Top Bar */
 .dashboard-topbar { background-color: white; border-bottom: 2px solid #e5e5e5; position: sticky; top: 0; z-index: 100; padding: 0.8rem 2rem; }
 .topbar-content { max-width: 1050px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+
 .logo-text { color: var(--color-primary); font-weight: 800; font-size: 1.5rem; letter-spacing: 0.5px; }
+
+/* Left Section Adjustment */
+.left-section {
+  display: flex; 
+  gap: 0.5rem; 
+  /* --- FIX: وسط‌چین کردن عمودی آیتم‌ها (دکمه خروج و راهنما) --- */
+  align-items: center; 
+}
+
 .stats-bar { display: flex; gap: 1.5rem; }
 .stat-item { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #afafaf; cursor: default; }
 .stat-item:hover { filter: brightness(0.9); }
 .icon-fire { color: #ff9600; font-size: 1.2rem; }
 .icon-gem { color: #1cb0f6; font-size: 1.2rem; }
-.flag-icon { font-size: 1.2rem; } /* FontAwesome flag */
+.flag-icon { font-size: 1.2rem; }
 
 /* Main Layout */
 .dashboard-main { flex: 1; max-width: 1050px; width: 100%; margin: 0 auto; padding: 2rem 1rem; display: flex; gap: 3rem; }
@@ -262,7 +272,7 @@ const startQuiz = async (quizId, index) => {
 .user-info h3 { margin: 0; font-size: 1.2rem; }
 .user-info p { margin: 0; color: var(--color-text-light); font-size: 0.9rem; }
 
-/* Leaderboard Widget (New Style) */
+/* Leaderboard Widget */
 .league-status { display: flex; align-items: center; gap: 1rem; }
 .league-icon-large { font-size: 3rem; display: flex; align-items: center; }
 .rank-info { flex: 1; display: flex; flex-direction: column; }
@@ -284,12 +294,13 @@ const startQuiz = async (quizId, index) => {
 .empty-state { color: var(--color-text-light); font-size: 0.9rem; }
 
 @media (max-width: 850px) {
-  .dashboard-main { 
-    flex-direction: column-reverse; 
-    
-    padding-bottom: 100px; 
-  }
+  .dashboard-main { flex-direction: column-reverse; padding-bottom: 100px; }
   .sidebar-column { width: 100%; }
   .desktop-only { display: none; }
+  
+  /* --- FIX: مخفی کردن لوگو در هدر موبایل --- */
+  .logo-text { display: none; }
+  /* تنظیم فاصله هدر در موبایل */
+  .dashboard-topbar { padding: 0.8rem 1rem; }
 }
 </style>

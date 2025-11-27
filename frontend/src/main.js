@@ -6,7 +6,7 @@ import './style.css';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-
+import "mobile-drag-drop/default.css";
 import { polyfill } from "mobile-drag-drop";
 
 polyfill({

@@ -327,5 +327,23 @@ input::placeholder {
 }
 .error-message { color: var(--color-danger); }
 
-.draggable { touch-action: none; cursor: grab; }
-.draggable:active { cursor: grabbing; }
+.dnd-poly-drag-image {
+  pointer-events: none !important;
+  opacity: 0.8;
+  z-index: 9999 !important;
+}
+
+.dnd-poly-drag-icon {
+  pointer-events: none !important;
+}
+
+.draggable {
+  touch-action: none; 
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: grab;
+}
+
+.dnd-poly-drag-active {
+  opacity: 0.5;
+}
