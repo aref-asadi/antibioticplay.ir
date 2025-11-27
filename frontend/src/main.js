@@ -13,9 +13,14 @@ import "mobile-drag-drop/default.css";
 polyfill({
     forceApply: true,
 
-    dragImageCenterOnTouch: true,
-    
-    dragImageOpacity: 0.7
+    dragImageCenterOnTouch: false,
+
+    dragImageTranslateOverride: (event, element, initialX, initialY, currentX, currentY) => {
+        return {
+            x: currentX - (element.offsetWidth / 2),
+            y: currentY - element.offsetHeight - 50 // 50px بالاتر
+        };
+    }
 });
 
 window.addEventListener('touchmove', function(e) {

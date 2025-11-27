@@ -330,29 +330,34 @@ input::placeholder {
 /* --- Mobile Drag & Drop Critical Fixes --- */
 
 .dnd-poly-drag-image {
-  pointer-events: none !important;
-  z-index: 10000 !important;
-  opacity: 0.8 !important;
+  pointer-events: none !important; /* مهمترین خط */
+  opacity: 0.7 !important;
+  z-index: 9999 !important;
   transform: scale(1.1);
 }
 
+/* 2. آیکون پیش‌فرض مرورگر */
 .dnd-poly-drag-icon {
-  pointer-events: none !important;
+  display: none !important;
 }
 
+/* 3. آیتم‌های قابل کشیدن */
 .draggable {
-  touch-action: none !important; 
+  /* جلوگیری از هایلایت آبی یا اسکرول */
+  touch-action: none !important;
+  -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
   cursor: grab;
-  -webkit-tap-highlight-color: transparent; 
 }
 
 .draggable:active {
   cursor: grabbing;
-  opacity: 0.6;
+  opacity: 0.5; /* فیدبک بصری به کاربر که آیتم گرفته شده */
 }
 
+/* 4. باکس‌های مقصد */
 .droppable {
+  /* باکس‌ها باید بتوانند رویداد تاچ را بگیرند */
   pointer-events: auto !important;
 }
