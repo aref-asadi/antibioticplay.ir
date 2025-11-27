@@ -1,27 +1,47 @@
+/* File: frontend/src/style.css */
 @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
 
 :root {
-  /* --- Duolingo Palette --- */
-  --color-primary: #58cc02;       /* Green */
+  /* --- Duolingo Color Palette --- */
+  --color-primary: #58cc02;       /* Green (Success/Primary) */
   --color-primary-shadow: #58a700;
-  --color-secondary: #1cb0f6;     /* Blue */
+  --color-primary-light: #d7ffb8;
+  
+  --color-secondary: #1cb0f6;     /* Blue (Info/Action) */
   --color-secondary-shadow: #1899d6;
-  --color-danger: #ff4b4b;        /* Red */
+  --color-secondary-light: #ddf4ff;
+
+  --color-danger: #ff4b4b;        /* Red (Error/Incorrect) */
   --color-danger-shadow: #ea2b2b;
-  --color-warning: #ffc800;       /* Yellow */
+  --color-danger-light: #ffdfe0;
+
+  --color-warning: #ffc800;       /* Yellow (Gold/Stars) */
   --color-warning-shadow: #d6a900;
+  --color-warning-light: #fff5d1;
+
+  --color-hero-bg: #235390;       /* Dark Navy (Hero Background) */
   
-  --color-hero-bg: #235390;       /* Duolingo Dark Navy */
-  --color-text: #3c3c3c;
-  --color-text-light: #777777;
-  --color-border: #e5e5e5;
-  --color-background-page: #ffffff; /* Main body is usually white in Duo */
-  
+  --color-text: #3c3c3c;          /* Dark Gray (Main Text) */
+  --color-text-light: #777777;    /* Light Gray (Subtitles) */
+  --color-border: #e5e5e5;        /* Light Border */
+  --color-background-page: #ffffff;
+  --color-background-off: #f7f7f7; /* Off-white background */
+
+  /* --- Dimensions & Spacing --- */
   --button-radius: 16px;
+  --card-radius: 20px;
+  --input-radius: 16px;
+  --border-width: 2px;
+  --border-bottom-width: 4px;
 }
 
 html {
   direction: rtl;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
 }
 
 body {
@@ -31,83 +51,94 @@ body {
   text-align: right;
   background-color: var(--color-background-page);
   color: var(--color-text);
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-/* --- Basic Element Styling (Refined) --- */
-input, button, textarea, select {
-    font-family: inherit;
-    font-size: 1rem;
-    border-radius: var(--button-border-radius);
-    border: 2px solid var(--color-border);
+/* --- Typography --- */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-weight: 800; /* Extra Bold for headings like Duolingo */
+  color: var(--color-text);
 }
 
-input, textarea {
-    text-align: right;
-    padding: 0.8rem 1rem; /* Adjust padding */
-    background-color: var(--color-background-light);
-    box-shadow: inset 0 2px 2px rgba(0,0,0,0.05); /* Subtle inner shadow */
+a {
+  color: var(--color-secondary);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.2s;
 }
-input:focus, textarea:focus {
-    border-color: var(--color-secondary);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(28, 176, 246, 0.2); /* Focus ring */
+a:hover {
+  filter: brightness(1.1);
 }
 
-/* --- Base Button Style (Refined) --- */
-button, .btn,
-a[class*="btn-"] { 
+/* --- Buttons (3D Game Style) --- */
+button, .btn {
   cursor: pointer;
   border: none;
   border-radius: var(--button-radius);
   padding: 0.8rem 1.5rem;
+  font-family: inherit;
   font-size: 1rem;
-  font-weight: 700; /* Bold text */
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  transition: filter 0.2s, transform 0.1s, border-bottom-width 0.1s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  text-decoration: none; /* For router-links acting as buttons */
+  text-decoration: none;
   box-sizing: border-box;
-  border-bottom-width: 4px;
+  
+  /* 3D Effect */
+  border-bottom-width: var(--border-bottom-width);
   border-bottom-style: solid;
-  min-width: 150px;
+  transform: translateY(0);
+  transition: transform 0.1s, border-bottom-width 0.1s, filter 0.2s;
+  min-width: 120px;
 }
 
-button:active, .btn:active {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
-  margin-top: 2px; /* To keep position stable */
+button:active:not(:disabled), .btn:active:not(.disabled) {
+  transform: translateY(4px);
+  border-bottom-width: 0px !important;
+  margin-top: 4px; /* To prevent layout shift */
 }
 
-/* --- Button Variants --- */
+button:disabled, .btn.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none !important;
+  border-bottom-width: var(--border-bottom-width) !important;
+  margin-top: 0 !important;
+  background-color: #e5e5e5 !important;
+  color: #afafaf !important;
+  border-bottom-color: #cecece !important;
+}
+
+/* Button Variants */
 .btn-primary {
   background-color: var(--color-primary);
   color: white;
   border-bottom-color: var(--color-primary-shadow);
 }
-.btn-primary:hover {
-  filter: brightness(1.1);
-}
+.btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
 
 .btn-secondary {
   background-color: var(--color-secondary);
   color: white;
   border-bottom-color: var(--color-secondary-shadow);
 }
-.btn-secondary:hover {
-  filter: brightness(1.1);
-}
+.btn-secondary:hover:not(:disabled) { filter: brightness(1.08); }
 
 .btn-danger {
   background-color: var(--color-danger);
   color: white;
   border-bottom-color: var(--color-danger-shadow);
 }
+.btn-danger:hover:not(:disabled) { filter: brightness(1.08); }
 
-/* Outline Button (For "I already have an account") */
 .btn-outline {
   background-color: transparent;
   border: 2px solid rgba(255, 255, 255, 0.4);
@@ -119,35 +150,63 @@ button:active, .btn:active {
   border-color: rgba(255, 255, 255, 1);
 }
 
-/* --- Base Card Style (Refined) --- */
+.btn-ghost {
+  background: transparent;
+  border: 2px solid transparent;
+  border-bottom-width: 2px; /* Subtle border for ghost */
+  color: var(--color-text-light);
+  box-shadow: none;
+}
+.btn-ghost:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+.btn-ghost:active {
+  border-bottom-width: 0;
+  transform: translateY(2px);
+}
+
+/* --- Cards (Floating Style) --- */
 .card {
-  background-color: var(--color-background-light);
+  background: white;
   border: 2px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: var(--card-radius);
   padding: 1.5rem;
-  /* Use a subtle bottom border instead of shadow for cards too */
-  border-bottom-width: 4px;
-  /* box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1); */ /* Optional: keep shadow if preferred */
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-}
-.card:hover {
-    transform: translateY(-2px);
-    /* box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1); */
-    border-color: #d1d1d1;
+  /* Optional: Add a subtle shadow or bottom border for depth */
+  /* border-bottom-width: 4px; */ 
 }
 
-
-/* --- Utility Classes --- */
-.text-left {
-  text-align: left !important;
+/* --- Inputs (Duolingo Style) --- */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-family: inherit;
+  font-size: 1.1rem;
+  background-color: var(--color-background-off);
+  border: 2px solid var(--color-border);
+  border-radius: var(--input-radius);
+  color: var(--color-text);
+  outline: none;
+  transition: all 0.2s;
 }
 
-/* --- Auth Pages Styles (Login/Register) --- */
+input:focus, textarea:focus {
+  background-color: white;
+  border-color: var(--color-secondary);
+}
+
+input::placeholder {
+  color: #afafaf;
+}
+
+/* --- Auth Pages Specifics (Login/Register) --- */
 .auth-wrapper {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: white; /* Clean white background */
+  background-color: white;
 }
 
 .auth-header {
@@ -155,16 +214,6 @@ button:active, .btn:active {
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2rem;
-}
-
-.close-btn {
-  font-size: 1.5rem;
-  color: var(--color-text-light);
-  cursor: pointer;
-  transition: color 0.2s;
-}
-.close-btn:hover {
-  color: var(--color-text);
 }
 
 .auth-content {
@@ -176,14 +225,13 @@ button:active, .btn:active {
   width: 100%;
   max-width: 400px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 2rem 1rem;
 }
 
 .auth-title {
   font-size: 1.8rem;
-  font-weight: 800;
   color: var(--color-text);
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   text-align: center;
 }
 
@@ -194,73 +242,46 @@ button:active, .btn:active {
   gap: 1rem;
 }
 
-/* Input Styles */
 .input-group {
   position: relative;
   width: 100%;
 }
 
 .duo-input {
+  /* Reuse generic input styles but ensure class specificity */
   width: 100%;
   padding: 1rem 1.2rem;
-  font-size: 1.1rem;
-  background-color: #f7f7f7; /* Light gray bg like Duolingo */
+  background-color: #f7f7f7;
   border: 2px solid var(--color-border);
-  border-radius: 16px; /* Rounded corners */
-  color: var(--color-text);
-  transition: border-color 0.2s, background-color 0.2s;
-  box-sizing: border-box;
-  text-align: right; /* RTL */
+  border-radius: 16px;
+  font-size: 1rem;
 }
-
-.duo-input::placeholder {
-  color: #afafaf;
-}
-
-.duo-input:focus {
-  background-color: white;
-  border-color: var(--color-secondary); /* Blue border on focus */
-  outline: none;
-}
-
 .duo-input.error {
   border-color: var(--color-danger);
-  background-color: #ffdfe0;
+  background-color: var(--color-danger-light);
 }
 
-/* Forgot Password Link inside input */
 .forgot-link {
   position: absolute;
-  left: 15px; /* Left side for RTL layout usually, check visual */
+  left: 15px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--color-text-light);
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
-  letter-spacing: 0.5px;
 }
-.forgot-link:hover {
-  color: var(--color-secondary);
-}
+.forgot-link:hover { color: var(--color-secondary); }
 
-/* Submit Button (Blue) */
 .btn-submit {
-  background-color: var(--color-secondary); /* Duolingo Blue */
-  color: white;
-  border-bottom-color: var(--color-secondary-shadow);
   width: 100%;
   padding: 1rem;
   margin-top: 1rem;
   font-size: 1.1rem;
 }
-.btn-submit:hover:not(:disabled) {
-  filter: brightness(1.1);
-}
 
-/* Footer Terms Text */
 .auth-footer-text {
   margin-top: 2rem;
   font-size: 0.8rem;
@@ -269,17 +290,39 @@ button:active, .btn:active {
   line-height: 1.6;
   max-width: 350px;
 }
-.auth-footer-text strong {
-  font-weight: 700;
-  cursor: pointer;
+
+/* --- Animations --- */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+@keyframes scorePop { 
+  0% { transform: scale(1); color: var(--color-text); } 
+  50% { transform: scale(1.3); color: var(--color-warning); } 
+  100% { transform: scale(1); color: var(--color-text); } 
+}
+@keyframes shake { 
+  0%, 100% { transform: translateX(0); } 
+  25% { transform: translateX(-6px); } 
+  75% { transform: translateX(6px); } 
 }
 
-/* --- Animation Definitions (Keep previous ones) --- */
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUpFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes scorePop { 0% { transform: scale(1); color: var(--color-text); } 50% { transform: scale(1.25); color: var(--color-primary); } 100% { transform: scale(1); color: var(--color-text); } }
-@keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); } 20%, 40%, 60%, 80% { transform: translateX(5px); } }
-.fade-in { animation: fadeIn 0.3s ease-out forwards; }
-.slide-up-fade-in { animation: slideUpFadeIn 0.4s ease-out forwards; }
-.score-pop-animation { animation: scorePop 0.6s ease-out forwards; display: inline-block; }
-.shake-animation { animation: shake 0.5s ease-in-out forwards; }
+.fade-in { animation: fadeIn 0.4s ease-out forwards; }
+.slide-up-fade-in { animation: slideUp 0.5s ease-out forwards; }
+.score-pop-animation { animation: scorePop 0.6s ease-out forwards; display: inline-block; font-weight: bold; }
+.shake-animation { animation: shake 0.4s ease-in-out forwards; }
+
+/* --- Utility Classes --- */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-primary { color: var(--color-primary); }
+.text-secondary { color: var(--color-secondary); }
+.text-danger { color: var(--color-danger); }
+.text-warning { color: var(--color-warning); }
+
+.loading-state, .error-message, .empty-state {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.1rem;
+  color: var(--color-text-light);
+}
+.error-message { color: var(--color-danger); }

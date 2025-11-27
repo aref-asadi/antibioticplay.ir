@@ -6,6 +6,23 @@
         <font-awesome-icon icon="fas fa-times" />
       </button>
       
+      <div class="hint-wrapper">
+        <button 
+          class="hint-btn" 
+          @click="toggleHint" 
+          :disabled="hintsRemaining <= 0 && !showHint"
+          title="راهنمایی"
+        >
+          <font-awesome-icon icon="fas fa-lightbulb" :class="{ 'bulb-on': showHint }" />
+          <span class="hint-count">{{ hintsRemaining }}</span>
+        </button>
+        <transition name="fade">
+          <div v-if="showHint" class="hint-bubble-top">
+            {{ currentQuestion?.hint || 'راهنمایی برای این سوال موجود نیست.' }}
+          </div>
+        </transition>
+      </div>
+
       <div class="progress-container">
         <div class="progress-bar" :style="{ width: progressPercentage + '%' }">
           <div class="progress-highlight"></div>
@@ -130,7 +147,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useQuizStore } from '../stores/quiz';
 import { useAuthStore } from '../stores/auth';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faTimes, faCheck, faFire } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faCheck, faFire, faLightbulb } from '@fortawesome/free-solid-svg-icons'; // <-- Added faLightbulb
 
 // Import Images
 import correctImg from '../assets/feedback_correct.jpg';
@@ -141,7 +158,7 @@ import MultipleSelect from '../components/MultipleSelect.vue';
 import TrueFalse from '../components/TrueFalse.vue';
 import DragDropFill from '../components/DragDropFill.vue';
 
-library.add(faTimes, faCheck, faFire);
+library.add(faTimes, faCheck, faFire, faLightbulb);
 
 const route = useRoute();
 const router = useRouter();
@@ -149,7 +166,7 @@ const quizStore = useQuizStore();
 const authStore = useAuthStore();
 const quizBody = ref(null);
 
-// --- State Variables ---
+// State Variables
 const currentQuestionIndex = ref(0);
 const userAnswer = ref(null);
 const feedback = ref({});
@@ -157,10 +174,13 @@ const quizState = ref('answering');
 const currentStreak = ref(0);
 const applyShake = ref(false);
 const explanationText = ref('');
-const questionStartTime = ref(Date.now()); // تایمر
+const questionStartTime = ref(Date.now());
 
-// --- Computed Properties ---
-// (این‌ها باید قبل از Watcher تعریف شوند)
+// Hint State
+const hintsRemaining = ref(3);
+const showHint = ref(false);
+
+// Computed
 const currentQuestion = computed(() => {
   if (quizStore.currentQuiz && quizStore.currentQuiz.questions) {
     return quizStore.currentQuiz.questions[currentQuestionIndex.value];
@@ -186,13 +206,12 @@ const isAnswerComplete = computed(() => {
     return true;
 });
 
-// --- Watchers ---
-// (حالا که currentQuestion تعریف شده، می‌توانیم آن را Watch کنیم)
+// Watchers
 watch(currentQuestion, () => {
-  questionStartTime.value = Date.now(); // ریست تایمر
+  questionStartTime.value = Date.now();
+  showHint.value = false; // مخفی کردن راهنما برای سوال جدید
 });
 
-// --- Lifecycle ---
 onMounted(() => {
   const quizId = route.params.id;
   if (quizId) {
@@ -200,7 +219,16 @@ onMounted(() => {
   }
 });
 
-// --- Methods ---
+// Methods
+const toggleHint = () => {
+  if (showHint.value) {
+    showHint.value = false;
+  } else if (hintsRemaining.value > 0) {
+    hintsRemaining.value--;
+    showHint.value = true;
+  }
+};
+
 const playSound = (soundFile) => {
   try {
     const audio = new Audio(`/${soundFile}`);
@@ -221,7 +249,6 @@ const scrollToBottom = () => {
 const checkAnswer = async () => {
   if (!currentQuestion.value) return;
 
-  // محاسبه زمان سپری شده
   const timeTaken = Math.floor((Date.now() - questionStartTime.value) / 1000);
   const isLast = currentQuestionIndex.value >= quizStore.currentQuiz.questions.length - 1;
 
@@ -231,12 +258,12 @@ const checkAnswer = async () => {
       currentQuestion.value.id,
       userAnswer.value,
       isLast,
-      timeTaken // ارسال زمان
+      timeTaken
     );
     
     const data = response.data;
     feedback.value = data.feedback;
-    explanationText.value = data.explanation; // ذخیره توضیحات علمی
+    explanationText.value = data.explanation;
 
     authStore.updateUserScore(data.newTotalScore);
     authStore.updateUserLevel(data.newLevel);
@@ -271,7 +298,7 @@ const handleContinue = () => {
     quizState.value = 'answering';
     feedback.value = {};
     userAnswer.value = null;
-    explanationText.value = ''; // پاک کردن توضیحات برای سوال بعد
+    explanationText.value = '';
   } else {
     currentStreak.value = 0;
     router.push({ name: 'QuizResult' });
@@ -284,102 +311,80 @@ const confirmExit = () => {
 </script>
 
 <style scoped>
-/* --- Layout Structure --- */
+/* Layout */
 .quiz-layout {
-  display: flex;
-  flex-direction: column;
-  height: 100vh; 
-  height: 100dvh; 
-  background-color: white;
-  overflow: hidden;
+  display: flex; flex-direction: column; height: 100vh; height: 100dvh; background-color: white; overflow: hidden;
 }
 
-/* --- Header --- */
+/* Header */
 .quiz-header {
-  flex: 0 0 auto;
-  padding: 1.5rem 2rem;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  background-color: white;
-  z-index: 20;
-  border-bottom: 1px solid #f0f0f0;
+  flex: 0 0 auto; padding: 1.5rem 2rem; display: flex; align-items: center; gap: 1.5rem; background-color: white; z-index: 20; border-bottom: 1px solid #f0f0f0;
 }
-
 .close-btn { background: none; border: none; color: #e5e5e5; font-size: 1.5rem; cursor: pointer; padding: 0; min-width: auto; border-bottom: none; }
-.close-btn:hover { color: var(--color-text-light); transform: none; }
+.close-btn:hover { color: var(--color-text-light); }
+
+/* Hint Styles */
+.hint-wrapper { position: relative; }
+.hint-btn {
+  background: none; border: 2px solid #e5e5e5; border-radius: 50%; width: 40px; height: 40px;
+  display: flex; justify-content: center; align-items: center; cursor: pointer; color: #e5e5e5;
+  transition: all 0.2s; position: relative; border-bottom-width: 4px; padding: 0; min-width: auto;
+}
+.hint-btn:not(:disabled) { border-color: #ffd700; color: #ffd700; background: #fffdf0; }
+.hint-btn:active:not(:disabled) { transform: translateY(2px); border-bottom-width: 2px; }
+.bulb-on { color: #ffc800; filter: drop-shadow(0 0 5px #ffd700); }
+.hint-count {
+  position: absolute; top: -5px; right: -5px; background: var(--color-primary); color: white;
+  font-size: 0.7rem; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold;
+}
+.hint-bubble-top {
+  position: absolute; top: 120%; right: -20px; width: 250px; background: #333; color: white;
+  padding: 1rem; border-radius: 12px; font-size: 0.9rem; z-index: 30; text-align: right; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.hint-bubble-top::after {
+  content: ''; position: absolute; top: -6px; right: 30px; width: 12px; height: 12px; background: #333; transform: rotate(45deg);
+}
 
 .progress-container { flex-grow: 1; height: 16px; background-color: #e5e5e5; border-radius: 10px; overflow: hidden; }
 .progress-bar { height: 100%; background-color: var(--color-primary); border-radius: 10px; position: relative; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 .progress-highlight { position: absolute; top: 20%; left: 5%; right: 5%; height: 30%; background-color: rgba(255,255,255,0.3); border-radius: 10px; }
 .quiz-stats { display: flex; align-items: center; gap: 0.5rem; color: #ff9600; font-weight: bold; font-size: 1.2rem; }
 
-/* --- Main Body (Scrollable) --- */
+/* Main Body */
 .quiz-body {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  padding: 1rem 2rem;
-  padding-bottom: 2rem;
-  display: flex;
-  justify-content: center;
-  position: relative;
-  scroll-behavior: smooth;
+  flex: 1 1 auto; overflow-y: auto; padding: 1rem 2rem; padding-bottom: 2rem; display: flex; justify-content: center; position: relative; scroll-behavior: smooth;
 }
-
 .question-container { width: 100%; max-width: 800px; text-align: center; margin-top: 1rem; }
 .question-title { font-size: 1.8rem; color: var(--color-text); margin-bottom: 2rem; text-align: right; }
 
-/* --- Character Animation --- */
-.character-popup {
-  position: fixed;
-  bottom: 140px;
-  right: 20px;
-  z-index: 90;
-  display: flex;
-  align-items: flex-end;
-  gap: 10px;
-  pointer-events: none;
+/* Styles for Question Cards (Visual Polish) */
+.question-container {
+  background: white; /* یا #ffffff اگر پس زمینه صفحه رنگی باشد */
+  /* برای برجسته شدن کارت */
+  /* border: 2px solid #e5e5e5; */ /* اختیاری: اگر می‌خواهید کادر داشته باشد */
+  /* border-radius: 20px; */
+  /* padding: 2rem; */
+  /* box-shadow: 0 4px 0 #e5e5e5; */ /* حالت سه‌بعدی */
 }
 
+/* Character Animation */
+.character-popup { position: fixed; bottom: 140px; right: 20px; z-index: 90; display: flex; align-items: flex-end; gap: 10px; pointer-events: none; }
 .character-img { width: 120px; height: auto; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2)); }
-
-.speech-bubble {
-  background: white;
-  border: 2px solid #e5e5e5;
-  padding: 0.8rem 1.2rem;
-  border-radius: 20px 20px 0 20px;
-  font-weight: bold;
-  color: var(--color-danger);
-  margin-bottom: 20px;
-  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+.speech-bubble { background: white; border: 2px solid #e5e5e5; padding: 0.8rem 1.2rem; border-radius: 20px 20px 0 20px; font-weight: bold; color: var(--color-danger); margin-bottom: 20px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .correct-bubble { color: var(--color-primary); border-color: var(--color-primary); }
 
-/* --- Footer --- */
-.quiz-footer {
-  flex: 0 0 auto;
-  width: 100%;
-  padding: 2rem;
-  border-top: 2px solid #e5e5e5;
-  background-color: white;
-  transition: background-color 0.2s, border-color 0.2s;
-  z-index: 100;
-  position: relative;
-}
-
+/* Footer */
+.quiz-footer { flex: 0 0 auto; width: 100%; padding: 2rem; border-top: 2px solid #e5e5e5; background-color: white; transition: background-color 0.2s, border-color 0.2s; z-index: 100; position: relative; }
 .footer-content { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
 .feedback-message { display: flex; align-items: center; gap: 1rem; animation: slideRight 0.3s ease-out; }
 @keyframes slideRight { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-
 .feedback-icon-circle { width: 60px; height: 60px; border-radius: 50%; background-color: white; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; }
 .footer-correct .feedback-icon-circle { color: var(--color-primary); }
 .footer-incorrect .feedback-icon-circle { color: var(--color-danger); }
 .feedback-text h3 { margin: 0; font-size: 1.5rem; font-weight: 800; }
 .footer-correct .feedback-text { color: var(--color-primary-dark); }
 .footer-incorrect .feedback-text { color: var(--color-danger-dark); }
-
 .explanation-text { font-size: 0.95rem; color: #555; margin-top: 0.5rem; max-width: 600px; line-height: 1.5; text-align: right; }
-
 .action-button-wrapper { margin-right: auto; }
 .check-btn, .continue-btn { min-width: 150px; padding: 1rem 2rem; font-size: 1.1rem; width: 100%; }
 
@@ -396,10 +401,10 @@ const confirmExit = () => {
 /* Colors & Transitions */
 .footer-correct { background-color: #d7ffb8; border-color: #d7ffb8; }
 .footer-incorrect { background-color: #ffdfe0; border-color: #ffdfe0; }
-
 .slide-up-enter-active, .slide-up-leave-active { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .slide-up-enter-from, .slide-up-leave-to { opacity: 0; transform: translateY(100px); }
-
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
 .shake-animation { animation: shake 0.5s ease-in-out; }
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
