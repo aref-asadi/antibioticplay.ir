@@ -10,6 +10,7 @@ class QuizList(Resource):
     @jwt_required()
     def get(self):
         try:
+            # دریافت لیست آزمون‌ها به همراه توضیحات و آیکون
             quizzes = list(mongo.db.quizzes.find(
                 {},
                 {"_id": 1, "id": 1, "title": 1, "icon": 1, "description": 1}
@@ -25,7 +26,6 @@ class QuizDetail(Resource):
     def get(self, quiz_id):
         try:
             quiz = mongo.db.quizzes.find_one({"id": quiz_id}, {"_id": 0})
-            
             if quiz:
                 return quiz, 200
             else:
@@ -35,13 +35,16 @@ class QuizDetail(Resource):
 
 class QuizSubmit(Resource):
     
+    # --- متد کمکی: محاسبه امتیاز ---
     def _calculate_score(self, question, user_answer):
         question_type = question.get('type')
         solution = question.get('solution')
-        points_per_correct = question.get('points_per_correct', 1)
+        points_per_correct = question.get('points_per_correct', 10)
+        
         score_earned = 0
         is_correct = False
         feedback = {}
+        
         try:
             if question_type in ["drag-drop-match", "drag-drop-ordering"]:
                 all_correct = True
@@ -50,75 +53,123 @@ class QuizSubmit(Resource):
                     if isinstance(user_answer, dict) and correct_category_id in user_answer:
                          if isinstance(user_answer[correct_category_id], list):
                              found_in_correct_category = any(isinstance(item, dict) and item.get('id') == item_id for item in user_answer[correct_category_id])
-                    if found_in_correct_category: 
+                    
+                    if found_in_correct_category:
                         feedback[item_id] = 'correct'
                         score_earned += points_per_correct
-                    else: 
+                    else:
                         feedback[item_id] = 'incorrect'
                         all_correct = False
-                        score_earned -= points_per_correct
                 is_correct = all_correct
+
             elif question_type == "multiple-select":
                  if isinstance(user_answer, list):
                     user_selections = set(user_answer)
                     correct_selections = set(solution)
+                    
                     correct_choices = user_selections.intersection(correct_selections)
                     incorrect_choices = user_selections.difference(correct_selections)
+                    
+                    # نمره منفی برای انتخاب غلط
                     score_earned = (len(correct_choices) * points_per_correct) - (len(incorrect_choices) * points_per_correct)
+                    if score_earned < 0: score_earned = 0
+                    
                     is_correct = (user_selections == correct_selections and len(incorrect_choices)==0)
                     feedback = {opt: ('correct' if opt in correct_selections else 'incorrect') for opt in question.get('options',[]) if opt in user_selections}
-                 else: is_correct = False; feedback = {}; score_earned = 0
+                 else:
+                    is_correct = False
+                    feedback = {}
+                    score_earned = 0
+
             elif question_type == "true-false":
                 all_correct = True
                 if isinstance(user_answer, dict):
                     for statement in question.get('statements', []):
-                        statement_id = statement['id']; correct_answer = statement['solution']; user_ans = user_answer.get(statement_id)
-                        if user_ans == correct_answer: 
+                        statement_id = statement['id']
+                        correct_answer = statement['solution']
+                        user_ans = user_answer.get(statement_id)
+                        
+                        if user_ans == correct_answer:
                             feedback[statement_id] = 'correct'
                             score_earned += points_per_correct
-                        else: 
+                        else:
                             feedback[statement_id] = 'incorrect'
                             all_correct = False
-                            score_earned -= points_per_correct
-                else: all_correct = False; feedback = {}; score_earned = 0
+                else:
+                    all_correct = False
+                    feedback = {}
+                    score_earned = 0
                 is_correct = all_correct
+
             elif question_type == "drag-drop-fill":
                 all_correct = True
                 if isinstance(user_answer, dict):
                     for blank in question.get('blanks', []):
-                        blank_id = blank['id']; correct_option_id = blank['solution_id']; user_option_id = user_answer.get(blank_id)
-                        if user_option_id == correct_option_id: 
+                        blank_id = blank['id']
+                        correct_option_id = blank['solution_id']
+                        user_option_id = user_answer.get(blank_id)
+                        
+                        if user_option_id == correct_option_id:
                             feedback[blank_id] = 'correct'
                             score_earned += points_per_correct
-                        else: 
+                        else:
                             feedback[blank_id] = 'incorrect'
                             all_correct = False
-                            score_earned -= points_per_correct
-                else: all_correct = False; feedback = {}; score_earned = 0
+                else:
+                    all_correct = False
+                    feedback = {}
+                    score_earned = 0
                 is_correct = all_correct
+                
+            # منطق خاص برای سوال ceftriaxone
+            if question.get('id') == 'ceftriaxone_calcium_admin' and 'solution_reversed' in question:
+                 solution_reversed = question.get('solution_reversed')
+                 all_correct = True
+                 feedback = {}
+                 score_earned = 0
+                 
+                 if isinstance(user_answer, dict):
+                    for category_id, correct_item_id in solution_reversed.items():
+                        user_item_id = user_answer.get(category_id)
+                        if user_item_id == correct_item_id:
+                            feedback[category_id] = 'correct'
+                            score_earned += points_per_correct
+                        else:
+                            feedback[category_id] = 'incorrect'
+                            all_correct = False
+                 else:
+                     all_correct = False
+                 is_correct = all_correct
+
         except Exception as e:
-            print(f"Error calculating score for question type {question_type}: {e}")
+            print(f"Error calculating score: {e}")
             return 0, False, {}
-        
-        if score_earned < 0:
-            score_earned = 0
             
         score_earned = math.ceil(score_earned) if score_earned > 0 else 0
         return score_earned, is_correct, feedback
 
+    # --- متد کمکی: محاسبه سطح ---
     def _calculate_level(self, score):
-        return math.floor(int(score) / 20) + 1
+        # هر 200 امتیاز یک سطح (با توجه به سیستم جدید امتیازدهی)
+        return math.floor(int(score) / 200) + 1
 
+    # --- متد کمکی: بررسی نشان‌ها ---
     def _check_and_award_badges(self, user):
         newly_earned_badges = []
         user_badge_ids = user.get('badges_earned', [])
+        
+        # دریافت همه نشان‌ها (بدون _id که باعث خطای 500 می‌شود)
         all_badges = list(mongo.db.badges.find({}, {"_id": 0}))
+        
         for badge in all_badges:
             badge_id = badge['id']
-            if badge_id in user_badge_ids: continue
+            if badge_id in user_badge_ids:
+                continue
+            
             criteria = badge.get('criteria', {})
             criteria_type = criteria.get('type')
             earned = False
+            
             if criteria_type == 'reach_score':
                  if int(user.get('score', 0)) >= criteria.get('score', 0): earned = True
             elif criteria_type == 'reach_level':
@@ -128,11 +179,16 @@ class QuizSubmit(Resource):
             elif criteria_type == 'correct_streak':
                  if int(user.get('correct_streak', 0)) >= criteria.get('count', 0): earned = True
 
-            if earned: 
+            if earned:
                 user_badge_ids.append(badge_id)
                 newly_earned_badges.append(badge)
+        
         if newly_earned_badges:
-            mongo.db.users.update_one({'_id': user['_id']},{'$set': {'badges_earned': user_badge_ids}})
+            mongo.db.users.update_one(
+                {'_id': user['_id']},
+                {'$set': {'badges_earned': user_badge_ids}}
+            )
+            
         return newly_earned_badges
 
     @jwt_required()
@@ -143,18 +199,20 @@ class QuizSubmit(Resource):
         user_answer = data.get('answer')
         is_last_question = data.get('isLastQuestion', False)
         time_taken = data.get('timeTaken', 30)
-        explanation_text = question.get('explanation', '')
 
         if not question_id or user_answer is None or not quiz_id:
             return {"message": "اطلاعات ناقص است"}, 400
 
+        # ۱. پیدا کردن سوال
         quiz = mongo.db.quizzes.find_one({"id": quiz_id})
         if not quiz: return {"message": "آزمون یافت نشد"}, 404
         question = next((q for q in quiz['questions'] if q['id'] == question_id), None)
         if not question: return {"message": "سوال یافت نشد"}, 404
 
+        # ۲. محاسبه امتیاز پایه
         base_score, is_correct, feedback = self._calculate_score(question, user_answer)
         
+        # ۳. محاسبه پاداش‌ها
         speed_bonus = 0
         streak_bonus = 0
         
@@ -165,23 +223,24 @@ class QuizSubmit(Resource):
         new_streak = current_streak + 1 if is_correct else 0
 
         if is_correct:
+            # الف) پاداش سرعت
             if time_taken < 5: speed_bonus = 5
             elif time_taken < 10: speed_bonus = 4
             elif time_taken < 15: speed_bonus = 3
             elif time_taken < 20: speed_bonus = 2
-            elif time_taken < 30: speed_bonus = 1
             
+            # ب) پاداش استریک (هر ۵ تا یکی)
             if new_streak > 0 and new_streak % 5 == 0:
                 streak_bonus = 20
 
         total_question_score = base_score + speed_bonus + streak_bonus
 
+        # ۴. آپدیت سوابق و پروفایل
         quiz_progress = user.get('quiz_progress', {})
         if quiz_id not in quiz_progress:
             quiz_progress[quiz_id] = {'best_score': 0, 'current_session_score': 0, 'attempts': 0}
         
         user_quiz_data = quiz_progress[quiz_id]
-        
         user_quiz_data['current_session_score'] = user_quiz_data.get('current_session_score', 0) + total_question_score
         
         current_total_score = int(user.get('score', 0))
@@ -220,6 +279,9 @@ class QuizSubmit(Resource):
 
         updated_user = mongo.db.users.find_one({'_id': user['_id']})
         newly_earned_badges = self._check_and_award_badges(updated_user)
+        
+        # استخراج متن توضیحات
+        explanation_text = question.get('explanation', '')
 
         return {
             "message": "جواب ثبت شد",
