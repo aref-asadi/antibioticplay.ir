@@ -11,15 +11,11 @@ import { polyfill } from "mobile-drag-drop";
 import "mobile-drag-drop/default.css";
 
 polyfill({
-    dragImageCenterOnTouch: false, 
+    forceApply: true,
+
+    dragImageCenterOnTouch: true,
     
-    dragImageTranslateOverride: (event, element, initialX, initialY, currentX, currentY) => {
-        return {
-            x: currentX - (element.offsetWidth / 2),
-            y: currentY - element.offsetHeight - 20
-        };
-    },
-    forceApply: false 
+    dragImageOpacity: 0.7
 });
 
 window.addEventListener('touchmove', function(e) {
