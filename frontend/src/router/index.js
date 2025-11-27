@@ -12,6 +12,7 @@ import DashboardPage from '../pages/DashboardPage.vue';
 import QuizPage from '../pages/QuizPage.vue';
 import LeaderboardPage from '../pages/LeaderboardPage.vue';
 import QuizResultPage from '../pages/QuizResultPage.vue';
+import RulesPage from '../pages/RulesPage.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
@@ -21,7 +22,8 @@ const routes = [
   { path: '/dashboard', name: 'Dashboard', component: DashboardPage, meta: { requiresAuth: true } },
   { path: '/quiz/:id', name: 'Quiz', component: QuizPage, meta: { requiresAuth: true } },
   { path: '/leaderboard', name: 'Leaderboard', component: LeaderboardPage, meta: { requiresAuth: true } },
-  { path: '/quiz/result', name: 'QuizResult', component: QuizResultPage, meta: { requiresAuth: true } }
+  { path: '/quiz/result', name: 'QuizResult', component: QuizResultPage, meta: { requiresAuth: true } },
+  { path: '/rules', name: 'Rules', component: RulesPage, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({

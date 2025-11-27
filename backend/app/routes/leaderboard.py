@@ -1,3 +1,4 @@
+from flask import request
 from flask_restful import Resource
 from app import mongo
 from app.models.user import User
@@ -5,20 +6,41 @@ from flask_jwt_extended import jwt_required
 import pymongo
 
 class Leaderboard(Resource):
+    """
+    API برای دریافت لیست کاربران بر اساس لیگ.
+    """
     @jwt_required()
     def get(self):
         try:
-            top_users_cursor = mongo.db.users.find(
-                {},
+            league_name = request.args.get('league', 'diamond').lower()
+            
+            min_score = 0
+            max_score = 999999999
+            
+            if league_name == 'bronze':
+                min_score = 0
+                max_score = 500
+            elif league_name == 'silver':
+                min_score = 501
+                max_score = 1000
+            elif league_name == 'gold':
+                min_score = 1001
+                max_score = 2000
+            elif league_name == 'diamond':
+                min_score = 2001
+                max_score = 999999999
+
+            cursor = mongo.db.users.find(
+                {"score": {"$gte": min_score, "$lte": max_score}},
                 {"username": 1, "score": 1, "_id": 0}
-            ).sort("score", pymongo.DESCENDING).limit(10)
+            ).sort("score", pymongo.DESCENDING).limit(20)
 
-            top_users = []
-            for user in top_users_cursor:
+            leaderboard_data = []
+            for user in cursor:
                 user['league'] = User.get_league_info(user.get('score', 0))
-                top_users.append(user)
+                leaderboard_data.append(user)
 
-            return top_users, 200
+            return leaderboard_data, 200
 
         except Exception as e:
             return {"message": str(e)}, 500

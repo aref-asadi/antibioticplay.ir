@@ -1,10 +1,11 @@
-// File: frontend/src/services/leaderboardService.js
-
 import apiClient from './api';
 
 export default {
-  getLeaderboard() {
-    // apiClient به طور خودکار توکن JWT را اضافه می‌کند
-    return apiClient.get('/leaderboard/');
+  /**
+   * دریافت جدول امتیازات بر اساس لیگ
+   * @param {string} league - 'bronze', 'silver', 'gold', 'diamond'
+   */
+  getLeaderboard(league = 'diamond') {
+    return apiClient.get(`/leaderboard/?league=${league}`);
   },
 };

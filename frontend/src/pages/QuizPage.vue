@@ -125,13 +125,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue';
+import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuizStore } from '../stores/quiz';
 import { useAuthStore } from '../stores/auth';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faTimes, faCheck, faFire } from '@fortawesome/free-solid-svg-icons';
-import { watch } from 'vue';
 
 // Import Images
 import correctImg from '../assets/feedback_correct.jpg';
@@ -149,30 +148,19 @@ const router = useRouter();
 const quizStore = useQuizStore();
 const authStore = useAuthStore();
 const quizBody = ref(null);
-const explanationText = ref('');
+
+// --- State Variables ---
 const currentQuestionIndex = ref(0);
 const userAnswer = ref(null);
 const feedback = ref({});
 const quizState = ref('answering');
 const currentStreak = ref(0);
 const applyShake = ref(false);
-const questionStartTime = ref(Date.now());
+const explanationText = ref('');
+const questionStartTime = ref(Date.now()); // تایمر
 
-watch(currentQuestion, () => {
-  questionStartTime.value = Date.now();
-});
-
-const data = response.data;
-feedback.value = data.feedback;
-explanationText.value = data.explanation;
-
-onMounted(() => {
-  const quizId = route.params.id;
-  if (quizId) {
-    quizStore.fetchQuizDetails(quizId);
-  }
-});
-
+// --- Computed Properties ---
+// (این‌ها باید قبل از Watcher تعریف شوند)
 const currentQuestion = computed(() => {
   if (quizStore.currentQuiz && quizStore.currentQuiz.questions) {
     return quizStore.currentQuiz.questions[currentQuestionIndex.value];
@@ -198,6 +186,21 @@ const isAnswerComplete = computed(() => {
     return true;
 });
 
+// --- Watchers ---
+// (حالا که currentQuestion تعریف شده، می‌توانیم آن را Watch کنیم)
+watch(currentQuestion, () => {
+  questionStartTime.value = Date.now(); // ریست تایمر
+});
+
+// --- Lifecycle ---
+onMounted(() => {
+  const quizId = route.params.id;
+  if (quizId) {
+    quizStore.fetchQuizDetails(quizId);
+  }
+});
+
+// --- Methods ---
 const playSound = (soundFile) => {
   try {
     const audio = new Audio(`/${soundFile}`);
@@ -217,13 +220,24 @@ const scrollToBottom = () => {
 
 const checkAnswer = async () => {
   if (!currentQuestion.value) return;
+
+  // محاسبه زمان سپری شده
   const timeTaken = Math.floor((Date.now() - questionStartTime.value) / 1000);
   const isLast = currentQuestionIndex.value >= quizStore.currentQuiz.questions.length - 1;
 
   try {
-    const response = await quizStore.submitAnswer(quizStore.currentQuiz.id, currentQuestion.value.id, userAnswer.value, isLast, timeTaken);
+    const response = await quizStore.submitAnswer(
+      quizStore.currentQuiz.id,
+      currentQuestion.value.id,
+      userAnswer.value,
+      isLast,
+      timeTaken // ارسال زمان
+    );
+    
     const data = response.data;
     feedback.value = data.feedback;
+    explanationText.value = data.explanation; // ذخیره توضیحات علمی
+
     authStore.updateUserScore(data.newTotalScore);
     authStore.updateUserLevel(data.newLevel);
     quizStore.addSessionScore(data.scoreEarned);
@@ -257,6 +271,7 @@ const handleContinue = () => {
     quizState.value = 'answering';
     feedback.value = {};
     userAnswer.value = null;
+    explanationText.value = ''; // پاک کردن توضیحات برای سوال بعد
   } else {
     currentStreak.value = 0;
     router.push({ name: 'QuizResult' });
@@ -273,23 +288,22 @@ const confirmExit = () => {
 .quiz-layout {
   display: flex;
   flex-direction: column;
-  /* استفاده از dvh برای موبایل تا آدرس‌بار مرورگر مشکل‌ساز نشود */
   height: 100vh; 
   height: 100dvh; 
   background-color: white;
-  overflow: hidden; /* اسکرول اصلی صفحه بسته شود */
+  overflow: hidden;
 }
 
 /* --- Header --- */
 .quiz-header {
-  flex: 0 0 auto; /* ارتفاع ثابت و عدم تغییر سایز */
+  flex: 0 0 auto;
   padding: 1.5rem 2rem;
   display: flex;
   align-items: center;
   gap: 1.5rem;
   background-color: white;
   z-index: 20;
-  border-bottom: 1px solid #f0f0f0; /* خط جداکننده ظریف */
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .close-btn { background: none; border: none; color: #e5e5e5; font-size: 1.5rem; cursor: pointer; padding: 0; min-width: auto; border-bottom: none; }
@@ -300,19 +314,15 @@ const confirmExit = () => {
 .progress-highlight { position: absolute; top: 20%; left: 5%; right: 5%; height: 30%; background-color: rgba(255,255,255,0.3); border-radius: 10px; }
 .quiz-stats { display: flex; align-items: center; gap: 0.5rem; color: #ff9600; font-weight: bold; font-size: 1.2rem; }
 
-/* --- Main Body (Scrollable Area) --- */
+/* --- Main Body (Scrollable) --- */
 .quiz-body {
-  flex: 1 1 auto; /* پر کردن تمام فضای خالی وسط صفحه */
-  overflow-y: auto; /* اسکرول فقط در این بخش */
+  flex: 1 1 auto;
+  overflow-y: auto;
   padding: 1rem 2rem;
-  
-  /* پدینگ معمولی برای فاصله از لبه‌ها */
-  padding-bottom: 2rem; 
-  
+  padding-bottom: 2rem;
   display: flex;
   justify-content: center;
   position: relative;
-  /* رفتار اسکرول نرم */
   scroll-behavior: smooth;
 }
 
@@ -321,8 +331,8 @@ const confirmExit = () => {
 
 /* --- Character Animation --- */
 .character-popup {
-  position: fixed; /* کاراکتر هنوز شناور است */
-  bottom: 140px; /* تنظیم فاصله از پایین صفحه */
+  position: fixed;
+  bottom: 140px;
   right: 20px;
   z-index: 90;
   display: flex;
@@ -331,11 +341,7 @@ const confirmExit = () => {
   pointer-events: none;
 }
 
-.character-img {
-  width: 120px;
-  height: auto;
-  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
-}
+.character-img { width: 120px; height: auto; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2)); }
 
 .speech-bubble {
   background: white;
@@ -349,18 +355,16 @@ const confirmExit = () => {
 }
 .correct-bubble { color: var(--color-primary); border-color: var(--color-primary); }
 
-/* --- Footer (Natural Flow) --- */
+/* --- Footer --- */
 .quiz-footer {
-  flex: 0 0 auto; /* ارتفاع بر اساس محتوا، بدون تغییر سایز */
-  width: 100%; /* پر کردن عرض */
+  flex: 0 0 auto;
+  width: 100%;
   padding: 2rem;
   border-top: 2px solid #e5e5e5;
   background-color: white;
   transition: background-color 0.2s, border-color 0.2s;
   z-index: 100;
-  
-  /* نکته مهم: پوزیشن دیگر فیکس نیست */
-  position: relative; 
+  position: relative;
 }
 
 .footer-content { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
@@ -374,6 +378,8 @@ const confirmExit = () => {
 .footer-correct .feedback-text { color: var(--color-primary-dark); }
 .footer-incorrect .feedback-text { color: var(--color-danger-dark); }
 
+.explanation-text { font-size: 0.95rem; color: #555; margin-top: 0.5rem; max-width: 600px; line-height: 1.5; text-align: right; }
+
 .action-button-wrapper { margin-right: auto; }
 .check-btn, .continue-btn { min-width: 150px; padding: 1rem 2rem; font-size: 1.1rem; width: 100%; }
 
@@ -381,28 +387,15 @@ const confirmExit = () => {
 @media (max-width: 600px) {
   .footer-content { flex-direction: column; gap: 1rem; align-items: stretch; }
   .action-button-wrapper { width: 100%; margin: 0; }
-  .feedback-message { margin-bottom: 0.5rem; justify-content: center; }
-  
-  /* تنظیم موقعیت کاراکتر در موبایل */
-  .character-popup { 
-    bottom: 180px; /* شاید نیاز باشد بسته به ارتفاع فوتر موبایل کمی تغییر دهید */
-    right: 50%; 
-    transform: translateX(50%); 
-  }
+  .feedback-message { margin-bottom: 0.5rem; justify-content: center; flex-direction: column; text-align: center; }
+  .character-popup { bottom: 180px; right: 50%; transform: translateX(50%); }
   .character-img { width: 100px; }
+  .explanation-text { text-align: center; }
 }
 
 /* Colors & Transitions */
 .footer-correct { background-color: #d7ffb8; border-color: #d7ffb8; }
 .footer-incorrect { background-color: #ffdfe0; border-color: #ffdfe0; }
-
-.explanation-text {
-  font-size: 0.95rem;
-  color: #555;
-  margin-top: 0.5rem;
-  max-width: 600px;
-  line-height: 1.5;
-}
 
 .slide-up-enter-active, .slide-up-leave-active { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .slide-up-enter-from, .slide-up-leave-to { opacity: 0; transform: translateY(100px); }

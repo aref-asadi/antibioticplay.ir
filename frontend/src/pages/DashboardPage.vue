@@ -31,7 +31,10 @@
           </div>
         </div>
 
-        <div class="left-section">
+        <div class="left-section" style="display: flex; gap: 0.5rem;">
+          <router-link to="/rules" class="btn-ghost" title="راهنما">
+              <font-awesome-icon icon="fas fa-question-circle" />
+          </router-link>
           <button @click="handleLogout" class="btn-ghost">خروج</button>
         </div>
       </div>
