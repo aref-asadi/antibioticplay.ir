@@ -213,7 +213,7 @@ const startQuiz = async (quizId) => {
   cursor: default;
 }
 .stat-item:hover { filter: brightness(0.9); }
-.flag-icon { width: auto; height: auto; }
+.flag-icon { width: auto; height: auto; font-size: 1.2rem; color: var(--color-danger); }
 .icon-fire { color: #ff9600; font-size: 1.2rem; }
 .icon-gem { color: #1cb0f6; font-size: 1.2rem; }
 .btn-ghost {
