@@ -1,22 +1,22 @@
 <template>
   <nav class="bottom-nav">
-    
-    <router-link to="/leaderboard" class="nav-item" active-class="active">
-      <div class="icon-container">
-        <font-awesome-icon icon="fas fa-trophy" />
-      </div>
-      <span class="nav-label">لیگ</span>
-    </router-link>
-
-    <div class="nav-item logo-item">
-      <span class="nav-logo-text">AntibioticPlay</span>
-    </div>
 
     <router-link to="/dashboard" class="nav-item" active-class="active">
       <div class="icon-container">
         <font-awesome-icon icon="fas fa-house" />
       </div>
       <span class="nav-label">خانه</span>
+    </router-link>
+
+    <div class="nav-item logo-item">
+      <span class="nav-logo-text">AntibioticPlay</span>
+    </div>
+
+    <router-link to="/leaderboard" class="nav-item" active-class="active">
+      <div class="icon-container">
+        <font-awesome-icon icon="fas fa-trophy" />
+      </div>
+      <span class="nav-label">لیگ</span>
     </router-link>
 
   </nav>

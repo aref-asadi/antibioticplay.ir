@@ -327,23 +327,36 @@ input::placeholder {
 }
 .error-message { color: var(--color-danger); }
 
+/* --- Mobile Drag & Drop Critical Fixes --- */
+
+/* 1. تصویر در حال درگ نباید رویدادهای موس/تاچ را دریافت کند */
 .dnd-poly-drag-image {
   pointer-events: none !important;
-  opacity: 0.8;
+  opacity: 0.9;
   z-index: 9999 !important;
+  transform: scale(1.05); /* کمی بزرگتر شود تا معلوم شود در حال درگ است */
 }
 
+/* 2. آیکون درگ در iOS */
 .dnd-poly-drag-icon {
   pointer-events: none !important;
 }
 
+/* 3. جلوگیری از انتخاب متن و اسکرول روی آیتم‌های درگ */
 .draggable {
   touch-action: none; 
   -webkit-user-select: none;
   user-select: none;
   cursor: grab;
+  /* جلوگیری از هایلایت شدن در موبایل هنگام لمس طولانی */
+  -webkit-tap-highlight-color: transparent; 
 }
 
-.dnd-poly-drag-active {
-  opacity: 0.5;
+.draggable:active {
+  cursor: grabbing;
+}
+
+/* 4. استایل باکس‌هایی که می‌توان در آن‌ها رها کرد (جهت اطمینان) */
+.droppable {
+  touch-action: none;
 }

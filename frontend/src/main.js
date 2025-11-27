@@ -6,14 +6,27 @@ import './style.css';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import "mobile-drag-drop/default.css";
+
 import { polyfill } from "mobile-drag-drop";
+import "mobile-drag-drop/default.css";
 
 polyfill({
-    dragImageCenterOnTouch: true
+    dragImageCenterOnTouch: false, 
+    
+    dragImageTranslateOverride: (event, element, initialX, initialY, currentX, currentY) => {
+        return {
+            x: currentX - (element.offsetWidth / 2),
+            y: currentY - element.offsetHeight - 20
+        };
+    },
+    forceApply: false 
 });
 
-window.addEventListener( 'touchmove', function() {}, {passive: false});
+window.addEventListener('touchmove', function(e) {
+    if (e.target.closest('.draggable')) {
+        e.preventDefault();
+    }
+}, { passive: false });
 
 import { 
   faPlay, faStar, faTrophy, faFire, faSitemap, 
