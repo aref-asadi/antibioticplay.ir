@@ -11,7 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # 1. تنظیم نسخه نود روی ۲۲ برای رفع خطای crypto.hash
       - uses: actions/setup-node@v3
         with:
           node-version: '22'
@@ -22,19 +21,16 @@ jobs:
           npm install
           npm run build
       
-      # 2. انتقال فایل‌های بیلد شده به پوشه بک‌اند
       - name: Move Frontend Build
         run: |
           mv frontend/dist backend/dist
 
-      # 3. نصب ابزار لیارا
       - name: Install Liara CLI
         run: npm i -g @liara/cli
 
-      # 4. استقرار پوشه backend
       - name: Deploy to Liara
         env:
           LIARA_TOKEN: ${{ secrets.LIARA_API_TOKEN }}
         run: |
           cd backend
-          liara deploy --api-token="$LIARA_TOKEN" --detach
+          liara deploy --app="antibioticplay" --api-token="$LIARA_TOKEN" --detach
