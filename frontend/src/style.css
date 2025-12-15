@@ -2,37 +2,43 @@
 @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
 
 :root {
-  /* --- Duolingo Color Palette --- */
-  --color-primary: #58cc02;       /* Green (Success/Primary) */
-  --color-primary-shadow: #58a700;
-  --color-primary-light: #d7ffb8;
+  /* --- Medical / Professional Color Palette --- */
+  /* رنگ اصلی: سبز کله‌غازی/سبز پزشکی (Teal) */
+  --color-primary: #009688;       
+  --color-primary-shadow: #00796b;
+  --color-primary-light: #e0f2f1;
   
-  --color-secondary: #1cb0f6;     /* Blue (Info/Action) */
-  --color-secondary-shadow: #1899d6;
-  --color-secondary-light: #ddf4ff;
+  /* رنگ ثانویه: آبی روشن و مطمئن (Medical Blue) */
+  --color-secondary: #03a9f4;     
+  --color-secondary-shadow: #0288d1;
+  --color-secondary-light: #e1f5fe;
 
-  --color-danger: #ff4b4b;        /* Red (Error/Incorrect) */
-  --color-danger-shadow: #ea2b2b;
-  --color-danger-light: #ffdfe0;
+  /* رنگ خطا: قرمز ملایم‌تر */
+  --color-danger: #ef5350;        
+  --color-danger-shadow: #c62828;
+  --color-danger-light: #ffebee;
 
-  --color-warning: #ffc800;       /* Yellow (Gold/Stars) */
-  --color-warning-shadow: #d6a900;
-  --color-warning-light: #fff5d1;
+  /* رنگ هشدار/ستاره‌ها: طلایی گرم */
+  --color-warning: #ffca28;       
+  --color-warning-shadow: #fbc02d;
+  --color-warning-light: #fffde7;
 
-  --color-hero-bg: #235390;       /* Dark Navy (Hero Background) */
+  /* رنگ پس‌زمینه هیرو (بخش بالای صفحه اصلی) */
+  --color-hero-bg: #00796b;       
   
-  --color-text: #3c3c3c;          /* Dark Gray (Main Text) */
-  --color-text-light: #777777;    /* Light Gray (Subtitles) */
-  --color-border: #e5e5e5;        /* Light Border */
-  --color-background-page: #ffffff;
-  --color-background-off: #f7f7f7; /* Off-white background */
+  /* متون و پس‌زمینه‌ها */
+  --color-text: #263238;          /* خاکستری بسیار تیره (Blue Gray) */
+  --color-text-light: #546e7a;    /* خاکستری ملایم */
+  --color-border: #cfd8dc;        /* بوردر خاکستری سرد */
+  --color-background-page: #f5f7fa; /* پس‌زمینه کلی خیلی روشن */
+  --color-background-off: #eceff1;  /* پس‌زمینه ورودی‌ها */
 
   /* --- Dimensions & Spacing --- */
-  --button-radius: 16px;
-  --card-radius: 20px;
-  --input-radius: 16px;
-  --border-width: 2px;
-  --border-bottom-width: 4px;
+  --button-radius: 12px; /* کمی گردی کمتر برای حس حرفه‌ای‌تر */
+  --card-radius: 16px;
+  --input-radius: 12px;
+  --border-width: 1px;
+  --border-bottom-width: 3px; /* افکت سه‌بعدی ملایم‌تر */
 }
 
 html {
@@ -61,21 +67,21 @@ body {
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
   margin-bottom: 1rem;
-  font-weight: 800; /* Extra Bold for headings like Duolingo */
+  font-weight: 700; /* کمی نازک‌تر از قبل */
   color: var(--color-text);
 }
 
 a {
   color: var(--color-secondary);
   text-decoration: none;
-  font-weight: 700;
+  font-weight: 600;
   transition: color 0.2s;
 }
 a:hover {
   filter: brightness(1.1);
 }
 
-/* --- Buttons (3D Game Style) --- */
+/* --- Buttons (Refined 3D Style) --- */
 button, .btn {
   cursor: pointer;
   border: none;
@@ -83,9 +89,8 @@ button, .btn {
   padding: 0.8rem 1.5rem;
   font-family: inherit;
   font-size: 1rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-weight: 600;
+  letter-spacing: 0px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -96,25 +101,23 @@ button, .btn {
   border-bottom-width: var(--border-bottom-width);
   border-bottom-style: solid;
   transform: translateY(0);
-  transition: transform 0.1s, border-bottom-width 0.1s, filter 0.2s;
+  transition: all 0.15s ease;
   min-width: 120px;
 }
 
 button:active:not(:disabled), .btn:active:not(.disabled) {
-  transform: translateY(4px);
-  border-bottom-width: 0px !important;
-  margin-top: 4px; /* To prevent layout shift */
+  transform: translateY(2px);
+  border-bottom-width: 1px !important;
+  margin-top: 2px;
 }
 
 button:disabled, .btn.disabled {
   cursor: not-allowed;
   opacity: 0.6;
   transform: none !important;
-  border-bottom-width: var(--border-bottom-width) !important;
-  margin-top: 0 !important;
-  background-color: #e5e5e5 !important;
-  color: #afafaf !important;
-  border-bottom-color: #cecece !important;
+  background-color: #cfd8dc !important;
+  color: #90a4ae !important;
+  border-bottom-color: #b0bec5 !important;
 }
 
 /* Button Variants */
@@ -123,69 +126,65 @@ button:disabled, .btn.disabled {
   color: white;
   border-bottom-color: var(--color-primary-shadow);
 }
-.btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-primary:hover:not(:disabled) { background-color: #26a69a; }
 
 .btn-secondary {
   background-color: var(--color-secondary);
   color: white;
   border-bottom-color: var(--color-secondary-shadow);
 }
-.btn-secondary:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-secondary:hover:not(:disabled) { background-color: #29b6f6; }
 
 .btn-danger {
   background-color: var(--color-danger);
   color: white;
   border-bottom-color: var(--color-danger-shadow);
 }
-.btn-danger:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-danger:hover:not(:disabled) { background-color: #e57373; }
 
 .btn-outline {
   background-color: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-bottom-width: 4px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-bottom-width: 3px;
   color: white;
 }
 .btn-outline:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 1);
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: #fff;
 }
 
 .btn-ghost {
   background: transparent;
   border: 2px solid transparent;
-  border-bottom-width: 2px; /* Subtle border for ghost */
+  border-bottom-width: 2px;
   color: var(--color-text-light);
   box-shadow: none;
 }
 .btn-ghost:hover {
   background-color: rgba(0,0,0,0.05);
-}
-.btn-ghost:active {
-  border-bottom-width: 0;
-  transform: translateY(2px);
+  color: var(--color-text);
 }
 
-/* --- Cards (Floating Style) --- */
+/* --- Cards --- */
 .card {
   background: white;
-  border: 2px solid var(--color-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--card-radius);
   padding: 1.5rem;
-  /* Optional: Add a subtle shadow or bottom border for depth */
-  /* border-bottom-width: 4px; */ 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* سایه نرم به جای بوردر ضخیم */
 }
 
-/* --- Inputs (Duolingo Style) --- */
+/* --- Inputs --- */
 input[type="text"],
 input[type="email"],
 input[type="password"],
 textarea {
   width: 100%;
-  padding: 0.8rem 1rem;
+  padding: 0.9rem 1rem;
   font-family: inherit;
-  font-size: 1.1rem;
+  font-size: 1rem;
   background-color: var(--color-background-off);
-  border: 2px solid var(--color-border);
+  border: 2px solid transparent;
   border-radius: var(--input-radius);
   color: var(--color-text);
   outline: none;
@@ -195,13 +194,14 @@ textarea {
 input:focus, textarea:focus {
   background-color: white;
   border-color: var(--color-secondary);
+  box-shadow: 0 0 0 3px var(--color-secondary-light);
 }
 
 input::placeholder {
-  color: #afafaf;
+  color: #b0bec5;
 }
 
-/* --- Auth Pages Specifics (Login/Register) --- */
+/* --- Auth Pages Specifics --- */
 .auth-wrapper {
   min-height: 100vh;
   display: flex;
@@ -248,12 +248,12 @@ input::placeholder {
 }
 
 .duo-input {
-  /* Reuse generic input styles but ensure class specificity */
   width: 100%;
   padding: 1rem 1.2rem;
-  background-color: #f7f7f7;
+  background-color: #f0f4c3; /* تغییر جزیی */
+  background-color: var(--color-background-off);
   border: 2px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: 12px;
   font-size: 1rem;
 }
 .duo-input.error {
@@ -289,6 +289,27 @@ input::placeholder {
   text-align: center;
   line-height: 1.6;
   max-width: 350px;
+}
+
+/* --- Progress Bar Gradient --- */
+.progress-bar {
+  /* این کلاس گرادیانت را روی رنگ پس‌زمینه اعمال می‌کند */
+  background-image: linear-gradient(
+    90deg, 
+    rgba(255, 255, 255, 0.3) 0%, 
+    rgba(255, 255, 255, 0) 100%
+  ) !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  /* خود رنگ اصلی از طریق inline-style در کامپوننت vue می‌آید، 
+     اما این تصویر گرادیانت روی آن قرار می‌گیرد تا حالت طیف‌دار بدهد */
+}
+.progress-container {
+  background-color: #e0e0e0 !important; /* رنگ زمینه نوار خالی */
+  border: none !important;
+  height: 12px !important;
+}
+.progress-highlight {
+  background-color: rgba(255,255,255,0.4) !important; /* هایلایت روی نوار */
 }
 
 /* --- Animations --- */
@@ -327,50 +348,23 @@ input::placeholder {
 }
 .error-message { color: var(--color-danger); }
 
-/* --- Mobile Drag & Drop Critical Fixes --- */
+/* --- Drag & Drop Fixes --- */
 .dnd-poly-drag-image { pointer-events: none !important; opacity: 0.7 !important; z-index: 9999 !important; transform: scale(1.1); }
 .dnd-poly-drag-icon { display: none !important; }
-.draggable { touch-action: none !important; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; cursor: grab; }
+.draggable { touch-action: none !important; cursor: grab; }
 .draggable:active { cursor: grabbing; opacity: 0.5; }
 .droppable { pointer-events: auto !important; }
-.item-card.selected-mode { border-color: var(--color-secondary) !important; background-color: var(--color-secondary-light) !important; color: var(--color-secondary-shadow) !important; transform: scale(1.05); box-shadow: 0 4px 10px rgba(28, 176, 246, 0.3); z-index: 10; }
-.droppable.highlight-target { border-color: var(--color-secondary); border-style: solid; background-color: #f0faff; cursor: pointer; }
+.item-card.selected-mode { border-color: var(--color-secondary) !important; background-color: var(--color-secondary-light) !important; color: var(--color-secondary-shadow) !important; transform: scale(1.05); box-shadow: 0 4px 10px rgba(3, 169, 244, 0.3); z-index: 10; }
+.droppable.highlight-target { border-color: var(--color-secondary); border-style: solid; background-color: #f1f8e9; cursor: pointer; }
 
-/* --- Mobile Optimization (Scaling Down) --- */
+/* --- Mobile Optimization --- */
 @media (max-width: 600px) {
-  html {
-    font-size: 14px;
-  }
-
-  .card, .unit-card, .sidebar-widget {
-    padding: 1rem !important;
-  }
-
-  .node-button {
-    width: 65px;
-    height: 65px;
-  }
-  .node-icon {
-    font-size: 1.8rem;
-  }
-
-  .quiz-header {
-    padding: 0.8rem 1rem;
-    height: 60px;
-  }
-  
-  .quiz-body {
-    padding-bottom: 120px !important;
-  }
-  
-  .question-title {
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
-  }
-  
-  .item-card, .option-card {
-    padding: 0.6rem !important;
-    font-size: 0.9rem !important;
-    min-height: auto;
-  }
+  html { font-size: 14px; }
+  .card, .unit-card, .sidebar-widget { padding: 1rem !important; }
+  .node-button { width: 65px; height: 65px; }
+  .node-icon { font-size: 1.8rem; }
+  .quiz-header { padding: 0.8rem 1rem; height: 60px; }
+  .quiz-body { padding-bottom: 120px !important; }
+  .question-title { font-size: 1.3rem; margin-bottom: 1rem; }
+  .item-card, .option-card { padding: 0.6rem !important; font-size: 0.9rem !important; min-height: auto; }
 }
