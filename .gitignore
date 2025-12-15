@@ -1,36 +1,29 @@
-# --- Python / Flask ---
-__pycache__/
-*.py[cod]
-*$py.class
-venv/
-.venv/
-env/
-.env
-instance/
-.pytest_cache/
-coverage.xml
-*.coverage
-htmlcov/
-
-# --- Node.js / Vue ---
-node_modules/
-dist/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# --- IDEs / Editors ---
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# --- OS Generated ---
+# --- General ---
 .DS_Store
 Thumbs.db
-Desktop.ini
+.idea/
+.vscode/
+*.log
 
-# --- Liara / Deployment ---
+# --- Python / Backend ---
+backend/venv/
+backend/.venv/
+backend/__pycache__/
+backend/*.pyc
+backend/instance/
+backend/.env
+backend/db.sqlite3
+*.egg-info/
+
+# --- Node / Frontend ---
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.env.*.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# --- Deploy ---
 .liara/
 liara.json
