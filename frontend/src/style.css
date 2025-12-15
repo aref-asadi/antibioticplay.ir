@@ -2,43 +2,44 @@
 @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
 
 :root {
-  /* --- Medical / Professional Color Palette --- */
-  /* رنگ اصلی: سبز کله‌غازی/سبز پزشکی (Teal) */
-  --color-primary: #009688;       
-  --color-primary-shadow: #00796b;
-  --color-primary-light: #e0f2f1;
+  /* --- New Palette based on User Images (Blue/Red/Grey) --- */
   
-  /* رنگ ثانویه: آبی روشن و مطمئن (Medical Blue) */
-  --color-secondary: #03a9f4;     
-  --color-secondary-shadow: #0288d1;
-  --color-secondary-light: #e1f5fe;
+  /* رنگ اصلی: آبی متوسط و حرفه‌ای (برگرفته از تصویر ۲) */
+  --color-primary: #0c54c4;       
+  --color-primary-shadow: #073d91; /* سایه تیره‌تر */
+  --color-primary-light: #7fb0ec;  /* آبی روشن برای پس‌زمینه‌های کمرنگ */
+  
+  /* رنگ ثانویه: آبی روشن‌تر و زنده‌تر (برای دکمه‌های اکشن یا لینک‌ها) */
+  --color-secondary: #0d64ec;     
+  --color-secondary-shadow: #08429e;
+  --color-secondary-light: #e3f2fd;
 
-  /* رنگ خطا: قرمز ملایم‌تر */
-  --color-danger: #ef5350;        
-  --color-danger-shadow: #c62828;
-  --color-danger-light: #ffebee;
+  /* رنگ خطر/تاکید: قرمز (برگرفته از تصویر ۱) */
+  --color-danger: #e61c23;        
+  --color-danger-shadow: #b01217;
+  --color-danger-light: #ffcdd2;
 
-  /* رنگ هشدار/ستاره‌ها: طلایی گرم */
+  /* رنگ هشدار/ستاره‌ها: طلایی (ثابت نگه می‌داریم چون برای گیمیفیکیشن لازم است) */
   --color-warning: #ffca28;       
   --color-warning-shadow: #fbc02d;
   --color-warning-light: #fffde7;
 
-  /* رنگ پس‌زمینه هیرو (بخش بالای صفحه اصلی) */
-  --color-hero-bg: #00796b;       
+  /* رنگ پس‌زمینه هیرو (آبی بسیار تیره و سرمه‌ای - تصویر ۲) */
+  --color-hero-bg: #134685;       
   
   /* متون و پس‌زمینه‌ها */
-  --color-text: #263238;          /* خاکستری بسیار تیره (Blue Gray) */
+  --color-text: #0c0c14;          /* مشکی متمایل به سرمه‌ای (تصویر ۲) */
   --color-text-light: #546e7a;    /* خاکستری ملایم */
   --color-border: #cfd8dc;        /* بوردر خاکستری سرد */
-  --color-background-page: #f5f7fa; /* پس‌زمینه کلی خیلی روشن */
-  --color-background-off: #eceff1;  /* پس‌زمینه ورودی‌ها */
+  --color-background-page: #f9f9f9; /* سفید یخی */
+  --color-background-off: #eceff1;  /* خاکستری خیلی روشن برای اینپوت‌ها */
 
   /* --- Dimensions & Spacing --- */
-  --button-radius: 12px; /* کمی گردی کمتر برای حس حرفه‌ای‌تر */
+  --button-radius: 12px;
   --card-radius: 16px;
   --input-radius: 12px;
   --border-width: 1px;
-  --border-bottom-width: 3px; /* افکت سه‌بعدی ملایم‌تر */
+  --border-bottom-width: 3px;
 }
 
 html {
@@ -67,7 +68,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
   margin-bottom: 1rem;
-  font-weight: 700; /* کمی نازک‌تر از قبل */
+  font-weight: 700;
   color: var(--color-text);
 }
 
@@ -79,9 +80,10 @@ a {
 }
 a:hover {
   filter: brightness(1.1);
+  text-decoration: underline;
 }
 
-/* --- Buttons (Refined 3D Style) --- */
+/* --- Buttons (Professional 3D Style) --- */
 button, .btn {
   cursor: pointer;
   border: none;
@@ -126,21 +128,27 @@ button:disabled, .btn.disabled {
   color: white;
   border-bottom-color: var(--color-primary-shadow);
 }
-.btn-primary:hover:not(:disabled) { background-color: #26a69a; }
+.btn-primary:hover:not(:disabled) { 
+  filter: brightness(1.1); 
+}
 
 .btn-secondary {
   background-color: var(--color-secondary);
   color: white;
   border-bottom-color: var(--color-secondary-shadow);
 }
-.btn-secondary:hover:not(:disabled) { background-color: #29b6f6; }
+.btn-secondary:hover:not(:disabled) { 
+  filter: brightness(1.1); 
+}
 
 .btn-danger {
   background-color: var(--color-danger);
   color: white;
   border-bottom-color: var(--color-danger-shadow);
 }
-.btn-danger:hover:not(:disabled) { background-color: #e57373; }
+.btn-danger:hover:not(:disabled) { 
+  filter: brightness(1.1); 
+}
 
 .btn-outline {
   background-color: transparent;
@@ -171,7 +179,7 @@ button:disabled, .btn.disabled {
   border: 1px solid var(--color-border);
   border-radius: var(--card-radius);
   padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* سایه نرم به جای بوردر ضخیم */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
 }
 
 /* --- Inputs --- */
@@ -214,6 +222,7 @@ input::placeholder {
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .auth-content {
@@ -250,7 +259,6 @@ input::placeholder {
 .duo-input {
   width: 100%;
   padding: 1rem 1.2rem;
-  background-color: #f0f4c3; /* تغییر جزیی */
   background-color: var(--color-background-off);
   border: 2px solid var(--color-border);
   border-radius: 12px;
@@ -293,23 +301,20 @@ input::placeholder {
 
 /* --- Progress Bar Gradient --- */
 .progress-bar {
-  /* این کلاس گرادیانت را روی رنگ پس‌زمینه اعمال می‌کند */
   background-image: linear-gradient(
     90deg, 
-    rgba(255, 255, 255, 0.3) 0%, 
+    rgba(255, 255, 255, 0.35) 0%, 
     rgba(255, 255, 255, 0) 100%
   ) !important;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-  /* خود رنگ اصلی از طریق inline-style در کامپوننت vue می‌آید، 
-     اما این تصویر گرادیانت روی آن قرار می‌گیرد تا حالت طیف‌دار بدهد */
 }
 .progress-container {
-  background-color: #e0e0e0 !important; /* رنگ زمینه نوار خالی */
+  background-color: #e0e0e0 !important;
   border: none !important;
   height: 12px !important;
 }
 .progress-highlight {
-  background-color: rgba(255,255,255,0.4) !important; /* هایلایت روی نوار */
+  background-color: rgba(255,255,255,0.5) !important;
 }
 
 /* --- Animations --- */
@@ -354,8 +359,8 @@ input::placeholder {
 .draggable { touch-action: none !important; cursor: grab; }
 .draggable:active { cursor: grabbing; opacity: 0.5; }
 .droppable { pointer-events: auto !important; }
-.item-card.selected-mode { border-color: var(--color-secondary) !important; background-color: var(--color-secondary-light) !important; color: var(--color-secondary-shadow) !important; transform: scale(1.05); box-shadow: 0 4px 10px rgba(3, 169, 244, 0.3); z-index: 10; }
-.droppable.highlight-target { border-color: var(--color-secondary); border-style: solid; background-color: #f1f8e9; cursor: pointer; }
+.item-card.selected-mode { border-color: var(--color-secondary) !important; background-color: var(--color-secondary-light) !important; color: var(--color-secondary-shadow) !important; transform: scale(1.05); box-shadow: 0 4px 10px rgba(13, 100, 236, 0.3); z-index: 10; }
+.droppable.highlight-target { border-color: var(--color-secondary); border-style: solid; background-color: var(--color-primary-light); cursor: pointer; }
 
 /* --- Mobile Optimization --- */
 @media (max-width: 600px) {
