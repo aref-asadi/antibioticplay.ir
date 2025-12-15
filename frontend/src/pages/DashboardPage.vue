@@ -172,7 +172,7 @@ const earnedBadges = ref([]);
 const scoreJustUpdated = ref(false);
 const userRank = ref(null); // متغیر برای ذخیره رتبه
 
-const moduleColors = ['#58cc02', '#ce82ff', '#00cd9c', '#ff9600', '#ff4b4b'];
+const moduleColors = ['#009688', '#03a9f4', '#5c6bc0', '#ffa726', '#ef5350'];
 const getModuleColor = (index) => moduleColors[index % moduleColors.length];
 
 onMounted(async () => {
