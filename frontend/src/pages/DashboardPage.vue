@@ -17,7 +17,7 @@
             <span class="desktop-only">{{ user?.league?.name || 'برنز' }}</span>
           </div>
 
-          <div class="stat-item" title="زنجیره پاسخ‌های صحیح">
+          <div class="stat-item" title="پاسخ صحیح متوالی">
             <font-awesome-icon icon="fas fa-fire" class="icon-fire" :class="{ 'animate-fire': (user?.correct_streak || 0) > 0 }" />
             <span>{{ user?.correct_streak || 0 }}</span>
           </div>

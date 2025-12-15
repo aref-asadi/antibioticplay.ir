@@ -19,7 +19,7 @@
       </div>
 
       <div class="stat-card streak-card">
-        <div class="stat-label">روزهای متوالی</div>
+        <div class="stat-label">پاسخ صحیح متوالی</div>
         <div class="stat-value text-fire">
           <font-awesome-icon icon="fas fa-fire" />
           {{ authStore.user?.correct_streak || 0 }}

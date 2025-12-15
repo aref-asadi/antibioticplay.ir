@@ -101,38 +101,34 @@
 
     <footer class="main-footer">
       <div class="footer-container">
+        
         <div class="footer-column">
-          <h4>درباره ما</h4>
+          <h4>درباره AntibioticPlay</h4>
           <ul>
-            <li><a href="#">درباره سایت</a></li>
-            <li><a href="#">تیم توسعه</a></li>
-            <li><a href="#">فرصت‌های شغلی</a></li>
+            <li><router-link to="/about">درباره ما & تیم</router-link></li>
+            <li><router-link to="/terms">قوانین و مقررات</router-link></li>
+            <li><router-link to="/contact">تماس با پشتیبانی</router-link></li>
           </ul>
         </div>
+
         <div class="footer-column">
-          <h4>محصولات</h4>
+          <h4>آموزش</h4>
           <ul>
-            <li><a href="#">آزمون‌ها</a></li>
-            <li><a href="#">فلش‌کارت‌ها</a></li>
-            <li><a href="#">AntibioticPlay برای دانشگاه‌ها</a></li>
+            <li><router-link to="/register">آزمون‌ها</router-link></li>
+            <li><router-link to="/flashcards">فلش‌کارت‌ها</router-link></li>
           </ul>
         </div>
-        <div class="footer-column">
-          <h4>پشتیبانی</h4>
-          <ul>
-            <li><a href="#">سوالات متداول</a></li>
-            <li><a href="#">تماس با ما</a></li>
-            <li><a href="#">قوانین و مقررات</a></li>
-          </ul>
+
+        <div class="footer-column uni-logo-section">
+          <h4>با حمایت</h4>
+          <div class="uni-logo-box">
+            <div class="logo-placeholder">
+              <font-awesome-icon icon="fas fa-university" />
+              <span>لوگوی دانشگاه</span>
+            </div>
+          </div>
         </div>
-        <div class="footer-column">
-          <h4>شبکه‌های اجتماعی</h4>
-          <ul>
-            <li><a href="#">اینستاگرام</a></li>
-            <li><a href="#">توییتر</a></li>
-            <li><a href="#">لینکدین</a></li>
-          </ul>
-        </div>
+
       </div>
       <div class="footer-bottom">
         <p>© 2025 AntibioticPlay. تمامی حقوق محفوظ است.</p>
@@ -146,14 +142,15 @@
 import { useAuthStore } from '../stores/auth';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { 
-  faGlobeAmericas, 
-  faFire, 
-  faCheckCircle, 
-  faStar, 
-  faHeart 
+  faGlobeAmericas,
+  faFire,
+  faCheckCircle,
+  faStar,
+  faHeart,
+  faUniversity
 } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faGlobeAmericas, faFire, faCheckCircle, faStar, faHeart);
+library.add(faGlobeAmericas, faFire, faCheckCircle, faStar, faHeart, faUniversity);
 
 const authStore = useAuthStore();
 </script>
@@ -313,6 +310,24 @@ const authStore = useAuthStore();
   border-top: 2px solid rgba(255,255,255,0.1);
   font-size: 0.9rem;
 }
+
+.uni-logo-box {
+  background: rgba(255,255,255,0.1);
+  padding: 1rem;
+  border-radius: 12px;
+  display: inline-block;
+  min-width: 150px;
+  text-align: center;
+}
+.logo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255,255,255,0.8);
+  font-size: 0.9rem;
+}
+.logo-placeholder svg { font-size: 2rem; }
 
 /* --- Responsive --- */
 @media (max-width: 850px) {

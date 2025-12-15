@@ -80,6 +80,8 @@
       </div>
     </transition>
 
+    <Confetti v-if="quizState === 'correct'" />
+
     <footer 
       class="quiz-footer" 
       :class="{ 
@@ -150,6 +152,8 @@ import DragDropMatch from '../components/DragDropMatch.vue';
 import MultipleSelect from '../components/MultipleSelect.vue';
 import TrueFalse from '../components/TrueFalse.vue';
 import DragDropFill from '../components/DragDropFill.vue';
+
+import Confetti from '../components/Confetti.vue';
 
 // Register Icons
 library.add(faTimes, faCheck, faFire, faLightbulb, fasBookmark, farBookmark);

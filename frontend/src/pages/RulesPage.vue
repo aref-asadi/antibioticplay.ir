@@ -34,7 +34,7 @@
       <section class="rule-card">
         <div class="icon-box danger"><font-awesome-icon icon="fas fa-fire" /></div>
         <div class="text-box">
-          <h3>استریک (زنجیره)</h3>
+          <h3>پاسخ صحیح متوالی</h3>
           <p>این عدد نشان می‌دهد چند سوال را <strong>پشت سر هم و بدون غلط</strong> جواب داده‌اید. هر ۵ جواب صحیح متوالی، ۲۰ امتیاز پاداش دارد!</p>
         </div>
       </section>
