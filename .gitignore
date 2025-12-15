@@ -26,4 +26,3 @@ frontend/yarn-error.log*
 
 # --- Deploy ---
 .liara/
-liara.json
