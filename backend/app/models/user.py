@@ -1,24 +1,59 @@
+# File: backend/app/models/user.py
 from app import mongo
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User:
-    def __init__(self, username, email, password):
+    def __init__(self, username, password=None, email=None, level=1, xp=0, total_score=0, badges=None, correct_streak=0, avatar_id='fleming'):
         self.username = username
         self.email = email
-        self.password_hash = generate_password_hash(password)
+        if password:
+            self.password_hash = generate_password_hash(password)
+        else:
+            self.password_hash = None
+            
+        self.level = level
+        self.xp = xp
+        self.total_score = total_score
+        self.badges = badges if badges else []
+        self.correct_streak = correct_streak
+        self.avatar_id = avatar_id
 
-    def save(self):
+    def to_dict(self):
+        """تبدیل اطلاعات کاربر به دیکشنری برای ارسال به فرانت"""
+        return {
+            "username": self.username,
+            "email": self.email,
+            "level": self.level,
+            "xp": self.xp,
+            "total_score": self.total_score,
+            "badges": self.badges,
+            "correct_streak": self.correct_streak,
+            "avatar_id": self.avatar_id,
+            "league": User.get_league_info(self.total_score)
+        }
+
+    @staticmethod
+    def create_user(username, password, email=None, avatar_id='fleming'):
+        """ایجاد کاربر جدید در دیتابیس"""
+        if User.find_by_username(username):
+            return None
+        if email and User.find_by_email(email):
+            return None
+        
+        new_user = User(username, password, email=email, avatar_id=avatar_id)
+        
         mongo.db.users.insert_one({
-            'username': self.username,
-            'email': self.email,
-            'password_hash': self.password_hash,
-            'score': 0,
-            'level': 1,
-            'badges_earned': [], 
-            'quizzes_completed': 0, 
-            'correct_streak': 0,
-            'quiz_progress': {} 
+            "username": new_user.username,
+            "email": new_user.email,
+            "password_hash": new_user.password_hash,
+            "level": new_user.level,
+            "xp": new_user.xp,
+            "total_score": new_user.total_score,
+            "badges": new_user.badges,
+            "correct_streak": new_user.correct_streak,
+            "avatar_id": new_user.avatar_id
         })
+        return new_user
 
     @staticmethod
     def find_by_username(username):

@@ -18,6 +18,7 @@ import TermsPage from '../pages/TermsPage.vue';
 import AboutPage from '../pages/AboutPage.vue';
 import ContactPage from '../pages/ContactPage.vue';
 import FlashcardsPage from '../pages/FlashcardsPage.vue';
+import ProfilePage from '../pages/ProfilePage.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
@@ -34,6 +35,7 @@ const routes = [
   { path: '/about', name: 'About', component: AboutPage },
   { path: '/contact', name: 'Contact', component: ContactPage },
   { path: '/flashcards', name: 'Flashcards', component: FlashcardsPage },
+  { path: '/profile', name: 'Profile', component: ProfilePage, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({
