@@ -77,13 +77,12 @@
       <aside class="sidebar-column">
         
         <div class="sidebar-widget user-widget">
-          <div class="user-avatar-container" @click="router.push('/profile')" title="ویرایش پروفایل">
-            <img :src="userAvatar" alt="Avatar" class="sidebar-avatar-img" />
+          <div class="user-avatar-placeholder">
+            {{ user?.username?.charAt(0).toUpperCase() }}
           </div>
           <div class="user-info">
             <h3>{{ user?.username }}</h3>
             <p>{{ user?.email }}</p>
-            <router-link to="/profile" class="edit-profile-link">ویرایش پروفایل</router-link>
           </div>
         </div>
 
@@ -157,7 +156,7 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useQuizStore } from '../stores/quiz';
 import badgeService from '../services/badgeService';
-import leaderboardService from '../services/leaderboardService';
+import leaderboardService from '../services/leaderboardService'; // ایمپورت سرویس لیدربورد
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
@@ -171,14 +170,14 @@ const { user, score, level } = storeToRefs(authStore);
 
 const earnedBadges = ref([]);
 const scoreJustUpdated = ref(false);
-const userRank = ref(null);
+const userRank = ref(null); // متغیر برای ذخیره رتبه
 
 const moduleColors = ['#009688', '#03a9f4', '#5c6bc0', '#ffa726', '#ef5350'];
 const getModuleColor = (index) => moduleColors[index % moduleColors.length];
 
-// محاسبه آدرس عکس آواتار
 const userAvatar = computed(() => {
   const avatarId = authStore.user?.avatar_id || 'fleming';
+  // ساخت آدرس فایل بر اساس الگوی نامگذاری
   return `/assets/avatars/avatar_${avatarId}.png`;
 })
 
@@ -198,20 +197,23 @@ onMounted(async () => {
     console.error("Failed to fetch earned badges:", error);
   }
 
-  // محاسبه رتبه کاربر
+  // --- *** محاسبه رتبه کاربر *** ---
   try {
+    // گرفتن لیگ فعلی کاربر (مثلاً 'gold')
     const currentLeagueId = authStore.userLeague?.name === 'الماس' ? 'diamond' : 
                             authStore.userLeague?.name === 'طلا' ? 'gold' :
                             authStore.userLeague?.name === 'نقره' ? 'silver' : 'bronze';
     
+    // درخواست لیدربورد همان لیگ
     const lbResponse = await leaderboardService.getLeaderboard(currentLeagueId);
     const leaderboard = lbResponse.data;
     
+    // پیدا کردن ایندکس کاربر
     const myIndex = leaderboard.findIndex(u => u.username === user.value.username);
     if (myIndex !== -1) {
       userRank.value = myIndex + 1;
     } else {
-      userRank.value = '20+';
+      userRank.value = '20+'; // اگر در ۲۰ نفر اول نبود
     }
   } catch (err) {
     console.error("Failed to fetch rank:", err);
@@ -225,11 +227,12 @@ const handleLogout = () => {
 const startQuiz = async (quizId, index) => {
   await quizStore.fetchQuizDetails(quizId);
   if (!quizStore.error) {
+    // رنگ تم را به عنوان کوئری به صفحه بعد می‌فرستیم
     const themeColor = getModuleColor(index);
     router.push({ 
       name: 'Quiz', 
       params: { id: quizId },
-      query: { theme: themeColor }
+      query: { theme: themeColor } // ارسال رنگ
     });
   }
 };
@@ -244,9 +247,11 @@ const startQuiz = async (quizId, index) => {
 
 .logo-text { color: var(--color-primary); font-weight: 800; font-size: 1.5rem; letter-spacing: 0.5px; }
 
+/* Left Section Adjustment */
 .left-section {
   display: flex; 
   gap: 0.5rem; 
+  /* --- FIX: وسط‌چین کردن عمودی آیتم‌ها (دکمه خروج و راهنما) --- */
   align-items: center; 
 }
 
@@ -277,29 +282,11 @@ const startQuiz = async (quizId, index) => {
 .sidebar-column { width: 350px; display: flex; flex-direction: column; gap: 1.5rem; }
 .sidebar-widget { border: 2px solid #e5e5e5; border-radius: 16px; padding: 1.5rem; background-color: white; }
 
-/* User Widget (Updated) */
+/* User Widget */
 .user-widget { display: flex; align-items: center; gap: 1rem; }
-
-/* استایل عکس آواتار در سایدبار */
-.sidebar-avatar-img {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--color-primary);
-  padding: 2px;
-  background-color: white;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-.sidebar-avatar-img:hover {
-  transform: scale(1.05);
-}
-
+.user-avatar-placeholder { width: 60px; height: 60px; background-color: var(--color-secondary); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; font-weight: bold; border: 2px solid rgba(0,0,0,0.1); }
 .user-info h3 { margin: 0; font-size: 1.2rem; }
 .user-info p { margin: 0; color: var(--color-text-light); font-size: 0.9rem; }
-.edit-profile-link { font-size: 0.8rem; color: var(--color-secondary); text-decoration: none; display: block; margin-top: 4px; }
-.edit-profile-link:hover { text-decoration: underline; }
 
 /* Leaderboard Widget */
 .league-status { display: flex; align-items: center; gap: 1rem; }
@@ -326,7 +313,10 @@ const startQuiz = async (quizId, index) => {
   .dashboard-main { flex-direction: column-reverse; padding-bottom: 100px; }
   .sidebar-column { width: 100%; }
   .desktop-only { display: none; }
+  
+  /* --- FIX: مخفی کردن لوگو در هدر موبایل --- */
   .logo-text { display: none; }
+  /* تنظیم فاصله هدر در موبایل */
   .dashboard-topbar { padding: 0.8rem 1rem; }
 }
 </style>
