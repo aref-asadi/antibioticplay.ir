@@ -21,9 +21,10 @@ class UserRegistration(Resource):
             return {"message": "Username or email already exists"}, 400
 
         access_token = create_access_token(identity=username)
+        # اصلاح شد: استفاده از access_token به جای token
         return {
             "message": "User registered successfully",
-            "token": access_token,
+            "access_token": access_token, 
             "user": user.to_dict()
         }, 201
 
@@ -45,7 +46,6 @@ class UserLogin(Resource):
 
         access_token = create_access_token(identity=username)
         
-        # ساخت دیکشنری پاسخ با تمام فیلدها
         response_user = {
             "username": user_data['username'],
             "email": user_data.get('email'),
@@ -58,8 +58,9 @@ class UserLogin(Resource):
             "league": User.get_league_info(user_data.get('total_score', 0))
         }
 
+        # اصلاح شد: استفاده از access_token برای هماهنگی با auth.js در فرانت
         return {
-            "token": access_token,
+            "access_token": access_token,
             "user": response_user
         }, 200
 
