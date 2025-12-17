@@ -92,6 +92,76 @@
       </div>
     </section>
 
+    <section class="legends-section">
+      <h2 class="section-title">با قهرمانان آنتی‌بیوتیک آشنا شوید</h2>
+      <p class="section-subtitle">شما می‌توانید یکی از این دانشمندان بزرگ را به عنوان آواتار خود انتخاب کنید!</p>
+      
+      <div class="legends-grid">
+        <div class="legend-card">
+          <img src="/assets/avatars/avatar_fleming.png" alt="الکساندر فلمینگ" class="legend-img" />
+          <div class="legend-info">
+            <h3>الکساندر فلمینگ</h3>
+            <span class="legend-role">کاشف پنی‌سیلین</span>
+            <p>در سال ۱۹۲۸، او به طور اتفاقی متوجه شد که کپک پنی‌سیلیوم باکتری‌ها را نابود می‌کند. این کشف سرآغاز عصر آنتی‌بیوتیک‌ها بود.</p>
+          </div>
+        </div>
+
+        <div class="legend-card">
+          <img src="/assets/avatars/avatar_waksman.png" alt="سلمان واکسمن" class="legend-img" />
+          <div class="legend-info">
+            <h3>سلمان واکسمن</h3>
+            <span class="legend-role">کاشف استرپتومایسین</span>
+            <p>او کاشف اولین داروی موثر علیه سل بود و برای اولین بار واژه «آنتی‌بیوتیک» را به معنای امروزی آن تعریف کرد.</p>
+          </div>
+        </div>
+
+        <div class="legend-card">
+          <img src="/assets/avatars/avatar_domagk.png" alt="گرهارد دماک" class="legend-img" />
+          <div class="legend-info">
+            <h3>گرهارد دماک</h3>
+            <span class="legend-role">کاشف سولفونامید</span>
+            <p>او اولین داروی ضدباکتریایی تجاری (پرونتوسیل) را کشف کرد که توانست عفونت‌های کشنده را درمان کند و جایزه نوبل گرفت.</p>
+          </div>
+        </div>
+
+        <div class="legend-card">
+          <img src="/assets/avatars/avatar_florey.png" alt="هاوارد فلوری" class="legend-img" />
+          <div class="legend-info">
+            <h3>هاوارد فلوری</h3>
+            <span class="legend-role">توسعه تولید پنی‌سیلین</span>
+            <p>او با تشکیل تیمی قدرتمند در آکسفورد، توانست پنی‌سیلین را خالص‌سازی کرده و به تولید انبوه برساند تا جان سربازان را نجات دهد.</p>
+          </div>
+        </div>
+
+        <div class="legend-card">
+          <img src="/assets/avatars/avatar_hodgkin.png" alt="دوروتی هاجکین" class="legend-img" />
+          <div class="legend-info">
+            <h3>دوروتی هاجکین</h3>
+            <span class="legend-role">تعیین ساختار پنی‌سیلین</span>
+            <p>او با استفاده از کریستالوگرافی اشعه ایکس، ساختار سه بعدی پنی‌سیلین را کشف کرد که راه را برای ساخت مصنوعی آن هموار کرد.</p>
+          </div>
+        </div>
+
+        <div class="legend-card">
+          <img src="/assets/avatars/avatar_bugie.png" alt="الیزابت بوگی" class="legend-img" />
+          <div class="legend-info">
+            <h3>الیزابت بوگی</h3>
+            <span class="legend-role">همکار در کشف استرپتومایسین</span>
+            <p>او یکی از اعضای کلیدی آزمایشگاه واکسمن بود و نقش اساسی در کشف استرپتومایسین ایفا کرد، اگرچه اغلب نامش کمتر شنیده شده است.</p>
+          </div>
+        </div>
+
+        <div class="legend-card">
+          <img src="/assets/avatars/avatar_youyou.png" alt="تو یویو" class="legend-img" />
+          <div class="legend-info">
+            <h3>تو یویو</h3>
+            <span class="legend-role">کاشف آرتمیسینین</span>
+            <p>او با الهام از متون طب سنتی چین، دارویی حیاتی برای درمان مالاریا کشف کرد که جان میلیون‌ها نفر را در سراسر جهان نجات داده است.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="bottom-cta-section">
       <h2 class="cta-title">یادگیری داروسازی با AntibioticPlay</h2>
       <router-link to="/register" class="btn btn-primary cta-btn">
@@ -243,6 +313,64 @@ const authStore = useAuthStore();
 .icon-heart { color: var(--color-secondary); }
 .feature-text h3 { margin: 0 0 0.5rem 0; font-size: 1.4rem; color: var(--color-text); }
 .feature-text p { margin: 0; color: var(--color-text-light); line-height: 1.6; font-size: 1.1rem; }
+
+/* --- Legends Section --- */
+.legends-section {
+  padding: 5rem 2rem;
+  background-color: #f9fbfd; /* رنگ زمینه متفاوت برای تمایز */
+  text-align: center;
+}
+.section-subtitle {
+  color: var(--color-text-light);
+  margin-bottom: 3rem;
+  font-size: 1.1rem;
+}
+.legends-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.legend-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.legend-card:hover {
+  transform: translateY(-5px);
+}
+.legend-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 3px solid var(--color-primary-light);
+}
+.legend-info h3 {
+  color: var(--color-primary);
+  margin: 0.5rem 0;
+  font-size: 1.3rem;
+}
+.legend-role {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+.legend-info p {
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
 
 /* --- Bottom CTA Section --- */
 .bottom-cta-section {

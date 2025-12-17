@@ -1,12 +1,23 @@
 from flask import Blueprint
 from flask_restful import Api
 
-from .auth import auth_bp
+# ایمپورت کردن کلاس‌های احراز هویت و آپدیت آواتار
+from .auth import UserRegistration, UserLogin, UserProfile, UpdateAvatar
 
 from .quiz import QuizList, QuizDetail, QuizSubmit
 from .leaderboard import Leaderboard
 from .badge_routes import AllBadges, EarnedBadges
 from .bookmarks import BookmarkToggle, BookmarkList
+
+# Auth Blueprint setup
+auth_bp = Blueprint('auth_bp', __name__)
+auth_api = Api(auth_bp)
+
+# ثبت اندپوینت‌های مربوط به کاربر
+auth_api.add_resource(UserRegistration, '/register')
+auth_api.add_resource(UserLogin, '/login')
+auth_api.add_resource(UserProfile, '/profile')
+auth_api.add_resource(UpdateAvatar, '/update-avatar')  # <-- اندپوینت جدید اضافه شد
 
 # Quiz Blueprint setup
 quiz_bp = Blueprint('quiz_bp', __name__)
