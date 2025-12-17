@@ -46,6 +46,76 @@
       <div class="bg-pattern"></div>
     </section>
 
+    <section class="legends-section">
+      <h2 class="section-title">با قهرمانان آنتی‌بیوتیک آشنا شوید</h2>
+      <p class="section-subtitle">شما می‌توانید یکی از این دانشمندان بزرگ را به عنوان آواتار خود انتخاب کنید!</p>
+      
+      <div class="legends-grid">
+        <div class="legend-card">
+          <img src="/avatars/avatar_fleming.png" alt="الکساندر فلمینگ" class="legend-img" />
+          <div class="legend-info">
+            <h3>الکساندر فلمینگ</h3>
+            <span class="legend-role">کاشف پنی‌سیلین</span>
+            <p>در سال ۱۹۲۸، او به طور اتفاقی متوجه شد که کپک پنی‌سیلیوم باکتری‌ها را نابود می‌کند. این کشف سرآغاز عصر آنتی‌بیوتیک‌ها بود.</p>
+          </div>
+        </div>
+
+        <div class="legend-card">
+          <img src="/avatars/avatar_waksman.png" alt="سلمان واکسمن" class="legend-img" />
+          <div class="legend-info">
+            <h3>سلمان واکسمن</h3>
+            <span class="legend-role">کاشف استرپتومایسین</span>
+            <p>او کاشف اولین داروی موثر علیه سل بود و برای اولین بار واژه «آنتی‌بیوتیک» را به معنای امروزی آن تعریف کرد.</p>
+          </div>
+        </div>
+
+        <div class="legend-card">
+          <img src="/avatars/avatar_domagk.png" alt="گرهارد دماک" class="legend-img" />
+          <div class="legend-info">
+            <h3>گرهارد دماک</h3>
+            <span class="legend-role">کاشف سولفونامید</span>
+            <p>او اولین داروی ضدباکتریایی تجاری (پرونتوسیل) را کشف کرد که توانست عفونت‌های کشنده را درمان کند و جایزه نوبل گرفت.</p>
+          </div>
+        </div>
+
+        <div class="legend-card">
+          <img src="/avatars/avatar_florey.png" alt="هاوارد فلوری" class="legend-img" />
+          <div class="legend-info">
+            <h3>هاوارد فلوری</h3>
+            <span class="legend-role">توسعه تولید پنی‌سیلین</span>
+            <p>او با تشکیل تیمی قدرتمند در آکسفورد، توانست پنی‌سیلین را خالص‌سازی کرده و به تولید انبوه برساند تا جان سربازان را نجات دهد.</p>
+          </div>
+        </div>
+
+        <div class="legend-card">
+          <img src="/avatars/avatar_hodgkin.png" alt="دوروتی هاجکین" class="legend-img" />
+          <div class="legend-info">
+            <h3>دوروتی هاجکین</h3>
+            <span class="legend-role">تعیین ساختار پنی‌سیلین</span>
+            <p>او با استفاده از کریستالوگرافی اشعه ایکس، ساختار سه بعدی پنی‌سیلین را کشف کرد که راه را برای ساخت مصنوعی آن هموار کرد.</p>
+          </div>
+        </div>
+
+        <div class="legend-card">
+          <img src="/avatars/avatar_bugie.png" alt="الیزابت بوگی" class="legend-img" />
+          <div class="legend-info">
+            <h3>الیزابت بوگی</h3>
+            <span class="legend-role">همکار در کشف استرپتومایسین</span>
+            <p>او یکی از اعضای کلیدی آزمایشگاه واکسمن بود و نقش اساسی در کشف استرپتومایسین ایفا کرد، اگرچه اغلب نامش کمتر شنیده شده است.</p>
+          </div>
+        </div>
+
+        <div class="legend-card">
+          <img src="/avatars/avatar_youyou.png" alt="تو یویو" class="legend-img" />
+          <div class="legend-info">
+            <h3>تو یویو</h3>
+            <span class="legend-role">کاشف آرتمیسینین</span>
+            <p>او با الهام از متون طب سنتی چین، دارویی حیاتی برای درمان مالاریا کشف کرد که جان میلیون‌ها نفر را در سراسر جهان نجات داده است.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="features-section">
       <h2 class="section-title">چرا یادگیری با AntibioticPlay را دوست خواهید داشت؟</h2>
       
@@ -87,76 +157,6 @@
           <div class="feature-text">
             <h3>سرگرم‌کننده است!</h3>
             <p>یادگیری خشک و خسته‌کننده را فراموش کنید. اینجا بازی کنید و یاد بگیرید.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="legends-section">
-      <h2 class="section-title">با قهرمانان آنتی‌بیوتیک آشنا شوید</h2>
-      <p class="section-subtitle">شما می‌توانید یکی از این دانشمندان بزرگ را به عنوان آواتار خود انتخاب کنید!</p>
-      
-      <div class="legends-grid">
-        <div class="legend-card">
-          <img src="/assets/avatars/avatar_fleming.png" alt="الکساندر فلمینگ" class="legend-img" />
-          <div class="legend-info">
-            <h3>الکساندر فلمینگ</h3>
-            <span class="legend-role">کاشف پنی‌سیلین</span>
-            <p>در سال ۱۹۲۸، او به طور اتفاقی متوجه شد که کپک پنی‌سیلیوم باکتری‌ها را نابود می‌کند. این کشف سرآغاز عصر آنتی‌بیوتیک‌ها بود.</p>
-          </div>
-        </div>
-
-        <div class="legend-card">
-          <img src="/assets/avatars/avatar_waksman.png" alt="سلمان واکسمن" class="legend-img" />
-          <div class="legend-info">
-            <h3>سلمان واکسمن</h3>
-            <span class="legend-role">کاشف استرپتومایسین</span>
-            <p>او کاشف اولین داروی موثر علیه سل بود و برای اولین بار واژه «آنتی‌بیوتیک» را به معنای امروزی آن تعریف کرد.</p>
-          </div>
-        </div>
-
-        <div class="legend-card">
-          <img src="/assets/avatars/avatar_domagk.png" alt="گرهارد دماک" class="legend-img" />
-          <div class="legend-info">
-            <h3>گرهارد دماک</h3>
-            <span class="legend-role">کاشف سولفونامید</span>
-            <p>او اولین داروی ضدباکتریایی تجاری (پرونتوسیل) را کشف کرد که توانست عفونت‌های کشنده را درمان کند و جایزه نوبل گرفت.</p>
-          </div>
-        </div>
-
-        <div class="legend-card">
-          <img src="/assets/avatars/avatar_florey.png" alt="هاوارد فلوری" class="legend-img" />
-          <div class="legend-info">
-            <h3>هاوارد فلوری</h3>
-            <span class="legend-role">توسعه تولید پنی‌سیلین</span>
-            <p>او با تشکیل تیمی قدرتمند در آکسفورد، توانست پنی‌سیلین را خالص‌سازی کرده و به تولید انبوه برساند تا جان سربازان را نجات دهد.</p>
-          </div>
-        </div>
-
-        <div class="legend-card">
-          <img src="/assets/avatars/avatar_hodgkin.png" alt="دوروتی هاجکین" class="legend-img" />
-          <div class="legend-info">
-            <h3>دوروتی هاجکین</h3>
-            <span class="legend-role">تعیین ساختار پنی‌سیلین</span>
-            <p>او با استفاده از کریستالوگرافی اشعه ایکس، ساختار سه بعدی پنی‌سیلین را کشف کرد که راه را برای ساخت مصنوعی آن هموار کرد.</p>
-          </div>
-        </div>
-
-        <div class="legend-card">
-          <img src="/assets/avatars/avatar_bugie.png" alt="الیزابت بوگی" class="legend-img" />
-          <div class="legend-info">
-            <h3>الیزابت بوگی</h3>
-            <span class="legend-role">همکار در کشف استرپتومایسین</span>
-            <p>او یکی از اعضای کلیدی آزمایشگاه واکسمن بود و نقش اساسی در کشف استرپتومایسین ایفا کرد، اگرچه اغلب نامش کمتر شنیده شده است.</p>
-          </div>
-        </div>
-
-        <div class="legend-card">
-          <img src="/assets/avatars/avatar_youyou.png" alt="تو یویو" class="legend-img" />
-          <div class="legend-info">
-            <h3>تو یویو</h3>
-            <span class="legend-role">کاشف آرتمیسینین</span>
-            <p>او با الهام از متون طب سنتی چین، دارویی حیاتی برای درمان مالاریا کشف کرد که جان میلیون‌ها نفر را در سراسر جهان نجات داده است.</p>
           </div>
         </div>
       </div>
@@ -300,20 +300,6 @@ const authStore = useAuthStore();
 .item-3 { bottom: 40px; right: 0; animation-delay: 2s; font-size: 2.5rem; }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
-/* --- Features Section --- */
-.features-section { padding: 5rem 2rem; background-color: white; text-align: center; display: flex; flex-direction: column; align-items: center; }
-.section-title { font-size: 2rem; color: var(--color-text); margin-bottom: 4rem; font-weight: 800; }
-.features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem 4rem; max-width: 1000px; width: 100%; text-align: right; }
-.feature-item { display: flex; align-items: flex-start; gap: 1.5rem; }
-.icon-wrapper { flex-shrink: 0; width: 60px; display: flex; justify-content: center; }
-.feature-icon { font-size: 2.5rem; }
-.icon-fire { color: var(--color-danger); }
-.icon-check { color: var(--color-primary); }
-.icon-star { color: var(--color-warning); }
-.icon-heart { color: var(--color-secondary); }
-.feature-text h3 { margin: 0 0 0.5rem 0; font-size: 1.4rem; color: var(--color-text); }
-.feature-text p { margin: 0; color: var(--color-text-light); line-height: 1.6; font-size: 1.1rem; }
-
 /* --- Legends Section --- */
 .legends-section {
   padding: 5rem 2rem;
@@ -371,6 +357,20 @@ const authStore = useAuthStore();
   font-size: 0.95rem;
   line-height: 1.6;
 }
+
+/* --- Features Section --- */
+.features-section { padding: 5rem 2rem; background-color: white; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.section-title { font-size: 2rem; color: var(--color-text); margin-bottom: 4rem; font-weight: 800; }
+.features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem 4rem; max-width: 1000px; width: 100%; text-align: right; }
+.feature-item { display: flex; align-items: flex-start; gap: 1.5rem; }
+.icon-wrapper { flex-shrink: 0; width: 60px; display: flex; justify-content: center; }
+.feature-icon { font-size: 2.5rem; }
+.icon-fire { color: var(--color-danger); }
+.icon-check { color: var(--color-primary); }
+.icon-star { color: var(--color-warning); }
+.icon-heart { color: var(--color-secondary); }
+.feature-text h3 { margin: 0 0 0.5rem 0; font-size: 1.4rem; color: var(--color-text); }
+.feature-text p { margin: 0; color: var(--color-text-light); line-height: 1.6; font-size: 1.1rem; }
 
 /* --- Bottom CTA Section --- */
 .bottom-cta-section {

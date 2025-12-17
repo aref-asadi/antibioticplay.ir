@@ -75,48 +75,51 @@ const selectedAvatar = ref('');
 const isSaving = ref(false);
 
 // لیست دانشمندان (آواتارها)
+// ... بخش‌های دیگر کد ثابت ...
+
+// لیست دانشمندان (آواتارها) - با آدرس دهی اصلاح شده
 const avatars = [
   { 
     id: 'fleming', 
     name: 'الکساندر فلمینگ', 
     role: 'کاشف پنی‌سیلین', 
-    image: '/assets/avatars/avatar_fleming.png' 
+    image: '/avatars/avatar_fleming.png' // اصلاح شد
   },
   { 
     id: 'waksman', 
     name: 'سلمان واکسمن', 
     role: 'کاشف استرپتومایسین', 
-    image: '/assets/avatars/avatar_waksman.png' 
+    image: '/avatars/avatar_waksman.png' // اصلاح شد
   },
   { 
     id: 'domagk', 
     name: 'گرهارد دماک', 
     role: 'کاشف سولفونامید', 
-    image: '/assets/avatars/avatar_domagk.png' 
+    image: '/avatars/avatar_domagk.png' // اصلاح شد
   },
   { 
     id: 'florey', 
     name: 'هاوارد فلوری', 
     role: 'توسعه تولید پنی‌سیلین', 
-    image: '/assets/avatars/avatar_florey.png' 
+    image: '/avatars/avatar_florey.png' // اصلاح شد
   },
   { 
     id: 'hodgkin', 
     name: 'دوروتی هاجکین', 
     role: 'تعیین ساختار پنی‌سیلین', 
-    image: '/assets/avatars/avatar_hodgkin.png' 
+    image: '/avatars/avatar_hodgkin.png' // اصلاح شد
   },
   { 
     id: 'bugie', 
     name: 'الیزابت بوگی', 
     role: 'همکار در کشف استرپتومایسین', 
-    image: '/assets/avatars/avatar_bugie.png' 
+    image: '/avatars/avatar_bugie.png' // اصلاح شد
   },
   { 
     id: 'youyou', 
     name: 'تو یویو', 
     role: 'کاشف آرتمیسینین (ضد مالاریا)', 
-    image: '/assets/avatars/avatar_youyou.png' 
+    image: '/avatars/avatar_youyou.png' // اصلاح شد
   }
 ];
 
@@ -124,8 +127,10 @@ const avatars = [
 const getAvatarUrl = (id) => {
   const found = avatars.find(a => a.id === id);
   // اگر پیدا نشد، عکس فلمینگ را پیش‌فرض نشان بده
-  return found ? found.image : '/assets/avatars/avatar_fleming.png';
+  return found ? found.image : '/avatars/avatar_fleming.png'; // اصلاح شد
 };
+
+// ... بقیه کد بدون تغییر ...
 
 onMounted(() => {
   if (authStore.user) {
