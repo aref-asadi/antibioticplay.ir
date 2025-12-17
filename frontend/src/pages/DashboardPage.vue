@@ -77,12 +77,17 @@
       <aside class="sidebar-column">
         
         <div class="sidebar-widget user-widget">
-          <div class="user-avatar-placeholder">
-            {{ user?.username?.charAt(0).toUpperCase() }}
+          <div class="user-avatar-img-container">
+            <img :src="userAvatar" alt="Avatar" class="sidebar-avatar" />
           </div>
           <div class="user-info">
             <h3>{{ user?.username }}</h3>
-            <p>{{ user?.email }}</p>
+            <p class="user-email">{{ user?.email }}</p>
+            
+            <router-link to="/profile" class="profile-link-btn">
+              <font-awesome-icon icon="fas fa-user-pen" />
+              ویرایش پروفایل
+            </router-link>
           </div>
         </div>
 
@@ -158,9 +163,9 @@ import { useQuizStore } from '../stores/quiz';
 import badgeService from '../services/badgeService';
 import leaderboardService from '../services/leaderboardService'; // ایمپورت سرویس لیدربورد
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle, faUserPen } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faQuestionCircle);
+library.add(faQuestionCircle, faUserPen);
 
 const authStore = useAuthStore();
 const quizStore = useQuizStore();
@@ -177,8 +182,8 @@ const getModuleColor = (index) => moduleColors[index % moduleColors.length];
 
 const userAvatar = computed(() => {
   const avatarId = authStore.user?.avatar_id || 'fleming';
-  // ساخت آدرس فایل بر اساس الگوی نامگذاری
-  return `/assets/avatars/avatar_${avatarId}.png`;
+  // اصلاح مسیر: فایل‌ها در پوشه public/avatars هستند
+  return `/avatars/avatar_${avatarId}.png`;
 })
 
 onMounted(async () => {
@@ -284,9 +289,50 @@ const startQuiz = async (quizId, index) => {
 
 /* User Widget */
 .user-widget { display: flex; align-items: center; gap: 1rem; }
-.user-avatar-placeholder { width: 60px; height: 60px; background-color: var(--color-secondary); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; font-weight: bold; border: 2px solid rgba(0,0,0,0.1); }
+/* استایل جدید برای عکس آواتار در سایدبار */
+.user-avatar-img-container {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--color-primary);
+  background-color: white;
+  flex-shrink: 0;
+}
+.sidebar-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .user-info h3 { margin: 0; font-size: 1.2rem; }
 .user-info p { margin: 0; color: var(--color-text-light); font-size: 0.9rem; }
+.user-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.user-email {
+  margin: 0 0 0.5rem 0; /* کمی فاصله پایین ایمیل */
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+}
+
+.profile-link-btn {
+  font-size: 0.85rem;
+  color: var(--color-secondary); /* یا color-primary بسته به سلیقه */
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: opacity 0.2s;
+}
+
+.profile-link-btn:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
 
 /* Leaderboard Widget */
 .league-status { display: flex; align-items: center; gap: 1rem; }

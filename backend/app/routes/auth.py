@@ -69,7 +69,10 @@ class UserProfile(Resource):
             'level': user_data.get('level', 1),
             'correct_streak': user_data.get('correct_streak', 0),
             'league': league_info,
-            'avatar_id': user_data.get('avatar_id', 'fleming')
+            'avatar_id': user_data.get('avatar_id', 'fleming'),
+            # --- موارد زیر اضافه شدند ---
+            'badges_earned': user_data.get('badges_earned', []),
+            'quizzes_completed': user_data.get('quizzes_completed', 0)
         }, 200
     
 class UpdateAvatar(Resource):
