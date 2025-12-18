@@ -9,7 +9,11 @@
     </router-link>
 
     <div class="nav-item logo-item">
-      <span class="nav-logo-text">AntibioticPlay</span>
+      <router-link to="/" class="dashboard-logo-link">
+        <div class="logo-container">
+          <h2 class="nav-logo-text">AntibioticPlay</h2>
+        </div>
+      </router-link>
     </div>
 
     <router-link to="/leaderboard" class="nav-item" active-class="active">

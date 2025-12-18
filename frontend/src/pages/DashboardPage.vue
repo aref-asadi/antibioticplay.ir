@@ -4,7 +4,12 @@
     <header class="dashboard-topbar">
       <div class="topbar-content">
         <div class="right-section">
-          <span class="logo-text">AntibioticPlay</span>
+          <router-link to="/" class="dashboard-logo-link">
+            <div class="logo-container">
+              <font-awesome-icon icon="fas fa-microscope" class="logo-icon" />
+              <h2 class="logo-text">AntibioticPlay</h2>
+            </div>
+          </router-link>
         </div>
         
         <div class="stats-bar">
@@ -170,9 +175,9 @@ import { useQuizStore } from '../stores/quiz';
 import badgeService from '../services/badgeService';
 import leaderboardService from '../services/leaderboardService'; // ایمپورت سرویس لیدربورد
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faQuestionCircle, faUserPen, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle, faUserPen, faLock, faMicroscope } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faQuestionCircle, faUserPen, faLock);
+library.add(faQuestionCircle, faUserPen, faLock, faMicroscope);
 
 const authStore = useAuthStore();
 const quizStore = useQuizStore();
@@ -287,8 +292,32 @@ const startQuiz = (level, unitIndex = 0) => {
 .dashboard-topbar { background-color: white; border-bottom: 2px solid #e5e5e5; position: sticky; top: 0; z-index: 100; padding: 0.8rem 2rem; }
 .topbar-content { max-width: 1050px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
 
-.logo-text { color: var(--color-primary); font-weight: 800; font-size: 1.5rem; letter-spacing: 0.5px; }
+.dashboard-logo-link {
+  text-decoration: none;
+  display: inline-block;
+  margin-right: auto; /* برای هل دادن بقیه آیتم‌ها به چپ (در حالت RTL) */
+}
 
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  font-size: 1.4rem;
+  color: var(--color-primary);
+}
+
+.logo-text {
+  background: linear-gradient(45deg, var(--color-primary), #2c3e50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  font-size: 1.4rem;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
 /* Left Section Adjustment */
 .left-section {
   display: flex; 
@@ -439,7 +468,7 @@ const startQuiz = (level, unitIndex = 0) => {
   .desktop-only { display: none; }
   
   /* --- FIX: مخفی کردن لوگو در هدر موبایل --- */
-  .logo-text { display: none; }
+  .logo-container { display: none; }
   /* تنظیم فاصله هدر در موبایل */
   .dashboard-topbar { padding: 0.8rem 1rem; }
 }
