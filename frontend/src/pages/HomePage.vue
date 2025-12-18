@@ -215,10 +215,7 @@
         <div class="footer-column uni-logo-section">
           <h4>با حمایت</h4>
           <div class="uni-logo-box">
-            <div class="logo-placeholder">
-              <font-awesome-icon icon="fas fa-university" />
-              <span>لوگوی دانشگاه</span>
-            </div>
+             <img src="/images/uni_logo.png" alt="University Logo" class="uni-logo-img" />
           </div>
         </div>
 
@@ -276,14 +273,22 @@ const authStore = useAuthStore();
 
 /* --- Hero Section --- */
 .hero-section {
-  background: linear-gradient(135deg, #fdfbf7 0%, #fff 100%);
-  padding: 4rem 1.5rem;
-  min-height: 90vh; /* تمام صفحه در دسکتاپ */
+  background-color: var(--color-hero-bg);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   position: relative;
   overflow: hidden;
+  padding: 4rem 1.5rem;
+  min-height: 90vh; /* تمام صفحه در دسکتاپ */
+}
+.bg-pattern {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.2) 2px, transparent 2px);
+  background-size: 50px 50px;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .hero-container {
@@ -564,10 +569,10 @@ const authStore = useAuthStore();
 
 /* --- Footer --- */
 .main-footer {
-  background-color: var(--color-hero-bg); /* Or slightly darker if desired */
-  color: rgba(255, 255, 255, 0.7);
+  background-color: #1a202c; /* رنگ تیره (سرمه‌ای/مشکی) برای کنتراست بهتر */
+  color: rgba(255, 255, 255, 0.8);
   padding: 4rem 2rem 2rem;
-  border-top: 2px solid rgba(255,255,255,0.1); /* Separator line */
+  border-top: 1px solid rgba(255,255,255,0.1);
 }
 .footer-container {
   max-width: 1100px;
@@ -608,22 +613,32 @@ const authStore = useAuthStore();
 }
 
 .uni-logo-box {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1); /* پس‌زمینه شیشه‌ای */
   padding: 1rem;
   border-radius: 12px;
-  display: inline-block;
-  min-width: 150px;
-  text-align: center;
-}
-.logo-placeholder {
-  display: flex;
-  flex-direction: column;
+  display: flex; /* برای وسط‌چین کردن عالی */
+  justify-content: center;
   align-items: center;
-  gap: 0.5rem;
-  color: rgba(255,255,255,0.8);
-  font-size: 0.9rem;
+  min-width: 140px;
+  min-height: 80px;
+  backdrop-filter: blur(5px); /* افکت محو شدن پشت (اختیاری) */
 }
-.logo-placeholder svg { font-size: 2rem; }
+
+/* استایل خود تصویر لوگو */
+.uni-logo-img {
+  max-width: 120px; /* حداکثر عرض */
+  max-height: 70px; /* حداکثر ارتفاع */
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  /* اگر لوگوی شما مشکی است و فوتر تیره، خط زیر را فعال کنید تا لوگو سفید شود: */
+  /* filter: brightness(0) invert(1); */
+  transition: transform 0.3s ease;
+}
+
+.uni-logo-box:hover .uni-logo-img {
+  transform: scale(1.05); /* افکت زوم هنگام هاور */
+}
 
 /* --- Responsive --- */
 @media (max-width: 850px) {
