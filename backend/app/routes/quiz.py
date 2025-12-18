@@ -14,9 +14,17 @@ class QuizList(Resource):
         current_user = get_jwt_identity()
         user = User.find_by_username(current_user)
         
+        if not user:
+            return {'message': 'User not found'}, 404
+            
         completed_quizzes = user.get('completed_quizzes', [])
         
+        # این متغیر تعیین می‌کند که آیا مرحله فعلی باید باز باشد یا خیر.
+        # مرحله اول همیشه باز است، پس با True شروع می‌کنیم.
+        unlock_next = True 
+
         path_data = []
+        
         for unit in LEARNING_PATH:
             unit_data = {
                 "id": unit["id"],
@@ -31,13 +39,25 @@ class QuizList(Resource):
                 if quiz_info:
                     is_completed = quiz_id in completed_quizzes
                     
+                    # وضعیت قفل بودن: اگر اجازه باز کردن (unlock_next) نداریم، پس قفل است.
+                    is_locked = not unlock_next
+                    
                     unit_data["levels"].append({
                         "id": quiz_id,
                         "title": quiz_info["title"],
-                        "icon": "star",
+                        "icon": quiz_info.get("icon", "star"),
                         "is_completed": is_completed,
+                        "is_locked": is_locked, # <--- فیلد جدید
                         "total_questions": len(quiz_info["questions"])
                     })
+                    
+                    # منطق برای مرحله بعد:
+                    # اگر مرحله فعلی تکمیل شده باشد، مرحله بعدی باز می‌شود.
+                    # اگر تکمیل نشده باشد، مرحله بعدی قفل خواهد ماند.
+                    if is_completed:
+                        unlock_next = True
+                    else:
+                        unlock_next = False
             
             path_data.append(unit_data)
 

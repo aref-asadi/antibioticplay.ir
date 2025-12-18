@@ -60,18 +60,20 @@
               v-for="(level, index) in unit.levels" 
               :key="level.id" 
               class="level-node-wrapper"
-              :class="{ 'completed': level.is_completed }"
+              :class="{ 
+                'completed': level.is_completed,
+                'locked': level.is_locked 
+              }"
             >
               <button 
                 class="level-button" 
-                :style="{ 
-                  backgroundColor: level.is_completed ? '#ffc107' : unit.color,
-                  boxShadow: `0 6px 0 ${adjustColor(level.is_completed ? '#ffc107' : unit.color, -40)}`
-                }"
-                @click="startQuiz(level.id, unit.color)"
+                :style="getLevelButtonStyle(level, unit.color)"
+                @click="startQuiz(level)"
+                :disabled="level.is_locked"
               >
                 <font-awesome-icon v-if="level.is_completed" icon="fas fa-check" class="check-icon" />
-                <font-awesome-icon v-else icon="fas fa-star" class="level-icon" />
+                <font-awesome-icon v-else-if="level.is_locked" icon="fas fa-lock" class="lock-icon" />
+                <font-awesome-icon v-else :icon="['fas', level.icon || 'star']" class="level-icon" />
               </button>
               
               <span class="level-title">{{ level.title }}</span>
@@ -171,9 +173,9 @@ import { useQuizStore } from '../stores/quiz';
 import badgeService from '../services/badgeService';
 import leaderboardService from '../services/leaderboardService'; // ایمپورت سرویس لیدربورد
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faQuestionCircle, faUserPen } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle, faUserPen, faLock } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faQuestionCircle, faUserPen);
+library.add(faQuestionCircle, faUserPen, faLock);
 
 const authStore = useAuthStore();
 const quizStore = useQuizStore();
@@ -241,17 +243,43 @@ const adjustColor = (color, amount) => {
     return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
 }
 
-const startQuiz = async (quizId, index) => {
-  await quizStore.fetchQuizDetails(quizId);
-  if (!quizStore.error) {
-    // رنگ تم را به عنوان کوئری به صفحه بعد می‌فرستیم
-    const themeColor = getModuleColor(index);
-    router.push({ 
-      name: 'Quiz', 
-      params: { id: quizId },
-      query: { theme: themeColor } // ارسال رنگ
-    });
+const getLevelButtonStyle = (level, unitColor) => {
+  if (level.is_locked) {
+    return {
+      backgroundColor: '#e5e5e5',
+      boxShadow: 'none',
+      cursor: 'not-allowed',
+      color: '#afafaf'
+    };
   }
+  
+  if (level.is_completed) {
+    return {
+      backgroundColor: '#ffc107',
+      boxShadow: '0 6px 0 #d39e00',
+      color: 'white'
+    };
+  }
+
+  return {
+    backgroundColor: unitColor,
+    boxShadow: `0 6px 0 ${adjustColor(unitColor, -40)}`,
+    color: 'white'
+  };
+};
+
+const startQuiz = (level, unitIndex = 0) => {
+  if (!level || level.is_locked) return;
+
+  const quizId = level.id;
+  // prefer unit color if passed on level, otherwise derive from module index
+  const themeColor = level.unitColor || getModuleColor(unitIndex);
+
+  router.push({
+    name: 'Quiz',
+    params: { id: quizId },
+    query: { theme: themeColor }
+  });
 };
 </script>
 
@@ -319,6 +347,22 @@ const startQuiz = async (quizId, index) => {
 
 .level-node-wrapper:nth-child(odd) { transform: translateX(-30px); }
 .level-node-wrapper:nth-child(even) { transform: translateX(30px); }
+
+.level-node-wrapper.locked .level-button {
+  background-color: #e5e5e5 !important; /* اجبار رنگ خاکستری */
+  box-shadow: 0 4px 0 #ccc !important;
+  transform: none !important; /* حذف انیمیشن کلیک */
+}
+
+.level-node-wrapper.locked .level-title {
+  color: #aaa;
+  border-color: #eee;
+}
+
+.lock-icon {
+  font-size: 1.5rem;
+  opacity: 0.6;
+}
 
 /* Sidebar */
 .sidebar-column { width: 350px; display: flex; flex-direction: column; gap: 1.5rem; }
