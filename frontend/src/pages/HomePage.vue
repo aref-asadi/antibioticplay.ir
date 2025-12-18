@@ -3,11 +3,26 @@
     
     <header class="landing-header">
       <div class="header-content">
-        <h2 class="logo-text">AntibioticPlay</h2>
+        <div class="logo-container">
+          <font-awesome-icon icon="fas fa-microscope" class="logo-icon" />
+          <h2 class="logo-text">AntibioticPlay</h2>
         </div>
+        
+        <div class="header-actions">
+           <router-link v-if="!authStore.isAuthenticated" to="/login" class="btn-sm btn-outline">
+             ورود
+           </router-link>
+           <router-link v-else to="/dashboard" class="btn-sm btn-primary">
+             داشبورد
+           </router-link>
+        </div>
+      </div>
     </header>
 
     <section class="hero-section">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+
       <div class="hero-container">
         
         <div class="hero-content">
@@ -231,9 +246,9 @@
 <script setup>
 import { useAuthStore } from '../stores/auth';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faGlobeAmericas, faFire, faCheckCircle, faStar, faHeart, faUniversity, faArrowLeft, faRocket, faBacteria, faPrescriptionBottleAlt } from '@fortawesome/free-solid-svg-icons';
+import { faGlobeAmericas, faFire, faCheckCircle, faStar, faHeart, faUniversity, faArrowLeft, faRocket, faBacteria, faPrescriptionBottleAlt, faMicroscope } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faGlobeAmericas, faFire, faCheckCircle, faStar, faHeart, faUniversity, faArrowLeft, faRocket, faBacteria, faPrescriptionBottleAlt);
+library.add(faGlobeAmericas, faFire, faCheckCircle, faStar, faHeart, faUniversity, faArrowLeft, faRocket, faBacteria, faPrescriptionBottleAlt, faMicroscope);
 
 const authStore = useAuthStore();
 </script>
@@ -246,49 +261,97 @@ const authStore = useAuthStore();
   flex-direction: column;
 }
 
-/* --- Header --- */
+/* --- Sticky Glass Header --- */
 .landing-header {
-  position: absolute;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
-  padding: 1.5rem 2rem;
-  z-index: 10;
+  padding: 0.8rem 2rem;
+  z-index: 1000;
   display: flex;
-  justify-content: center; /* Center logo on desktop usually, or space-between */
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.85); /* پس‌زمینه شیشه‌ای */
+  backdrop-filter: blur(12px); /* افکت بلور */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 .header-content {
   width: 100%;
   max-width: 1100px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.logo-icon {
+  font-size: 1.5rem;
+  color: var(--color-primary);
 }
 .logo-text {
-  color: white;
+  /* گرادینت برای لوگو */
+  background: linear-gradient(45deg, var(--color-primary), #2c3e50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   font-weight: 800;
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   margin: 0;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+}
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.btn-sm {
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.btn-outline {
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+}
+.btn-outline:hover {
+  background-color: var(--color-primary);
+  color: white;
 }
 
 /* --- Hero Section --- */
 .hero-section {
-  background-color: var(--color-hero-bg);
+  /* گرادینت تمیز و روشن برای خوانایی عالی */
+  background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%);
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   overflow: hidden;
-  padding: 4rem 1.5rem;
-  min-height: 90vh; /* تمام صفحه در دسکتاپ */
+  padding: 6rem 1.5rem 4rem; /* padding بالا بیشتر بخاطر هدر چسبان */
+  min-height: 90vh;
 }
-.bg-pattern {
+
+/* Blobs Background */
+.blob {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.2) 2px, transparent 2px);
-  background-size: 50px 50px;
+  border-radius: 50%;
+  filter: blur(80px); /* بلور زیاد برای نرمی */
+  z-index: 1;
   opacity: 0.5;
-  pointer-events: none;
+}
+.blob-1 {
+  width: 400px; height: 400px;
+  background: #dcfce7; /* سبز خیلی روشن (Medical Green) */
+  top: -100px; right: -150px;
+}
+.blob-2 {
+  width: 350px; height: 350px;
+  background: #dbeafe; /* آبی خیلی روشن (Medical Blue) */
+  bottom: 0; left: -100px;
 }
 
 .hero-container {
@@ -298,6 +361,7 @@ const authStore = useAuthStore();
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
   align-items: center;
+  z-index: 2; /* روی Blob ها */
 }
 
 /* --- Left Side: Content --- */
@@ -305,11 +369,10 @@ const authStore = useAuthStore();
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  z-index: 2;
 }
 
 .badge-pill {
-  background-color: #e3f2fd;
+  background-color: white;
   color: #1976d2;
   padding: 0.5rem 1rem;
   border-radius: 50px;
@@ -319,18 +382,20 @@ const authStore = useAuthStore();
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  border: 1px solid #e3f2fd;
 }
 
 .hero-title {
   font-size: 3rem;
   font-weight: 900;
   line-height: 1.2;
-  color: #2c3e50;
+  color: #1e293b; /* رنگ تیره و خوانا */
   margin-bottom: 1.5rem;
 }
 
 .highlight-text {
-  color: var(--color-primary); /* رنگ اصلی سایت شما */
+  color: var(--color-primary); 
   position: relative;
   display: inline-block;
 }
@@ -342,17 +407,18 @@ const authStore = useAuthStore();
   left: 0;
   width: 100%;
   height: 12px;
-  background-color: rgba(66, 185, 131, 0.2); /* رنگ سبز کمرنگ */
+  background-color: rgba(66, 185, 131, 0.2);
   z-index: -1;
   border-radius: 4px;
 }
 
 .hero-subtitle {
   font-size: 1.15rem;
-  color: #555;
+  color: #475569; /* خاکستری سربی خوانا */
   line-height: 1.8;
   margin-bottom: 2.5rem;
   max-width: 90%;
+  font-weight: 500;
 }
 
 .hero-actions {
@@ -362,9 +428,23 @@ const authStore = useAuthStore();
 }
 
 .btn-lg {
-  padding: 0.8rem 2rem;
+  padding: 0.9rem 2.2rem;
   font-size: 1.1rem;
   border-radius: 12px;
+}
+
+/* دکمه اصلی با افکت Glow */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 14px 0 rgba(66, 185, 131, 0.39);
+  transition: all 0.2s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(66, 185, 131, 0.23);
+  filter: brightness(1.05);
 }
 
 .hero-stats {
@@ -381,18 +461,18 @@ const authStore = useAuthStore();
 .stat-item strong {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #2c3e50;
+  color: #1e293b;
 }
 
 .stat-item span {
   font-size: 0.9rem;
-  color: #777;
+  color: #64748b;
 }
 
 .stat-separator {
   width: 1px;
   height: 40px;
-  background-color: #ddd;
+  background-color: #cbd5e1;
 }
 
 /* --- Right Side: Image --- */
@@ -407,15 +487,15 @@ const authStore = useAuthStore();
   max-width: 550px;
   height: auto;
   border-radius: 24px;
-  /* سایه نرم برای جدا شدن از پس‌زمینه */
   filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));
   z-index: 1;
+  background-color: white; /* برای اطمینان در صورت png شفاف */
 }
 
 /* کارت‌های شناور */
 .floating-card {
   position: absolute;
-  background: white;
+  background: rgba(255, 255, 255, 0.95);
   padding: 0.8rem 1.2rem;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.08);
@@ -426,6 +506,8 @@ const authStore = useAuthStore();
   font-size: 0.9rem;
   z-index: 2;
   animation: float 6s ease-in-out infinite;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.5);
 }
 
 .card-1 {
@@ -440,8 +522,8 @@ const authStore = useAuthStore();
   animation-delay: 3s;
 }
 
-.icon-germ { color: #ff4b4b; font-size: 1.2rem; }
-.icon-drug { color: #58cc02; font-size: 1.2rem; }
+.icon-germ { color: #ef4444; font-size: 1.2rem; }
+.icon-drug { color: #22c55e; font-size: 1.2rem; }
 
 @keyframes float {
   0% { transform: translateY(0); }
@@ -471,115 +553,148 @@ const authStore = useAuthStore();
   
   .card-1 { left: 0; }
   .card-2 { right: 0; }
+  
+  /* مخفی کردن Blob در موبایل برای سبکی */
+  .blob { opacity: 0.3; }
 }
 
 /* --- Legends Section --- */
 .legends-section {
   padding: 5rem 2rem;
-  background-color: #f9fbfd; /* رنگ زمینه متفاوت برای تمایز */
+  background-color: #f8fafc; /* رنگ خاکستری خیلی روشن پزشکی */
   text-align: center;
 }
 .section-subtitle {
-  color: var(--color-text-light);
-  margin-bottom: 3rem;
+  color: #64748b;
+  margin-bottom: 4rem;
   font-size: 1.1rem;
 }
 .legends-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 3rem 2rem;
   max-width: 1100px;
   margin: 0 auto;
 }
 .legend-card {
   background: white;
   border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  padding: 2rem 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  position: relative;
+  margin-top: 30px; /* فضا برای بیرون زدگی عکس */
+  border: 1px solid #e2e8f0;
 }
 .legend-card:hover {
   transform: translateY(-5px);
+  border-color: var(--color-primary);
 }
+
+/* عکس بیرون زده از کادر */
 .legend-img {
-  width: 100px;
-  height: 100px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 1rem;
-  border: 3px solid var(--color-primary-light);
+  margin-top: -60px; /* بالا کشیدن عکس */
+  border: 4px solid white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  transition: transform 0.3s ease;
 }
+.legend-card:hover .legend-img {
+  transform: scale(1.1) rotate(3deg);
+}
+
 .legend-info h3 {
-  color: var(--color-primary);
-  margin: 0.5rem 0;
-  font-size: 1.3rem;
+  color: #334155;
+  margin: 1rem 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 .legend-role {
   display: block;
-  font-size: 0.9rem;
-  color: var(--color-secondary);
+  font-size: 0.85rem;
+  color: var(--color-primary);
   font-weight: bold;
   margin-bottom: 1rem;
+  background: #f0fdf4;
+  padding: 0.2rem 0.8rem;
+  border-radius: 20px;
+  width: fit-content;
+  margin-left: auto; margin-right: auto;
 }
 .legend-info p {
-  color: var(--color-text-light);
-  font-size: 0.95rem;
+  color: #64748b;
+  font-size: 0.9rem;
   line-height: 1.6;
 }
 
 /* --- Features Section --- */
 .features-section { padding: 5rem 2rem; background-color: white; text-align: center; display: flex; flex-direction: column; align-items: center; }
-.section-title { font-size: 2rem; color: var(--color-text); margin-bottom: 4rem; font-weight: 800; }
-.features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem 4rem; max-width: 1000px; width: 100%; text-align: right; }
+.section-title { font-size: 2rem; color: #1e293b; margin-bottom: 1rem; font-weight: 800; }
+.features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem 4rem; max-width: 1000px; width: 100%; text-align: right; margin-top: 3rem; }
 .feature-item { display: flex; align-items: flex-start; gap: 1.5rem; }
-.icon-wrapper { flex-shrink: 0; width: 60px; display: flex; justify-content: center; }
-.feature-icon { font-size: 2.5rem; }
-.icon-fire { color: var(--color-danger); }
+.icon-wrapper { flex-shrink: 0; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; background: #f1f5f9; border-radius: 12px; }
+.feature-icon { font-size: 1.8rem; }
+.icon-fire { color: #f59e0b; }
 .icon-check { color: var(--color-primary); }
-.icon-star { color: var(--color-warning); }
-.icon-heart { color: var(--color-secondary); }
-.feature-text h3 { margin: 0 0 0.5rem 0; font-size: 1.4rem; color: var(--color-text); }
-.feature-text p { margin: 0; color: var(--color-text-light); line-height: 1.6; font-size: 1.1rem; }
+.icon-star { color: #eab308; }
+.icon-heart { color: #ec4899; }
+.feature-text h3 { margin: 0 0 0.5rem 0; font-size: 1.2rem; color: #334155; font-weight: 700; }
+.feature-text p { margin: 0; color: #64748b; line-height: 1.6; font-size: 1rem; }
 
 /* --- Bottom CTA Section --- */
 .bottom-cta-section {
-  background-color: var(--color-hero-bg); /* Same as hero */
-  padding: 4rem 2rem;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #34d399 100%); /* گرادینت سبز */
+  padding: 5rem 2rem;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  color: white;
 }
 .cta-title {
   color: white;
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  font-weight: 800;
+  font-size: 2.2rem;
+  margin-bottom: 2.5rem;
+  font-weight: 900;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .cta-btn {
+  background: white;
+  color: var(--color-primary);
   min-width: 250px;
   font-size: 1.2rem;
   padding: 1rem 2rem;
+  font-weight: 800;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+.cta-btn:hover {
+  transform: translateY(-3px);
+  background: #f8fafc;
+  color: var(--color-primary-dark);
 }
 
 /* --- Footer --- */
 .main-footer {
-  background-color: #1a202c; /* رنگ تیره (سرمه‌ای/مشکی) برای کنتراست بهتر */
-  color: rgba(255, 255, 255, 0.8);
+  background-color: #0f172a; /* رنگ بسیار تیره برای کنتراست */
+  color: #94a3b8;
   padding: 4rem 2rem 2rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 4px solid var(--color-primary);
 }
 .footer-container {
   max-width: 1100px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive columns */
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 3rem;
   text-align: right;
   padding-bottom: 3rem;
 }
@@ -587,6 +702,7 @@ const authStore = useAuthStore();
   color: white;
   margin-bottom: 1.5rem;
   font-size: 1.1rem;
+  font-weight: 700;
 }
 .footer-column ul {
   list-style: none;
@@ -594,61 +710,62 @@ const authStore = useAuthStore();
   margin: 0;
 }
 .footer-column ul li {
-  margin-bottom: 0.8rem;
+  margin-bottom: 1rem;
 }
 .footer-column ul li a {
-  color: rgba(255, 255, 255, 0.6);
+  color: #cbd5e1;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
 }
 .footer-column ul li a:hover {
-  color: white;
+  color: var(--color-primary);
 }
 .footer-bottom {
   text-align: center;
   padding-top: 2rem;
-  border-top: 2px solid rgba(255,255,255,0.1);
+  border-top: 1px solid #1e293b;
   font-size: 0.9rem;
 }
 
 .uni-logo-box {
-  background: rgba(255, 255, 255, 0.1); /* پس‌زمینه شیشه‌ای */
+  background: rgba(255, 255, 255, 0.05);
   padding: 1rem;
   border-radius: 12px;
-  display: flex; /* برای وسط‌چین کردن عالی */
+  display: flex;
   justify-content: center;
   align-items: center;
   min-width: 140px;
   min-height: 80px;
-  backdrop-filter: blur(5px); /* افکت محو شدن پشت (اختیاری) */
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* استایل خود تصویر لوگو */
 .uni-logo-img {
-  max-width: 120px; /* حداکثر عرض */
-  max-height: 70px; /* حداکثر ارتفاع */
+  max-width: 120px;
+  max-height: 70px;
   width: auto;
   height: auto;
   object-fit: contain;
-  /* اگر لوگوی شما مشکی است و فوتر تیره، خط زیر را فعال کنید تا لوگو سفید شود: */
-  /* filter: brightness(0) invert(1); */
-  transition: transform 0.3s ease;
+  filter: brightness(0) invert(1); /* سفید کردن لوگو روی زمینه تیره */
+  opacity: 0.8;
+  transition: all 0.3s ease;
 }
 
 .uni-logo-box:hover .uni-logo-img {
-  transform: scale(1.05); /* افکت زوم هنگام هاور */
+  transform: scale(1.05);
+  opacity: 1;
 }
 
 /* --- Responsive --- */
 @media (max-width: 850px) {
   .hero-content { flex-direction: column; gap: 3rem; }
-  .hero-title { font-size: 2rem; }
-  .globe-icon { font-size: 10rem; }
-  .hero-section { padding-top: 6rem; min-height: auto; }
+  .hero-title { font-size: 2.2rem; }
   .features-grid { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
   .feature-item { flex-direction: column; align-items: center; }
   .feature-text h3, .feature-text p { text-align: center; }
   .footer-container { text-align: center; }
+  .uni-logo-box { margin: 0 auto; }
+  .legend-role { margin: 0 auto 1rem auto; }
 }
 </style>
