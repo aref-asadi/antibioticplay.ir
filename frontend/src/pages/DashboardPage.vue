@@ -50,9 +50,6 @@
               <h3>{{ unit.title }}</h3>
               <p>{{ unit.description }}</p>
             </div>
-            <router-link to="/guide" class="btn-guide">
-              <font-awesome-icon icon="fas fa-book" /> راهنما
-            </router-link>
           </header>
           
           <div class="unit-levels">

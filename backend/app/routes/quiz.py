@@ -162,7 +162,7 @@ class QuizSubmit(Resource):
                     feedback = {}
                     score_earned = 0
                 is_correct = all_correct
-                
+
             elif question_type == "image-labeling":
                 all_correct = True
                 # بررسی می‌کنیم که جواب کاربر دیکشنری باشد
@@ -321,7 +321,7 @@ class QuizSubmit(Resource):
             user_quiz_data['attempts'] = user_quiz_data.get('attempts', 0) + 1
             user_quiz_data['current_session_score'] = 0 # ریست
             
-            mongo.db.users.update_one({'_id': user['_id']}, {'$inc': {'quizzes_completed': 1}})
+            mongo.db.users.update_one({'_id': user['_id']}, {'$inc': {'quizzes_completed': 1}, '$addToSet': {'completed_quizzes': quiz_id}})
 
         quiz_progress[quiz_id] = user_quiz_data
         
