@@ -276,7 +276,7 @@ const authStore = useAuthStore();
 .legend-item:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border-color: var(--color-primary-light); }
 .legend-item.reverse { flex-direction: row-reverse; text-align: left; }
 .legend-item.reverse .legend-content { text-align: right; }
-.legend-avatar flex-shrink: 0;
+.legend-avatar { flex-shrink: 0; }
 .legend-avatar img { width: 160px; height: 160px; border-radius: 50%; object-fit: cover; border: 5px solid #f0fdf4; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
 .legend-content { flex: 1; }
 .legend-content h3 { font-size: 1.5rem; color: #334155; margin: 0 0 0.5rem 0; font-weight: 800; display: flex; align-items: center; gap: 0.8rem; }
