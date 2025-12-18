@@ -245,7 +245,16 @@ const isAnswerComplete = computed(() => {
     if (type === 'multiple-select') return Array.isArray(answer) && answer.length > 0;
     if (type === 'true-false') return currentQuestion.value.statements.length === Object.keys(answer).length;
     if (type === 'drag-drop-fill') return currentQuestion.value.blanks.length === Object.values(answer).filter(Boolean).length;
-    if (type === 'image-labeling') return currentQuestion.value.drop_zones.length === Object.keys(answer).length;
+    if (type === 'image-labeling') {
+        // ۱. استفاده از zones به جای drop_zones
+        const totalZones = currentQuestion.value.zones ? currentQuestion.value.zones.length : 0;
+        
+        // ۲. شمارش تعداد زون‌هایی که واقعاً پر شده‌اند (آرایه‌شان خالی نیست)
+        const filledZones = Object.values(answer).filter(items => Array.isArray(items) && items.length > 0).length;
+        
+        // ۳. دکمه فعال شود اگر تعداد زون‌های پر شده برابر با کل زون‌ها باشد
+        return totalZones > 0 && filledZones === totalZones;
+    }
     return true;
 });
 
