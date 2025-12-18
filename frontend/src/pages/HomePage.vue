@@ -37,7 +37,7 @@
             <router-link v-else to="/login" class="btn btn-primary btn-lg">
               شروع یادگیری <font-awesome-icon icon="fas fa-rocket" class="ms-2" />
             </router-link>
-          </div>
+            </div>
           <div class="hero-stats">
             <div class="stat-item"><strong>+۵</strong><span>ماژول تخصصی</span></div>
             <div class="stat-separator"></div>
@@ -142,7 +142,7 @@
             <font-awesome-icon icon="fas fa-fire" />
           </div>
           <div class="feature-text">
-            <h3>یادگیری میکروبی (Micro-Learning)</h3>
+            <h3>یادگیری خرد (Micro-Learning)</h3>
             <p>ماژول‌های کوتاه و متمرکز که پیچیده‌ترین مباحث فارماکولوژی را به لقمه‌های قابل‌هضم تبدیل می‌کنند.</p>
           </div>
         </div>
@@ -181,7 +181,7 @@
 
     <section class="bottom-cta-section">
       <h2 class="cta-title">آماده‌اید سطح دانش خود را ارتقا دهید؟</h2>
-      <router-link to="/register" class="btn btn-primary cta-btn">
+      <router-link to="/register" class="btn cta-btn">
         همین حالا رایگان شروع کنید
       </router-link>
     </section>
@@ -229,7 +229,7 @@ const authStore = useAuthStore();
 </script>
 
 <style scoped>
-/* کدهای قبلی هدر و هیرو بدون تغییر باقی می‌مانند (خلاصه شده برای جلوگیری از تکرار زیاد) */
+/* کدهای قبلی هدر و هیرو */
 .home-page { width: 100%; min-height: 100vh; display: flex; flex-direction: column; }
 .landing-header { position: sticky; top: 0; padding: 0.8rem 2rem; z-index: 1000; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
 .header-content { max-width: 1100px; display: flex; align-items: center; justify-content: space-between; margin: 0 auto; width: 100%; }
@@ -266,158 +266,82 @@ const authStore = useAuthStore();
 .icon-germ { color: #ef4444; } .icon-drug { color: #22c55e; }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-/* --- استایل جدید Legends (لیست) --- */
-.legends-section {
-  padding: 6rem 2rem;
-  background-color: #f8fafc;
-}
-.section-header {
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto 4rem;
-}
-.section-title {
-  font-size: 2.2rem;
-  font-weight: 900;
-  color: #1e293b;
-  margin-bottom: 1rem;
-}
-.section-subtitle {
-  color: #64748b;
-  font-size: 1.1rem;
-  line-height: 1.7;
-}
+/* Legends */
+.legends-section { padding: 6rem 2rem; background-color: #f8fafc; }
+.section-header { text-align: center; max-width: 800px; margin: 0 auto 4rem; }
+.section-title { font-size: 2.2rem; font-weight: 900; color: #1e293b; margin-bottom: 1rem; }
+.section-subtitle { color: #64748b; font-size: 1.1rem; line-height: 1.7; }
+.legends-list { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 3rem; }
+.legend-item { display: flex; align-items: center; gap: 3rem; background: white; padding: 2.5rem; border-radius: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.legend-item:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border-color: var(--color-primary-light); }
+.legend-item.reverse { flex-direction: row-reverse; text-align: left; }
+.legend-item.reverse .legend-content { text-align: right; }
+.legend-avatar flex-shrink: 0;
+.legend-avatar img { width: 160px; height: 160px; border-radius: 50%; object-fit: cover; border: 5px solid #f0fdf4; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+.legend-content { flex: 1; }
+.legend-content h3 { font-size: 1.5rem; color: #334155; margin: 0 0 0.5rem 0; font-weight: 800; display: flex; align-items: center; gap: 0.8rem; }
+.legend-year { font-size: 0.9rem; color: #94a3b8; font-weight: 400; background: #f1f5f9; padding: 2px 8px; border-radius: 6px; }
+.legend-badge { display: inline-block; background-color: #ecfdf5; color: var(--color-primary); font-weight: bold; font-size: 0.9rem; padding: 0.3rem 0.8rem; border-radius: 50px; margin-bottom: 1rem; }
+.legend-content p { color: #475569; font-size: 1.05rem; line-height: 1.8; margin: 0; }
 
-.legends-list {
-  max-width: 1000px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 3rem;
-  background: white;
-  padding: 2.5rem;
-  border-radius: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-  border: 1px solid #f1f5f9;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.legend-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-  border-color: var(--color-primary-light);
-}
-
-.legend-item.reverse {
-  flex-direction: row-reverse; /* عکس انداختن چیدمان */
-  text-align: left;
-}
-.legend-item.reverse .legend-content {
-  text-align: left; /* تراز متن چپ‌چین برای تنوع */
-}
-/* اما چون فارسی است، بهتر است متن همیشه راست‌چین بماند، فقط جای عکس عوض شود. */
-.legend-item.reverse .legend-content {
-  text-align: right;
-}
-
-.legend-avatar {
-  flex-shrink: 0;
-}
-.legend-avatar img {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 5px solid #f0fdf4;
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-}
-
-.legend-content {
-  flex: 1;
-}
-.legend-content h3 {
-  font-size: 1.5rem;
-  color: #334155;
-  margin: 0 0 0.5rem 0;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-.legend-year {
-  font-size: 0.9rem;
-  color: #94a3b8;
-  font-weight: 400;
-  background: #f1f5f9;
-  padding: 2px 8px;
-  border-radius: 6px;
-}
-.legend-badge {
-  display: inline-block;
-  background-color: #ecfdf5;
-  color: var(--color-primary);
-  font-weight: bold;
-  font-size: 0.9rem;
-  padding: 0.3rem 0.8rem;
-  border-radius: 50px;
-  margin-bottom: 1rem;
-}
-.legend-content p {
-  color: #475569;
-  font-size: 1.05rem;
-  line-height: 1.8;
-  margin: 0;
-}
-
-/* --- استایل جدید Features --- */
-.features-section {
-  padding: 6rem 2rem;
-  background-color: white;
-  text-align: center;
-}
+/* Features Section (Fix: 2 Columns) */
+.features-section { padding: 6rem 2rem; background-color: white; text-align: center; }
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  /* اصلاح: استفاده از 2 ستون ثابت برای ۴ آیتم */
+  grid-template-columns: repeat(2, 1fr);
   gap: 3rem;
-  max-width: 1100px;
+  max-width: 1000px;
   margin: 3rem auto 0;
   text-align: right;
 }
-.feature-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1.5rem;
-  padding: 1.5rem;
-  border-radius: 16px;
-  transition: background 0.2s;
-}
-.feature-item:hover {
-  background: #f8fafc;
-}
-.icon-box {
-  width: 60px;
-  height: 60px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.8rem;
-  flex-shrink: 0;
-}
+.feature-item { display: flex; align-items: flex-start; gap: 1.5rem; padding: 1.5rem; border-radius: 16px; transition: background 0.2s; }
+.feature-item:hover { background: #f8fafc; }
+.icon-box { width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; }
 .icon-box.fire { background: #fff7ed; color: #f97316; }
 .icon-box.check { background: #f0fdf4; color: #22c55e; }
 .icon-box.star { background: #fefce8; color: #eab308; }
 .icon-box.heart { background: #fdf2f8; color: #ec4899; }
-
 .feature-text h3 { margin: 0 0 0.5rem; font-size: 1.25rem; color: #1e293b; font-weight: 800; }
 .feature-text p { margin: 0; color: #64748b; line-height: 1.6; }
 
-/* --- Footer Updates --- */
+/* --- Bottom CTA Section (Restored Styles) --- */
+.bottom-cta-section {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #34d399 100%);
+  padding: 5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+.cta-title {
+  color: white;
+  font-size: 2.2rem;
+  margin-bottom: 2.5rem;
+  font-weight: 900;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.cta-btn {
+  background: white;
+  color: var(--color-primary);
+  min-width: 250px;
+  font-size: 1.2rem;
+  padding: 1rem 2rem;
+  font-weight: 800;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  text-decoration: none;
+  border-radius: 12px;
+  display: inline-block;
+}
+.cta-btn:hover {
+  transform: translateY(-3px);
+  background: #f8fafc;
+  color: var(--color-primary-dark);
+}
+
+/* Footer */
 .main-footer { background: #0f172a; color: #94a3b8; padding: 4rem 2rem 2rem; border-top: 4px solid var(--color-primary); }
 .footer-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; text-align: right; padding-bottom: 3rem; }
 .footer-column h4 { color: white; margin-bottom: 1.5rem; font-weight: 700; }
@@ -425,31 +349,15 @@ const authStore = useAuthStore();
 .footer-column ul li { margin-bottom: 1rem; }
 .footer-column ul li a { color: #cbd5e1; text-decoration: none; transition: 0.2s; }
 .footer-column ul li a:hover { color: var(--color-primary); }
+.uni-logo-box { background: rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 16px; display: inline-flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.15); }
+.uni-logo-img { width: 180px; height: auto; object-fit: contain; filter: brightness(0) invert(1); opacity: 1; }
 
-/* لوگوی دانشگاه بزرگتر و واضح‌تر */
-.uni-logo-box {
-  background: rgba(255, 255, 255, 0.1); /* شفاف‌تر */
-  padding: 1.5rem;
-  border-radius: 16px;
-  display: inline-flex; /* جلوگیری از کشیده شدن */
-  justify-content: center;
-  align-items: center;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255,255,255,0.15);
-}
-.uni-logo-img {
-  width: 180px; /* افزایش سایز */
-  height: auto;
-  object-fit: contain;
-  /* حذف فیلتر سفیدکننده اگر لوگو رنگی است. اگر لوگوی سفید دارید، فیلتر زیر را نگه دارید: */
-  filter: brightness(0) invert(1);
-  opacity: 1; /* وضوح کامل */
-}
-
-/* Responsive Tweaks */
+/* Responsive */
 @media (max-width: 900px) {
   .hero-container { grid-template-columns: 1fr; text-align: center; }
   .hero-content { align-items: center; }
+  /* در موبایل ستون‌ها را ۱ می‌کنیم */
+  .features-grid { grid-template-columns: 1fr; }
   .legends-list { gap: 2rem; }
   .legend-item, .legend-item.reverse { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
   .legend-item.reverse .legend-content { text-align: center; }
