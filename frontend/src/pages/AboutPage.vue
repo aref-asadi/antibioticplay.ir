@@ -1,17 +1,21 @@
 <template>
   <div class="page-container">
     
+    <button @click="$router.go(-1)" class="back-button" title="بازگشت">
+      <font-awesome-icon icon="fas fa-arrow-right" />
+    </button>
+
     <div class="content-wrapper">
       <section class="intro-section">
         <h1 class="page-title">درباره <span class="highlight">AntibioticPlay</span></h1>
         <p class="intro-text">
-          این پلتفرم با هدف آموزش جذاب و گیمیفاید اصول آنتی‌بیوتیک‌ها و مبارزه با مقاومت میکروبی طراحی شده است. 
-          ما معتقدیم که یادگیری داروسازی نباید خشک و خسته‌کننده باشد؛ بلکه می‌تواند مسیری پویا، تعاملی و سرگرم‌کننده برای کادر درمان و دانشجویان باشد.
+          ما در حال ساختن آینده‌ای هستیم که در آن آموزش پزشکی دیگر یک فرآیند یک‌طرفه و خسته‌کننده نیست. 
+          پلتفرم ما با تلفیق <strong>دقت علمی</strong> و <strong>جذابیت بازی‌سازی (Gamification)</strong>، مسیری نوین برای تسلط بر پیچیدگی‌های آنتی‌بیوتیک‌ها و فارماکولوژی بالینی ارائه می‌دهد.
         </p>
       </section>
 
       <section class="team-section">
-        <h2 class="section-title">تیم ما</h2>
+        <h2 class="section-title">تیم توسعه و علمی</h2>
         <div class="team-grid">
           
           <div class="team-card">
@@ -20,10 +24,9 @@
             </div>
             <div class="team-info">
               <h3>دکتر شعله ابراهیم‌پور</h3>
-              <span class="team-role">ناظر علمی پروژه</span>
+              <span class="team-role">ناظر علمی و طراح آموزشی</span>
               <p class="team-desc">
-                استادیار گروه داروسازی بالینی دانشگاه علوم پزشکی البرز. <br>
-                دارای بورد تخصصی فارماکوتراپی از دانشگاه علوم پزشکی تهران.
+                استادیار داروسازی بالینی با دیدگاهی نوآورانه در آموزش پزشکی. ایشان با نظارت دقیق بر محتوا، تضمین‌کننده اعتبار علمی تمام ماژول‌های این پلتفرم هستند.
               </p>
               <div class="badges">
                 <span class="badge">Clinical Pharmacy</span>
@@ -38,10 +41,9 @@
             </div>
             <div class="team-info">
               <h3>دکتر مهدی محمدی</h3>
-              <span class="team-role">ناظر علمی پروژه</span>
+              <span class="team-role">ناظر علمی و استراتژیست</span>
               <p class="team-desc">
-                عضو هیئت علمی گروه داروسازی بالینی دانشگاه علوم پزشکی البرز. <br>
-                دارای بورد تخصصی فارماکوتراپی (iBCPS).
+                عضو هیئت علمی و متخصص فارماکوتراپی (iBCPS). تجربیات ارزشمند ایشان در بالین، راهنمای اصلی ما در پیاده‌سازی کیس‌های واقعی و کاربردی بوده است.
               </p>
               <div class="badges">
                 <span class="badge">Pharm.D</span>
@@ -56,14 +58,13 @@
             </div>
             <div class="team-info">
               <h3>عارف اسدی</h3>
-              <span class="team-role">توسعه‌دهنده و طراح</span>
+              <span class="team-role">توسعه‌دهنده Full-Stack</span>
               <p class="team-desc">
-                دانشجوی داروسازی ورودی ۹۹ دانشگاه علوم پزشکی البرز. <br>
-                طراح و برنامه‌نویس پلتفرم AntibioticPlay.
+                دانشجوی داروسازی و برنامه‌نویس. خالق زیرساخت فنی و تجربه کاربری (UX) سایت که پل میان دنیای کدنویسی و علوم دارویی را بنا کرده است.
               </p>
               <div class="badges">
-                <span class="badge">Full-Stack Dev</span>
-                <span class="badge">Student</span>
+                <span class="badge">Developer</span>
+                <span class="badge">Designer</span>
               </div>
             </div>
           </div>
@@ -82,17 +83,46 @@
 
 <script setup>
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faUniversity } from '@fortawesome/free-solid-svg-icons';
-library.add(faUniversity);
+import { faUniversity, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+library.add(faUniversity, faArrowRight);
 </script>
 
 <style scoped>
 .page-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  padding: 8rem 1.5rem 4rem; /* Padding top زیاد برای هدر چسبان */
+  padding: 6rem 1.5rem 4rem;
   display: flex;
   justify-content: center;
+  position: relative;
+}
+
+/* استایل دکمه بازگشت */
+.back-button {
+  position: fixed;
+  top: 2rem;
+  right: 2rem; /* در حالت RTL دکمه سمت راست قرار می‌گیرد تا نقش بازگشت (به سمت راست) را تداعی کند */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-button:hover {
+  transform: translateX(5px); /* حرکت ریز به سمت راست */
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 6px 20px rgba(66, 185, 131, 0.3);
 }
 
 .content-wrapper {
@@ -105,9 +135,19 @@ library.add(faUniversity);
   text-align: center;
   margin-bottom: 5rem;
   background: white;
-  padding: 3rem;
+  padding: 4rem 3rem;
   border-radius: 24px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  position: relative;
+  overflow: hidden;
+}
+/* نوار رنگی بالای باکس */
+.intro-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
 }
 
 .page-title {
@@ -123,7 +163,7 @@ library.add(faUniversity);
 
 .intro-text {
   font-size: 1.1rem;
-  line-height: 1.8;
+  line-height: 1.9;
   color: #475569;
   max-width: 800px;
   margin: 0 auto;
@@ -149,7 +189,7 @@ library.add(faUniversity);
 }
 
 .team-card {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2rem;
@@ -166,8 +206,8 @@ library.add(faUniversity);
 }
 
 .img-container {
-  width: 120px;
-  height: 120px;
+  width: 130px;
+  height: 130px;
   margin: 0 auto 1.5rem;
   position: relative;
 }
@@ -184,12 +224,13 @@ library.add(faUniversity);
 .team-info h3 {
   margin: 0 0 0.5rem;
   color: #1e293b;
-  font-size: 1.25rem;
+  font-size: 1.3rem;
+  font-weight: 800;
 }
 
 .team-role {
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: bold;
   color: var(--color-primary);
   margin-bottom: 1rem;
@@ -200,7 +241,7 @@ library.add(faUniversity);
   color: #64748b;
   line-height: 1.6;
   margin-bottom: 1.5rem;
-  min-height: 3em; /* برای هم‌تراز شدن ارتفاع کارت‌ها */
+  min-height: 4.5em; 
 }
 
 .badges {
@@ -217,21 +258,33 @@ library.add(faUniversity);
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 600;
+  border: 1px solid #e2e8f0;
 }
 
-/* University Credit */
 .university-credit {
   text-align: center;
-  margin-top: 4rem;
+  margin-top: 5rem;
   color: #94a3b8;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
+  opacity: 0.7;
 }
 
 .uni-icon {
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: #cbd5e1;
+}
+
+/* ریسپانسیو برای دکمه بازگشت در موبایل */
+@media (max-width: 600px) {
+  .back-button {
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
 }
 </style>
