@@ -163,6 +163,28 @@ class QuizSubmit(Resource):
                     score_earned = 0
                 is_correct = all_correct
                 
+            elif question_type == "image-labeling":
+                all_correct = True
+                # بررسی می‌کنیم که جواب کاربر دیکشنری باشد
+                if isinstance(user_answer, dict):
+                    # پیمایش روی جواب صحیح (solution)
+                    # در اینجا solution به صورت { zone_id: correct_option_id } است
+                    for zone_id, correct_option_id in solution.items():
+                        user_selected_option_id = user_answer.get(zone_id)
+                        
+                        # مقایسه جواب کاربر با جواب صحیح
+                        if user_selected_option_id == correct_option_id:
+                            feedback[zone_id] = 'correct'
+                            score_earned += points_per_correct
+                        else:
+                            feedback[zone_id] = 'incorrect'
+                            all_correct = False
+                else:
+                    all_correct = False
+                    feedback = {}
+                    score_earned = 0
+                is_correct = all_correct
+                
             # منطق خاص برای سوال ceftriaxone
             if question.get('id') == 'ceftriaxone_calcium_admin' and 'solution_reversed' in question:
                  solution_reversed = question.get('solution_reversed')
