@@ -97,11 +97,11 @@ library.add(faUniversity, faArrowRight);
   position: relative;
 }
 
-/* استایل دکمه بازگشت */
+/* Back Button Circle Fix */
 .back-button {
   position: fixed;
   top: 2rem;
-  right: 2rem; /* در حالت RTL دکمه سمت راست قرار می‌گیرد تا نقش بازگشت (به سمت راست) را تداعی کند */
+  right: 2rem;
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -116,175 +116,39 @@ library.add(faUniversity, faArrowRight);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0; /* Reset padding to ensure perfect circle */
+  aspect-ratio: 1; /* Force square aspect ratio */
 }
 
 .back-button:hover {
-  transform: translateX(5px); /* حرکت ریز به سمت راست */
+  transform: translateX(5px);
   background: var(--color-primary);
   color: white;
   box-shadow: 0 6px 20px rgba(66, 185, 131, 0.3);
 }
 
-.content-wrapper {
-  max-width: 1000px;
-  width: 100%;
-}
+.content-wrapper { max-width: 1000px; width: 100%; }
+.intro-section { text-align: center; margin-bottom: 5rem; background: white; padding: 4rem 3rem; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
+.intro-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--color-primary), var(--color-secondary)); }
+.page-title { font-size: 2.5rem; font-weight: 900; color: #1e293b; margin-bottom: 1.5rem; }
+.highlight { color: var(--color-primary); }
+.intro-text { font-size: 1.1rem; line-height: 1.9; color: #475569; max-width: 800px; margin: 0 auto; }
+.team-section { margin-bottom: 4rem; }
+.section-title { text-align: center; font-size: 2rem; font-weight: 800; color: #334155; margin-bottom: 3rem; }
+.team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; }
+.team-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border-radius: 20px; padding: 2rem; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid rgba(255, 255, 255, 0.5); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.team-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); background: white; }
+.img-container { width: 130px; height: 130px; margin: 0 auto 1.5rem; position: relative; }
+.team-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid white; box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+.team-info h3 { margin: 0 0 0.5rem; color: #1e293b; font-size: 1.3rem; font-weight: 800; }
+.team-role { display: block; font-size: 0.95rem; font-weight: bold; color: var(--color-primary); margin-bottom: 1rem; }
+.team-desc { font-size: 0.9rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem; min-height: 4.5em; }
+.badges { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; }
+.badge { background: #f1f5f9; color: #475569; padding: 0.3rem 0.8rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; border: 1px solid #e2e8f0; }
+.university-credit { text-align: center; margin-top: 5rem; color: #94a3b8; display: flex; flex-direction: column; align-items: center; gap: 1rem; opacity: 0.7; }
+.uni-icon { font-size: 2.5rem; color: #cbd5e1; }
 
-/* Intro Section */
-.intro-section {
-  text-align: center;
-  margin-bottom: 5rem;
-  background: white;
-  padding: 4rem 3rem;
-  border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  position: relative;
-  overflow: hidden;
-}
-/* نوار رنگی بالای باکس */
-.intro-section::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 6px;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
-}
-
-.page-title {
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: #1e293b;
-  margin-bottom: 1.5rem;
-}
-
-.highlight {
-  color: var(--color-primary);
-}
-
-.intro-text {
-  font-size: 1.1rem;
-  line-height: 1.9;
-  color: #475569;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-/* Team Section */
-.team-section {
-  margin-bottom: 4rem;
-}
-
-.section-title {
-  text-align: center;
-  font-size: 2rem;
-  font-weight: 800;
-  color: #334155;
-  margin-bottom: 3rem;
-}
-
-.team-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2.5rem;
-}
-
-.team-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 2rem;
-  text-align: center;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.team-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  background: white;
-}
-
-.img-container {
-  width: 130px;
-  height: 130px;
-  margin: 0 auto 1.5rem;
-  position: relative;
-}
-
-.team-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid white;
-  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-}
-
-.team-info h3 {
-  margin: 0 0 0.5rem;
-  color: #1e293b;
-  font-size: 1.3rem;
-  font-weight: 800;
-}
-
-.team-role {
-  display: block;
-  font-size: 0.95rem;
-  font-weight: bold;
-  color: var(--color-primary);
-  margin-bottom: 1rem;
-}
-
-.team-desc {
-  font-size: 0.9rem;
-  color: #64748b;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-  min-height: 4.5em; 
-}
-
-.badges {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.badge {
-  background: #f1f5f9;
-  color: #475569;
-  padding: 0.3rem 0.8rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border: 1px solid #e2e8f0;
-}
-
-.university-credit {
-  text-align: center;
-  margin-top: 5rem;
-  color: #94a3b8;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  opacity: 0.7;
-}
-
-.uni-icon {
-  font-size: 2.5rem;
-  color: #cbd5e1;
-}
-
-/* ریسپانسیو برای دکمه بازگشت در موبایل */
 @media (max-width: 600px) {
-  .back-button {
-    top: 1rem;
-    right: 1rem;
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
-  }
+  .back-button { top: 1rem; right: 1rem; width: 40px; height: 40px; font-size: 1rem; }
 }
 </style>

@@ -8,7 +8,10 @@
           <h2 class="logo-text">AntibioticPlay</h2>
         </div>
         <div class="header-actions">
-           <router-link v-if="!authStore.isAuthenticated" to="/login" class="btn-sm btn-outline">ورود</router-link>
+           <template v-if="!authStore.isAuthenticated">
+             <router-link to="/login" class="btn-sm btn-outline">ورود</router-link>
+             <router-link to="/register" class="btn-sm btn-primary">ثبت‌نام</router-link>
+           </template>
            <router-link v-else to="/dashboard" class="btn-sm btn-primary">داشبورد</router-link>
         </div>
       </div>
@@ -34,10 +37,12 @@
             <router-link v-if="authStore.isAuthenticated" to="/dashboard" class="btn btn-primary btn-lg">
               ورود به داشبورد <font-awesome-icon icon="fas fa-arrow-left" class="ms-2" />
             </router-link>
-            <router-link v-else to="/login" class="btn btn-primary btn-lg">
-              شروع یادگیری <font-awesome-icon icon="fas fa-rocket" class="ms-2" />
-            </router-link>
-            </div>
+            <template v-else>
+              <router-link to="/login" class="btn btn-primary btn-lg">
+                شروع یادگیری <font-awesome-icon icon="fas fa-rocket" class="ms-2" />
+              </router-link>
+            </template>
+          </div>
           <div class="hero-stats">
             <div class="stat-item"><strong>+۵</strong><span>ماژول تخصصی</span></div>
             <div class="stat-separator"></div>
@@ -130,47 +135,62 @@
             </p>
           </div>
         </div>
+
+        <div class="legend-item reverse">
+          <div class="legend-avatar">
+            <img src="/avatars/avatar_bugie.png" alt="الیزابت بوگی" />
+          </div>
+          <div class="legend-content">
+            <h3>الیزابت بوگی <span class="legend-year">(Researcher)</span></h3>
+            <span class="legend-badge">همکار در کشف استرپتومایسین</span>
+            <p>
+              او یکی از اعضای کلیدی و تأثیرگذار آزمایشگاه واکسمن بود. اگرچه نام او در جایزه نوبل ذکر نشد، اما تحقیقات دقیق او نقش اساسی در اثبات اثربخشی استرپتومایسین داشت.
+            </p>
+          </div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-avatar">
+            <img src="/avatars/avatar_youyou.png" alt="تو یویو" />
+          </div>
+          <div class="legend-content">
+            <h3>تو یویو <span class="legend-year">(2015 Nobel)</span></h3>
+            <span class="legend-badge">کاشف آرتمیسینین</span>
+            <p>
+              او با الهام از متون طب سنتی چین، دارویی حیاتی (آرتمیسینین) را برای درمان مالاریا کشف کرد که جان میلیون‌ها نفر را در سراسر جهان نجات داده است.
+            </p>
+          </div>
+        </div>
+
       </div>
     </section>
 
     <section class="features-section">
       <h2 class="section-title">تجربه‌ای فراتر از مطالعه سنتی</h2>
-      
       <div class="features-grid">
         <div class="feature-item">
-          <div class="icon-box fire">
-            <font-awesome-icon icon="fas fa-fire" />
-          </div>
+          <div class="icon-box fire"><font-awesome-icon icon="fas fa-fire" /></div>
           <div class="feature-text">
             <h3>یادگیری خرد (Micro-Learning)</h3>
             <p>ماژول‌های کوتاه و متمرکز که پیچیده‌ترین مباحث فارماکولوژی را به لقمه‌های قابل‌هضم تبدیل می‌کنند.</p>
           </div>
         </div>
-
         <div class="feature-item">
-          <div class="icon-box check">
-            <font-awesome-icon icon="fas fa-check-circle" />
-          </div>
+          <div class="icon-box check"><font-awesome-icon icon="fas fa-check-circle" /></div>
           <div class="feature-text">
             <h3>بازخورد هوشمند آنی</h3>
             <p>تنها به گزینه درست بسنده نکنید. دلیل رد گزینه‌های غلط را یاد بگیرید تا استدلال بالینی خود را تقویت کنید.</p>
           </div>
         </div>
-
         <div class="feature-item">
-          <div class="icon-box star">
-            <font-awesome-icon icon="fas fa-star" />
-          </div>
+          <div class="icon-box star"><font-awesome-icon icon="fas fa-star" /></div>
           <div class="feature-text">
             <h3>رقابت علمی سالم</h3>
             <p>با سیستم امتیازدهی و لیدربورد، انگیزه خود را حفظ کنید و جایگاه خود را در میان همکاران بسنجید.</p>
           </div>
         </div>
-
         <div class="feature-item">
-          <div class="icon-box heart">
-            <font-awesome-icon icon="fas fa-heart" />
-          </div>
+          <div class="icon-box heart"><font-awesome-icon icon="fas fa-heart" /></div>
           <div class="feature-text">
             <h3>طراحی بالین‌محور</h3>
             <p>سناریوهایی که دقیقاً با چالش‌های واقعی شما در بیمارستان و داروخانه همخوانی دارد، نه صرفاً تئوری کتاب.</p>
@@ -203,7 +223,6 @@
             <li><router-link to="/flashcards">فلش‌کارت‌ها</router-link></li>
           </ul>
         </div>
-        
         <div class="footer-column uni-logo-section">
           <h4>با حمایت علمی</h4>
           <div class="uni-logo-box">
@@ -229,18 +248,22 @@ const authStore = useAuthStore();
 </script>
 
 <style scoped>
-/* کدهای قبلی هدر و هیرو */
+/* Basic Layout */
 .home-page { width: 100%; min-height: 100vh; display: flex; flex-direction: column; }
+
+/* Header */
 .landing-header { position: sticky; top: 0; padding: 0.8rem 2rem; z-index: 1000; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
 .header-content { max-width: 1100px; display: flex; align-items: center; justify-content: space-between; margin: 0 auto; width: 100%; }
 .logo-container { display: flex; align-items: center; gap: 0.5rem; }
 .logo-icon { font-size: 1.5rem; color: var(--color-primary); }
 .logo-text { background: linear-gradient(45deg, var(--color-primary), #2c3e50); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; font-size: 1.5rem; margin: 0; }
-.header-actions { display: flex; gap: 0.5rem; }
+.header-actions { display: flex; gap: 0.8rem; align-items: center; } /* فاصله بین دکمه‌ها */
 .btn-sm { padding: 0.4rem 1rem; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 0.9rem; }
 .btn-outline { border: 2px solid var(--color-primary); color: var(--color-primary); }
 .btn-outline:hover { background: var(--color-primary); color: white; }
 .btn-primary { background: var(--color-primary); color: white; border: none; box-shadow: 0 4px 14px rgba(66, 185, 131, 0.4); }
+
+/* Hero */
 .hero-section { background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%); display: flex; justify-content: center; padding: 6rem 1.5rem 4rem; position: relative; overflow: hidden; }
 .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; z-index: 1; }
 .blob-1 { width: 400px; height: 400px; background: #dcfce7; top: -100px; right: -150px; }
@@ -276,6 +299,7 @@ const authStore = useAuthStore();
 .legend-item:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border-color: var(--color-primary-light); }
 .legend-item.reverse { flex-direction: row-reverse; text-align: left; }
 .legend-item.reverse .legend-content { text-align: right; }
+
 .legend-avatar { flex-shrink: 0; }
 .legend-avatar img { width: 160px; height: 160px; border-radius: 50%; object-fit: cover; border: 5px solid #f0fdf4; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
 .legend-content { flex: 1; }
@@ -284,17 +308,9 @@ const authStore = useAuthStore();
 .legend-badge { display: inline-block; background-color: #ecfdf5; color: var(--color-primary); font-weight: bold; font-size: 0.9rem; padding: 0.3rem 0.8rem; border-radius: 50px; margin-bottom: 1rem; }
 .legend-content p { color: #475569; font-size: 1.05rem; line-height: 1.8; margin: 0; }
 
-/* Features Section (Fix: 2 Columns) */
+/* Features */
 .features-section { padding: 6rem 2rem; background-color: white; text-align: center; }
-.features-grid {
-  display: grid;
-  /* اصلاح: استفاده از 2 ستون ثابت برای ۴ آیتم */
-  grid-template-columns: repeat(2, 1fr);
-  gap: 3rem;
-  max-width: 1000px;
-  margin: 3rem auto 0;
-  text-align: right;
-}
+.features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem; max-width: 1000px; margin: 3rem auto 0; text-align: right; }
 .feature-item { display: flex; align-items: flex-start; gap: 1.5rem; padding: 1.5rem; border-radius: 16px; transition: background 0.2s; }
 .feature-item:hover { background: #f8fafc; }
 .icon-box { width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; }
@@ -305,7 +321,7 @@ const authStore = useAuthStore();
 .feature-text h3 { margin: 0 0 0.5rem; font-size: 1.25rem; color: #1e293b; font-weight: 800; }
 .feature-text p { margin: 0; color: #64748b; line-height: 1.6; }
 
-/* --- Bottom CTA Section (Restored Styles) --- */
+/* CTA Section */
 .bottom-cta-section {
   background: linear-gradient(135deg, var(--color-primary) 0%, #34d399 100%);
   padding: 5rem 2rem;
@@ -325,7 +341,7 @@ const authStore = useAuthStore();
 }
 .cta-btn {
   background: white;
-  color: var(--color-primary);
+  color: var(--color-primary) !important; /* Force color on default */
   min-width: 250px;
   font-size: 1.2rem;
   padding: 1rem 2rem;
@@ -334,11 +350,12 @@ const authStore = useAuthStore();
   text-decoration: none;
   border-radius: 12px;
   display: inline-block;
+  transition: all 0.3s ease;
 }
 .cta-btn:hover {
   transform: translateY(-3px);
-  background: #f8fafc;
-  color: var(--color-primary-dark);
+  background: #f1f5f9 !important; /* Light gray on hover */
+  color: var(--color-primary-dark) !important; /* Dark green on hover */
 }
 
 /* Footer */
@@ -352,11 +369,21 @@ const authStore = useAuthStore();
 .uni-logo-box { background: rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 16px; display: inline-flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.15); }
 .uni-logo-img { width: 180px; height: auto; object-fit: contain; filter: brightness(0) invert(1); opacity: 1; }
 
+/* Copyright Centering */
+.footer-bottom {
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 2rem;
+  border-top: 1px solid #1e293b;
+  font-size: 0.9rem;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
   .hero-container { grid-template-columns: 1fr; text-align: center; }
   .hero-content { align-items: center; }
-  /* در موبایل ستون‌ها را ۱ می‌کنیم */
   .features-grid { grid-template-columns: 1fr; }
   .legends-list { gap: 2rem; }
   .legend-item, .legend-item.reverse { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
