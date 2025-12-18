@@ -302,13 +302,18 @@ class QuizSubmit(Resource):
         # ۴. آپدیت سوابق و پروفایل
         quiz_progress = user.get('quiz_progress', {})
         if quiz_id not in quiz_progress:
-            quiz_progress[quiz_id] = {'best_score': 0, 'current_session_score': 0, 'attempts': 0}
+            quiz_progress[quiz_id] = {'best_score': 0, 'current_session_score': 0, 'attempts': 0, 'current_session_correct_count': 0}
         
         user_quiz_data = quiz_progress[quiz_id]
         user_quiz_data['current_session_score'] = user_quiz_data.get('current_session_score', 0) + total_question_score
-        
+        current_correct_count = user_quiz_data.get('current_session_correct_count', 0)
+        if is_correct:
+            current_correct_count += 1
+        user_quiz_data['current_session_correct_count'] = current_correct_count
+
         current_total_score = int(user.get('score', 0))
         xp_gained_this_step = 0
+        stage_completed_perfectly = False
         
         if is_last_question:
             previous_best = user_quiz_data.get('best_score', 0)
@@ -319,6 +324,18 @@ class QuizSubmit(Resource):
                 user_quiz_data['best_score'] = new_session_score
             
             user_quiz_data['attempts'] = user_quiz_data.get('attempts', 0) + 1
+            total_questions_in_quiz = len(quiz['questions'])
+            if current_correct_count == total_questions_in_quiz:
+                stage_completed_perfectly = True
+                mongo.db.users.update_one(
+                    {'_id': user['_id']}, 
+                    {
+                        '$inc': {'quizzes_completed': 1},
+                        '$addToSet': {'completed_quizzes': quiz_id} # فقط در صورت کامل بودن اضافه می‌شود
+                    }
+                )
+            
+            user_quiz_data['current_session_correct_count'] = 0
             user_quiz_data['current_session_score'] = 0 # ریست
             
             mongo.db.users.update_one({'_id': user['_id']}, {'$inc': {'quizzes_completed': 1}, '$addToSet': {'completed_quizzes': quiz_id}})
@@ -359,5 +376,6 @@ class QuizSubmit(Resource):
             "newLevel": new_level,
             "levelUp": level_up_occurred,
             "newlyEarnedBadges": newly_earned_badges,
-            "explanation": explanation_text
+            "explanation": explanation_text,
+            "stageCompleted": stage_completed_perfectly
         }, 200

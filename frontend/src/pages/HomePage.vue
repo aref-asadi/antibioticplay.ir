@@ -8,42 +8,65 @@
     </header>
 
     <section class="hero-section">
-      <div class="hero-content">
+      <div class="hero-container">
         
-        <div class="hero-image-container">
-          <div class="globe-placeholder">
-            <font-awesome-icon icon="fas fa-globe-americas" class="globe-icon" />
-            <div class="orbit-item item-1">💊</div>
-            <div class="orbit-item item-2">🦠</div>
-            <div class="orbit-item item-3">🧪</div>
+        <div class="hero-content">
+          <div class="badge-pill">
+            <span class="badge-icon">🛡️</span>
+            <span>مبارزه با مقاومت میکروبی</span>
+          </div>
+          
+          <h1 class="hero-title">
+            آگاهی، خط اول دفاع در <br />
+            <span class="highlight-text">دنیای آنتی‌بیوتیک‌ها</span>
+          </h1>
+          
+          <p class="hero-subtitle">
+            ما در AntibioticPlay به کادر درمان کمک می‌کنیم تا با تسلط بر اصول تجویز و فارماکولوژی، سدی محکم در برابر مقاومت میکروبی بسازند. دانش شما، نجات‌بخش آینده است.
+          </p>
+          
+          <div class="hero-actions">
+            <router-link v-if="authStore.isAuthenticated" to="/dashboard" class="btn btn-primary btn-lg">
+              ورود به داشبورد
+              <font-awesome-icon icon="fas fa-arrow-left" class="ms-2" />
+            </router-link>
+            <router-link v-else to="/login" class="btn btn-primary btn-lg">
+              شروع یادگیری
+              <font-awesome-icon icon="fas fa-rocket" class="ms-2" />
+            </router-link>
+            
+            <router-link to="/about" class="btn btn-outline btn-lg">
+              درباره ما
+            </router-link>
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat-item">
+              <strong>+۵</strong>
+              <span>ماژول تخصصی</span>
+            </div>
+            <div class="stat-separator"></div>
+            <div class="stat-item">
+              <strong>سطح‌بندی</strong>
+              <span>گیمیفیکیشن</span>
+            </div>
           </div>
         </div>
 
-        <div class="hero-text-container">
-          <h1 class="hero-title">
-            راهی رایگان، جذاب و موثر برای یادگیری داروسازی!
-          </h1>
+        <div class="hero-image-wrapper">
+          <img src="/images/hero-awareness.png" alt="Antibiotic Awareness" class="hero-img" />
           
-          <div class="hero-actions">
-            <template v-if="!authStore.isAuthenticated">
-              <router-link to="/register" class="btn btn-primary hero-btn">
-                شروع کنید
-              </router-link>
-              <router-link to="/login" class="btn btn-outline hero-btn">
-                اکانت دارم
-              </router-link>
-            </template>
-            
-            <template v-else>
-              <router-link to="/dashboard" class="btn btn-primary hero-btn">
-                رفتن به داشبورد
-              </router-link>
-            </template>
+          <div class="floating-card card-1">
+            <font-awesome-icon icon="fas fa-bacteria" class="icon-germ" />
+            <span>MDR Organisms</span>
+          </div>
+          <div class="floating-card card-2">
+            <font-awesome-icon icon="fas fa-prescription-bottle-alt" class="icon-drug" />
+            <span>Stewardship</span>
           </div>
         </div>
 
       </div>
-      <div class="bg-pattern"></div>
     </section>
 
     <section class="legends-section">
@@ -211,16 +234,9 @@
 <script setup>
 import { useAuthStore } from '../stores/auth';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { 
-  faGlobeAmericas,
-  faFire,
-  faCheckCircle,
-  faStar,
-  faHeart,
-  faUniversity
-} from '@fortawesome/free-solid-svg-icons';
+import { faGlobeAmericas, faFire, faCheckCircle, faStar, faHeart, faUniversity, faArrowLeft, faRocket, faBacteria, faPrescriptionBottleAlt } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faGlobeAmericas, faFire, faCheckCircle, faStar, faHeart, faUniversity);
+library.add(faGlobeAmericas, faFire, faCheckCircle, faStar, faHeart, faUniversity, faArrowLeft, faRocket, faBacteria, faPrescriptionBottleAlt);
 
 const authStore = useAuthStore();
 </script>
@@ -260,45 +276,197 @@ const authStore = useAuthStore();
 
 /* --- Hero Section --- */
 .hero-section {
-  background-color: var(--color-hero-bg);
+  background: linear-gradient(135deg, #fdfbf7 0%, #fff 100%);
+  padding: 4rem 1.5rem;
+  min-height: 90vh; /* تمام صفحه در دسکتاپ */
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 6rem 2rem 4rem; /* Added top padding for header space */
+  justify-content: center;
   position: relative;
   overflow: hidden;
-  min-height: 85vh;
 }
-.bg-pattern {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.2) 2px, transparent 2px);
-  background-size: 50px 50px;
-  opacity: 0.5;
-  pointer-events: none;
+
+.hero-container {
+  max-width: 1200px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
 }
+
+/* --- Left Side: Content --- */
 .hero-content {
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: column;
+  align-items: flex-start;
+  z-index: 2;
+}
+
+.badge-pill {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  max-width: 1100px;
+  gap: 0.5rem;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1.2;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.highlight-text {
+  color: var(--color-primary); /* رنگ اصلی سایت شما */
+  position: relative;
+  display: inline-block;
+}
+
+.highlight-text::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 0;
   width: 100%;
-  gap: 4rem;
+  height: 12px;
+  background-color: rgba(66, 185, 131, 0.2); /* رنگ سبز کمرنگ */
+  z-index: -1;
+  border-radius: 4px;
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  max-width: 90%;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.btn-lg {
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 12px;
+}
+
+.hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-item strong {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #2c3e50;
+}
+
+.stat-item span {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.stat-separator {
+  width: 1px;
+  height: 40px;
+  background-color: #ddd;
+}
+
+/* --- Right Side: Image --- */
+.hero-image-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-img {
+  width: 100%;
+  max-width: 550px;
+  height: auto;
+  border-radius: 24px;
+  /* سایه نرم برای جدا شدن از پس‌زمینه */
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));
   z-index: 1;
 }
-.hero-text-container { flex: 1; text-align: center; max-width: 500px; }
-.hero-title { color: white; font-size: 2.5rem; line-height: 1.4; margin-bottom: 2rem; font-weight: 900; }
-.hero-actions { display: flex; flex-direction: column; gap: 1rem; max-width: 350px; margin: 0 auto; }
-.hero-btn { width: 100%; padding: 1rem; font-size: 1.1rem; }
-.hero-image-container { flex: 1; display: flex; justify-content: center; align-items: center; }
-.globe-placeholder { position: relative; width: 300px; height: 300px; display: flex; justify-content: center; align-items: center; }
-.globe-icon { font-size: 14rem; color: #4cb6ea; filter: drop-shadow(0 10px 0 rgba(0,0,0,0.2)); }
-.orbit-item { position: absolute; font-size: 3rem; animation: float 4s ease-in-out infinite; }
-.item-1 { top: 0; right: 20px; animation-delay: 0s; }
-.item-2 { bottom: 20px; left: 20px; animation-delay: 1s; }
-.item-3 { bottom: 40px; right: 0; animation-delay: 2s; font-size: 2.5rem; }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+/* کارت‌های شناور */
+.floating-card {
+  position: absolute;
+  background: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-weight: bold;
+  font-size: 0.9rem;
+  z-index: 2;
+  animation: float 6s ease-in-out infinite;
+}
+
+.card-1 {
+  top: 10%;
+  left: -20px;
+  animation-delay: 0s;
+}
+
+.card-2 {
+  bottom: 15%;
+  right: -10px;
+  animation-delay: 3s;
+}
+
+.icon-germ { color: #ff4b4b; font-size: 1.2rem; }
+.icon-drug { color: #58cc02; font-size: 1.2rem; }
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0); }
+}
+
+/* --- Responsive --- */
+@media (max-width: 992px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 3rem;
+  }
+
+  .hero-content {
+    align-items: center;
+  }
+  
+  .hero-subtitle {
+    max-width: 100%;
+  }
+
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  
+  .card-1 { left: 0; }
+  .card-2 { right: 0; }
+}
 
 /* --- Legends Section --- */
 .legends-section {
