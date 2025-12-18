@@ -165,25 +165,36 @@ class QuizSubmit(Resource):
 
             elif question_type == "image-labeling":
                 all_correct = True
-                # بررسی می‌کنیم که جواب کاربر دیکشنری باشد
+                total_zones = len(solution.keys())
+                correct_zones = 0
+                
                 if isinstance(user_answer, dict):
-                    # پیمایش روی جواب صحیح (solution)
-                    # در اینجا solution به صورت { zone_id: correct_option_id } است
-                    for zone_id, correct_option_id in solution.items():
-                        user_selected_option_id = user_answer.get(zone_id)
+                    for zone_id, correct_values in solution.items():
+                        # جواب کاربر برای این ناحیه (لیست)
+                        user_selected_list = user_answer.get(zone_id, [])
                         
-                        # مقایسه جواب کاربر با جواب صحیح
-                        if user_selected_option_id == correct_option_id:
+                        # تبدیل به set برای مقایسه بدون در نظر گرفتن ترتیب
+                        # correct_values در دیتابیس باید به صورت لیست باشد ['drug1', 'drug2']
+                        # اگر در دیتابیس تکی است، آن را به لیست تبدیل می‌کنیم
+                        if not isinstance(correct_values, list):
+                            correct_values = [correct_values]
+                        
+                        # مقایسه محتوا
+                        if set(user_selected_list) == set(correct_values):
                             feedback[zone_id] = 'correct'
-                            score_earned += points_per_correct
+                            correct_zones += 1
+                            score_earned += points_per_correct # یا تقسیم بر تعداد گزینه‌ها
                         else:
                             feedback[zone_id] = 'incorrect'
                             all_correct = False
                 else:
                     all_correct = False
-                    feedback = {}
-                    score_earned = 0
-                is_correct = all_correct
+
+                # اگر همه زون‌ها درست بود
+                if correct_zones == total_zones:
+                    is_correct = True
+                else:
+                    is_correct = False
                 
             # منطق خاص برای سوال ceftriaxone
             if question.get('id') == 'ceftriaxone_calcium_admin' and 'solution_reversed' in question:

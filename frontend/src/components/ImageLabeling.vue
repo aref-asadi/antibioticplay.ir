@@ -1,209 +1,450 @@
 <template>
   <div class="image-labeling-container">
-    <p class="instruction">{{ question.instruction }}</p>
+    <p class="question-text">{{ question.text }}</p>
 
-    <div class="image-wrapper">
-      <img :src="question.question_image" class="base-image" alt="Question Image" />
-      
-      <div 
-        v-for="zone in question.drop_zones" 
-        :key="zone.id"
-        class="drop-zone"
-        :style="{ top: zone.top, left: zone.left, width: zone.width, height: zone.height }"
-        :class="{ 
-          'filled': !!userAnswers[zone.id],
-          'correct': feedback && feedback[zone.id] === 'correct',   /* اضافه شده: کلاس سبز */
-          'incorrect': feedback && feedback[zone.id] === 'incorrect', /* اضافه شده: کلاس قرمز */
-          'highlight-target': selectedOptionId && !userAnswers[zone.id] && !feedback[zone.id]
-        }"
-        @click="onZoneClick(zone.id)"
-      >
-        <transition name="pop">
+    <div class="workspace">
+      <div class="image-wrapper" ref="imageRef">
+        <div v-if="!imageLoaded" class="image-loading">
+          <div class="spinner"></div>
+          <p>در حال بارگذاری تصویر...</p>
+        </div>
+
+        <img 
+          :src="question.image" 
+          :alt="question.text" 
+          class="question-image" 
+          :class="{ 'hidden': !imageLoaded }"
+          @load="onImageLoad" 
+        />
+        
+        <template v-if="imageLoaded">
           <div 
-            v-if="userAnswers[zone.id]" 
-            class="placed-item"
-            @click.stop="onPlacedItemClick(zone.id)"
+            v-for="zone in question.zones" 
+            :key="zone.id"
+            class="drop-zone"
+            :class="{ 
+              'is-over': isDragOver === zone.id, 
+              'has-items': userAnswers[zone.id] && userAnswers[zone.id].length > 0,
+              'feedback-correct': feedback && feedback[zone.id] === 'correct',
+              'feedback-incorrect': feedback && feedback[zone.id] === 'incorrect'
+            }"
+            :style="getZoneStyle(zone)"
+            @dragover.prevent="onDragOver(zone.id)"
+            @dragleave="onDragLeave"
+            @drop="onDrop($event, zone.id)"
+            @click="removeLastItem(zone.id)"
+            :title="getZoneTooltip(zone.id)"
           >
-            <img v-if="getItemById(userAnswers[zone.id])?.image" :src="getItemById(userAnswers[zone.id]).image" class="option-img-mini" />
-            <span v-else>{{ getItemById(userAnswers[zone.id])?.text }}</span>
-          </div>
-        </transition>
+            <div v-if="userAnswers[zone.id] && userAnswers[zone.id].length > 0" class="zone-badges">
+              <span v-for="optId in userAnswers[zone.id]" :key="optId" class="mini-badge">
+                {{ getOptionText(optId) }}
+              </span>
+            </div>
+            
+            <div v-else class="zone-placeholder">
+              <span class="plus-icon">+</span>
+            </div>
 
-        <div v-if="feedback && feedback[zone.id]" class="feedback-icon">
-             <font-awesome-icon :icon="feedback[zone.id] === 'correct' ? 'fas fa-check' : 'fas fa-times'" />
+            <div v-if="feedback && feedback[zone.id]" class="feedback-icon">
+              <span v-if="feedback[zone.id] === 'correct'">✅</span>
+              <span v-else>❌</span>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div class="options-pool" v-if="availableOptions.length > 0">
+        <p class="pool-title">گزینه‌ها را بکشید:</p>
+        <div class="options-grid">
+          <div 
+            v-for="option in availableOptions" 
+            :key="option.id"
+            class="draggable-option"
+            draggable="true"
+            @dragstart="onDragStart($event, option)"
+          >
+            {{ option.text }}
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="options-bank" :class="{ 'disabled': disabled }">
-      <div 
-        v-for="option in availableOptions" 
-        :key="option.id"
-        class="option-card"
-        :class="{ 'selected': selectedOptionId === option.id }"
-        @click="onOptionClick(option)"
-      >
-        <img v-if="option.image" :src="option.image" class="option-img" />
-        <span v-else>{{ option.text }}</span>
+      <div v-else class="options-pool empty">
+        <p>تمام گزینه‌ها جایگذاری شده‌اند.</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 
-library.add(faCheck, faTimes);
+const props = defineProps(['question', 'feedback']);
+const emit = defineEmits(['answer']);
 
-const props = defineProps({
-  question: { type: Object, required: true },
-  feedback: { type: Object, default: () => ({}) },
-  disabled: { type: Boolean, default: false }
-});
+const userAnswers = ref({}); // ساختار: { zoneId: [optionId1, optionId2] }
+const isDragOver = ref(null);
+const imageRef = ref(null);
+const imageLoaded = ref(false);
+const scale = ref(1);
 
-const emit = defineEmits(['update:answer']);
-
-const userAnswers = ref({}); // { zone-1: opt-1, ... }
-const selectedOptionId = ref(null);
-
-// ریست کردن وقتی سوال عوض میشه
-watch(() => props.question, () => {
-  userAnswers.value = {};
-  selectedOptionId.value = null;
-}, { immediate: true });
-
-// گزینه‌هایی که هنوز استفاده نشده‌اند (برای نمایش در پایین)
+// محاسبه گزینه‌هایی که هنوز استفاده نشده‌اند
 const availableOptions = computed(() => {
-  const usedIds = Object.values(userAnswers.value);
-  return props.question.options.filter(opt => !usedIds.includes(opt.id));
+  const usedOptionIds = new Set();
+  Object.values(userAnswers.value).forEach(list => {
+    if (Array.isArray(list)) {
+      list.forEach(id => usedOptionIds.add(id));
+    }
+  });
+  return props.question.options.filter(opt => !usedOptionIds.has(opt.id));
 });
 
-const getItemById = (id) => props.question.options.find(o => o.id === id);
+// وقتی سوال عوض می‌شود، همه چیز ریست شود
+watch(() => props.question.id, () => {
+  userAnswers.value = {};
+  imageLoaded.value = false;
+});
 
-// --- منطق کلیک (Tap to Move) ---
+function onImageLoad() {
+  imageLoaded.value = true;
+  calculateScale();
+}
 
-const onOptionClick = (option) => {
-  if (props.disabled) return;
-  if (selectedOptionId.value === option.id) {
-    selectedOptionId.value = null; // لغو انتخاب
-  } else {
-    selectedOptionId.value = option.id;
+function getOptionText(id) {
+  const opt = props.question.options.find(o => o.id === id);
+  return opt ? opt.text : id;
+}
+
+function getZoneTooltip(zoneId) {
+  if (props.feedback && props.feedback[zoneId] === 'incorrect') {
+    return 'پاسخ اشتباه است. کلیک کنید تا حذف شود.';
   }
-};
+  return 'برای حذف آخرین آیتم کلیک کنید';
+}
 
-const onZoneClick = (zoneId) => {
-  if (props.disabled) return;
+// --- Drag & Drop Logic ---
+
+function onDragStart(event, option) {
+  // اگر فیدبک داده شده (یعنی سوال ثبت شده)، اجازه درگ نده
+  if (props.feedback && Object.keys(props.feedback).length > 0) {
+    event.preventDefault();
+    return;
+  }
+  event.dataTransfer.dropEffect = 'move';
+  event.dataTransfer.effectAllowed = 'move';
+  event.dataTransfer.setData('optionId', option.id);
+}
+
+function onDragOver(zoneId) {
+  if (props.feedback && Object.keys(props.feedback).length > 0) return;
+  isDragOver.value = zoneId;
+}
+
+function onDragLeave() {
+  isDragOver.value = null;
+}
+
+function onDrop(event, zoneId) {
+  if (props.feedback && Object.keys(props.feedback).length > 0) return;
   
-  // اگر گزینه‌ای انتخاب شده، آن را اینجا قرار بده
-  if (selectedOptionId.value) {
-    // اگر قبلاً چیزی اینجا بوده، برش گردون به بانک (با جایگزینی)
-    userAnswers.value[zoneId] = selectedOptionId.value;
-    selectedOptionId.value = null;
-    emit('update:answer', userAnswers.value);
+  const optionId = event.dataTransfer.getData('optionId');
+  if (optionId) {
+    if (!userAnswers.value[zoneId]) {
+      userAnswers.value[zoneId] = [];
+    }
+    
+    // جلوگیری از تکرار آیتم در یک زون (هرچند با منطق availableOptions نباید پیش بیاید)
+    if (!userAnswers.value[zoneId].includes(optionId)) {
+      userAnswers.value[zoneId].push(optionId);
+      
+      // کپی جدید برای واکنش‌گرایی Vue
+      userAnswers.value = { ...userAnswers.value };
+      emit('answer', userAnswers.value);
+    }
+  }
+  isDragOver.value = null;
+}
+
+function removeLastItem(zoneId) {
+  // اگر آزمون تمام شده، اجازه تغییر نده
+  if (props.feedback && Object.keys(props.feedback).length > 0) return;
+
+  if (userAnswers.value[zoneId] && userAnswers.value[zoneId].length > 0) {
+    userAnswers.value[zoneId].pop(); // حذف آخرین آیتم
+    
+    if (userAnswers.value[zoneId].length === 0) {
+      delete userAnswers.value[zoneId];
+    }
+    
+    userAnswers.value = { ...userAnswers.value };
+    emit('answer', userAnswers.value);
+  }
+}
+
+// --- Scaling Logic (Responsive) ---
+
+const calculateScale = () => {
+  if (imageRef.value) {
+    const img = imageRef.value.querySelector('.question-image');
+    if (img && img.naturalWidth) {
+      // محاسبه نسبت عرض فعلی به عرض اصلی عکس
+      // 800 عرض فرضی است که مختصات zones بر اساس آن تنظیم شده‌اند (درصدگیری بهتر است)
+      // اما اینجا فرض می‌کنیم مختصات درصدی (0 تا 100) از بک‌اند می‌آیند.
+      // اگر مختصات بک‌اند درصدی باشند (x: 10 به معنی 10%) نیازی به scale نیست.
+      // کد زیر برای حالتی است که x, y درصد هستند:
+      scale.value = 1; 
+    }
   }
 };
 
-const onPlacedItemClick = (zoneId) => {
-  if (props.disabled) return;
-  // حذف گزینه از زون و بازگشت به بانک
-  delete userAnswers.value[zoneId];
-  emit('update:answer', userAnswers.value);
+const getZoneStyle = (zone) => {
+  // فرض می‌کنیم x, y, width, height در دیتابیس به صورت درصد (0 تا 100) ذخیره شده‌اند
+  return {
+    left: `${zone.x}%`,
+    top: `${zone.y}%`,
+    width: `${zone.width}%`,
+    height: `${zone.height}%`
+  };
 };
+
+// گوش دادن به تغییر سایز پنجره
+onMounted(() => {
+  window.addEventListener('resize', calculateScale);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', calculateScale);
+});
 </script>
 
 <style scoped>
-.image-labeling-container { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; width: 100%; }
-.instruction { font-size: 1.1rem; color: #555; margin: 0; text-align: center; }
+.image-labeling-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
 
-.image-wrapper { position: relative; display: inline-block; max-width: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 2px solid #eee; background: white; }
-.base-image { display: block; max-width: 100%; height: auto; user-select: none; pointer-events: none; }
+.question-text {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2c3e50;
+  text-align: right;
+  margin-bottom: 1rem;
+}
 
-/* --- Drop Zone Styles --- */
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}
+
+/* --- Image Wrapper --- */
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 800px; /* حداکثر عرض عکس */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  background-color: #f8f9fa;
+  min-height: 300px; /* حداقل ارتفاع برای لودینگ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.question-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+.question-image.hidden {
+  opacity: 0;
+  position: absolute;
+}
+
+.image-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #7f8c8d;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* --- Drop Zones --- */
 .drop-zone {
   position: absolute;
-  background-color: rgba(255, 255, 255, 0.6);
-  border: 2px dashed #3c3c3c;
+  border: 2px dashed rgba(52, 152, 219, 0.6); /* آبی کمرنگ */
+  background-color: rgba(255, 255, 255, 0.4);
   border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
   cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  overflow: hidden; /* جلوگیری از بیرون زدن آیتم‌ها */
+  padding: 2px;
 }
 
-.drop-zone:hover:not(.filled) { background-color: rgba(255, 255, 255, 0.8); }
-
-.drop-zone.highlight-target { 
-  border-color: var(--color-primary); 
-  background-color: rgba(66, 185, 131, 0.3); 
-  animation: pulse 1.5s infinite; 
+.drop-zone:hover {
+  background-color: rgba(255, 255, 255, 0.6);
+  border-color: #3498db;
+  z-index: 10; /* آمدن روی بقیه */
 }
 
-.drop-zone.filled { 
-  border-style: solid; 
-  background-color: white; 
-  border-color: #bbb; 
+.drop-zone.is-over {
+  background-color: rgba(46, 204, 113, 0.3); /* سبز هنگام درگ */
+  border-color: #2ecc71;
+  transform: scale(1.02);
 }
 
-/* --- Feedback Styles (Red & Green) --- */
-.drop-zone.correct { 
-  border-color: #58cc02 !important; 
-  background-color: #d7ffb8 !important; 
-  color: #58cc02;
+.drop-zone.has-items {
   border-style: solid;
+  border-color: #2c3e50;
+  background-color: rgba(255, 255, 255, 0.85);
 }
 
-.drop-zone.incorrect { 
-  border-color: #ff4b4b !important; 
-  background-color: #ffdfe0 !important; 
-  color: #ff4b4b;
-  border-style: solid;
+/* Feedback Styles */
+.drop-zone.feedback-correct {
+  border-color: #2ecc71;
+  background-color: rgba(46, 204, 113, 0.2);
+}
+
+.drop-zone.feedback-incorrect {
+  border-color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.2);
+}
+
+.zone-placeholder {
+  color: #555;
+  font-weight: bold;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.plus-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* --- Zone Badges (Items inside zone) --- */
+.zone-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-height: 100%;
+  overflow-y: auto; /* اگر زیاد شد اسکرول بخورد */
+}
+
+.mini-badge {
+  background: #34495e;
+  color: white;
+  font-size: 0.7rem; /* فونت ریز برای جا شدن */
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  max-width: 95%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .feedback-icon {
   position: absolute;
   top: -10px;
   right: -10px;
-  width: 24px; height: 24px;
+  background: white;
   border-radius: 50%;
-  color: white;
-  display: flex; align-items: center; justify-content: center;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   font-size: 0.8rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  z-index: 10;
-}
-.drop-zone.correct .feedback-icon { background-color: #58cc02; }
-.drop-zone.incorrect .feedback-icon { background-color: #ff4b4b; }
-
-/* --- Item Styles --- */
-.placed-item { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem; text-align: center; overflow: hidden; padding: 2px; }
-.option-img-mini { width: 100%; height: 100%; object-fit: contain; }
-
-/* --- Bank Styles --- */
-.options-bank { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; background: #f8f8f8; padding: 1rem; border-radius: 12px; width: 100%; border: 2px solid #eee; min-height: 80px; }
-.options-bank.disabled { opacity: 0.6; pointer-events: none; filter: grayscale(1); }
-
-.option-card { 
-  background: white; border: 2px solid #e0e0e0; padding: 0.5rem 1rem; 
-  border-radius: 12px; cursor: pointer; transition: all 0.2s; 
-  font-weight: bold; min-width: 80px; text-align: center; 
-  box-shadow: 0 2px 0 #e0e0e0;
-}
-.option-card:hover { transform: translateY(-2px); }
-.option-card:active { transform: translateY(0); box-shadow: none; }
-
-.option-card.selected { 
-  border-color: var(--color-primary); 
-  background-color: var(--color-primary-light); 
-  color: var(--color-primary-dark);
-  transform: scale(1.05); 
+  z-index: 20;
 }
 
-.option-img { max-height: 40px; display: block; margin: 0 auto; }
+/* --- Options Pool --- */
+.options-pool {
+  width: 100%;
+  background-color: #f1f2f6;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #dfe4ea;
+}
 
-/* Animations */
-@keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.02); } 100% { opacity: 1; transform: scale(1); } }
-.pop-enter-active { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-@keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+.pool-title {
+  font-size: 1rem;
+  color: #57606f;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: center;
+}
+
+.draggable-option {
+  background-color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  cursor: grab;
+  font-weight: 500;
+  color: #2f3542;
+  border: 1px solid #ced6e0;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.draggable-option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-color: var(--color-primary);
+}
+
+.draggable-option:active {
+  cursor: grabbing;
+}
+
+.options-pool.empty {
+  text-align: center;
+  color: #a4b0be;
+  font-style: italic;
+  padding: 2rem;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 600px) {
+  .mini-badge {
+    font-size: 0.6rem;
+    padding: 1px 3px;
+  }
+  .draggable-option {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.8rem;
+  }
+}
 </style>
