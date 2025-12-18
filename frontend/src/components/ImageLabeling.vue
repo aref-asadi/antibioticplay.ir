@@ -4,20 +4,28 @@
 
     <div class="workspace">
       <div class="image-wrapper" ref="imageRef">
-        <div v-if="!imageLoaded" class="image-loading">
+        
+        <div v-if="isLoading" class="image-loading">
           <div class="spinner"></div>
           <p>در حال بارگذاری تصویر...</p>
         </div>
 
+        <div v-if="imageError" class="image-error-state">
+          <p>متاسفانه تصویر بارگذاری نشد.</p>
+          <button @click="retryImage" class="btn-retry">تلاش مجدد</button>
+        </div>
+
         <img 
+          ref="imgElement"
           :src="question.image" 
           :alt="question.text" 
           class="question-image" 
-          :class="{ 'hidden': !imageLoaded }"
-          @load="onImageLoad" 
+          :class="{ 'hidden': !imageLoaded || imageError }"
+          @load="onImageLoad"
+          @error="onImageError"
         />
         
-        <template v-if="imageLoaded">
+        <template v-if="imageLoaded && !imageError">
           <div 
             v-for="zone in question.zones" 
             :key="zone.id"
@@ -75,18 +83,22 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 
 const props = defineProps(['question', 'feedback']);
 const emit = defineEmits(['answer']);
 
-const userAnswers = ref({}); // ساختار: { zoneId: [optionId1, optionId2] }
+const userAnswers = ref({}); 
 const isDragOver = ref(null);
 const imageRef = ref(null);
-const imageLoaded = ref(false);
-const scale = ref(1);
+const imgElement = ref(null); // رفرنس مستقیم به تگ img
 
-// محاسبه گزینه‌هایی که هنوز استفاده نشده‌اند
+const imageLoaded = ref(false);
+const imageError = ref(false);
+
+const isLoading = computed(() => !imageLoaded.value && !imageError.value);
+
+// محاسبه گزینه‌های باقی‌مانده
 const availableOptions = computed(() => {
   const usedOptionIds = new Set();
   Object.values(userAnswers.value).forEach(list => {
@@ -97,15 +109,36 @@ const availableOptions = computed(() => {
   return props.question.options.filter(opt => !usedOptionIds.has(opt.id));
 });
 
-// وقتی سوال عوض می‌شود، همه چیز ریست شود
+// ریست کردن وضعیت با تغییر سوال
 watch(() => props.question.id, () => {
   userAnswers.value = {};
   imageLoaded.value = false;
+  imageError.value = false;
 });
 
 function onImageLoad() {
   imageLoaded.value = true;
+  imageError.value = false;
   calculateScale();
+}
+
+function onImageError() {
+  console.error("خطا در بارگذاری تصویر:", props.question.image);
+  imageLoaded.value = false;
+  imageError.value = true;
+}
+
+function retryImage() {
+  imageError.value = false;
+  imageLoaded.value = false;
+  if (imgElement.value) {
+    // ترفند برای لود مجدد عکس با تغییر کوئری استرینگ
+    const src = props.question.image;
+    imgElement.value.src = '';
+    nextTick(() => {
+        imgElement.value.src = src + '?t=' + new Date().getTime();
+    });
+  }
 }
 
 function getOptionText(id) {
@@ -123,7 +156,6 @@ function getZoneTooltip(zoneId) {
 // --- Drag & Drop Logic ---
 
 function onDragStart(event, option) {
-  // اگر فیدبک داده شده (یعنی سوال ثبت شده)، اجازه درگ نده
   if (props.feedback && Object.keys(props.feedback).length > 0) {
     event.preventDefault();
     return;
@@ -151,11 +183,8 @@ function onDrop(event, zoneId) {
       userAnswers.value[zoneId] = [];
     }
     
-    // جلوگیری از تکرار آیتم در یک زون (هرچند با منطق availableOptions نباید پیش بیاید)
     if (!userAnswers.value[zoneId].includes(optionId)) {
       userAnswers.value[zoneId].push(optionId);
-      
-      // کپی جدید برای واکنش‌گرایی Vue
       userAnswers.value = { ...userAnswers.value };
       emit('answer', userAnswers.value);
     }
@@ -164,39 +193,27 @@ function onDrop(event, zoneId) {
 }
 
 function removeLastItem(zoneId) {
-  // اگر آزمون تمام شده، اجازه تغییر نده
   if (props.feedback && Object.keys(props.feedback).length > 0) return;
 
   if (userAnswers.value[zoneId] && userAnswers.value[zoneId].length > 0) {
-    userAnswers.value[zoneId].pop(); // حذف آخرین آیتم
-    
+    userAnswers.value[zoneId].pop();
     if (userAnswers.value[zoneId].length === 0) {
       delete userAnswers.value[zoneId];
     }
-    
     userAnswers.value = { ...userAnswers.value };
     emit('answer', userAnswers.value);
   }
 }
 
-// --- Scaling Logic (Responsive) ---
-
+// --- Scaling Logic ---
+const scale = ref(1);
 const calculateScale = () => {
-  if (imageRef.value) {
-    const img = imageRef.value.querySelector('.question-image');
-    if (img && img.naturalWidth) {
-      // محاسبه نسبت عرض فعلی به عرض اصلی عکس
-      // 800 عرض فرضی است که مختصات zones بر اساس آن تنظیم شده‌اند (درصدگیری بهتر است)
-      // اما اینجا فرض می‌کنیم مختصات درصدی (0 تا 100) از بک‌اند می‌آیند.
-      // اگر مختصات بک‌اند درصدی باشند (x: 10 به معنی 10%) نیازی به scale نیست.
-      // کد زیر برای حالتی است که x, y درصد هستند:
-      scale.value = 1; 
-    }
-  }
+  // اگر نیاز به محاسبات خاصی روی سایز عکس بود اینجا قرار میگیرد
+  // فعلا برای ریسپانسیو بودن CSS کافی است
+  scale.value = 1; 
 };
 
 const getZoneStyle = (zone) => {
-  // فرض می‌کنیم x, y, width, height در دیتابیس به صورت درصد (0 تا 100) ذخیره شده‌اند
   return {
     left: `${zone.x}%`,
     top: `${zone.y}%`,
@@ -205,9 +222,15 @@ const getZoneStyle = (zone) => {
   };
 };
 
-// گوش دادن به تغییر سایز پنجره
 onMounted(() => {
   window.addEventListener('resize', calculateScale);
+  
+  // بررسی اینکه آیا عکس از کش لود شده است؟
+  if (imgElement.value && imgElement.value.complete) {
+    if (imgElement.value.naturalWidth > 0) {
+        onImageLoad();
+    } 
+  }
 });
 
 onUnmounted(() => {
@@ -244,12 +267,12 @@ onUnmounted(() => {
 .image-wrapper {
   position: relative;
   width: 100%;
-  max-width: 800px; /* حداکثر عرض عکس */
+  max-width: 800px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   background-color: #f8f9fa;
-  min-height: 300px; /* حداقل ارتفاع برای لودینگ */
+  min-height: 300px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -265,13 +288,35 @@ onUnmounted(() => {
 .question-image.hidden {
   opacity: 0;
   position: absolute;
+  width: 0; 
+  height: 0;
 }
 
-.image-loading {
+.image-loading, .image-error-state {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   color: #7f8c8d;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  text-align: center;
+}
+
+.image-error-state p {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.btn-retry {
+    padding: 0.5rem 1rem;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
 .spinner {
@@ -289,7 +334,7 @@ onUnmounted(() => {
 /* --- Drop Zones --- */
 .drop-zone {
   position: absolute;
-  border: 2px dashed rgba(52, 152, 219, 0.6); /* آبی کمرنگ */
+  border: 2px dashed rgba(52, 152, 219, 0.6);
   background-color: rgba(255, 255, 255, 0.4);
   border-radius: 8px;
   display: flex;
@@ -297,18 +342,18 @@ onUnmounted(() => {
   align-items: center;
   transition: all 0.2s ease;
   cursor: pointer;
-  overflow: hidden; /* جلوگیری از بیرون زدن آیتم‌ها */
+  overflow: hidden;
   padding: 2px;
 }
 
 .drop-zone:hover {
   background-color: rgba(255, 255, 255, 0.6);
   border-color: #3498db;
-  z-index: 10; /* آمدن روی بقیه */
+  z-index: 10;
 }
 
 .drop-zone.is-over {
-  background-color: rgba(46, 204, 113, 0.3); /* سبز هنگام درگ */
+  background-color: rgba(46, 204, 113, 0.3);
   border-color: #2ecc71;
   transform: scale(1.02);
 }
@@ -342,7 +387,7 @@ onUnmounted(() => {
   line-height: 1;
 }
 
-/* --- Zone Badges (Items inside zone) --- */
+/* --- Zone Badges --- */
 .zone-badges {
   display: flex;
   flex-wrap: wrap;
@@ -351,13 +396,13 @@ onUnmounted(() => {
   align-items: center;
   width: 100%;
   max-height: 100%;
-  overflow-y: auto; /* اگر زیاد شد اسکرول بخورد */
+  overflow-y: auto;
 }
 
 .mini-badge {
   background: #34495e;
   color: white;
-  font-size: 0.7rem; /* فونت ریز برای جا شدن */
+  font-size: 0.7rem;
   padding: 2px 6px;
   border-radius: 4px;
   white-space: nowrap;
@@ -436,7 +481,6 @@ onUnmounted(() => {
   padding: 2rem;
 }
 
-/* Mobile Adjustments */
 @media (max-width: 600px) {
   .mini-badge {
     font-size: 0.6rem;
