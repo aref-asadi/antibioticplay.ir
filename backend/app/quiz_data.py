@@ -43,26 +43,70 @@ QUIZZES = {
             {
                 "id": "q_pd_chart_label",
                 "type": "image-labeling",
-                "title": "نمودار PK/PD",
-                "instruction": "پارامترهای فارماکودینامیک را در جای صحیح روی نمودار قرار دهید.",
-                "question_image": "/images/questions/pkpd_chart.png", # عکس باید در پوشه public باشد
-                # مختصات حدودی بر اساس نمودار پاورپوینت
-                "drop_zones": [
-                    {"id": "z_conc", "top": "10%", "left": "60%", "width": "35%", "height": "15%"}, # بالا: Concentration
-                    {"id": "z_auc", "top": "40%", "left": "60%", "width": "35%", "height": "15%"},  # وسط: AUC
-                    {"id": "z_time", "top": "75%", "left": "60%", "width": "35%", "height": "15%"}  # پایین: Time
+                # تغییر title و instruction به text (چون کامپوننت question.text را نمایش می‌دهد)
+                "text": "پارامترهای فارماکودینامیک را در جای صحیح روی نمودار قرار دهید.",
+                
+                # تغییر question_image به image
+                "image": "/images/questions/pkpd_chart.png", 
+                
+                "points_per_correct": 20,
+                
+                # تغییر drop_zones به zones و تبدیل مختصات به x, y (به صورت عدد بدون %)
+                "zones": [
+                    # left -> x, top -> y (اعداد باید درصد باشند اما بدون علامت %)
+                    {"id": "z_conc", "y": 10, "x": 60, "width": 35, "height": 15}, # بالا
+                    {"id": "z_auc",  "y": 40, "x": 60, "width": 35, "height": 15}, # وسط
+                    {"id": "z_time", "y": 75, "x": 60, "width": 35, "height": 15}  # پایین
                 ],
+                
                 "options": [
                     {"id": "o1", "text": "وابسته به غلظت (آمینوگلیکوزید)"},
                     {"id": "o2", "text": "وابسته به AUC (ونکومایسین)"},
                     {"id": "o3", "text": "وابسته به زمان (بتا-لاکتام)"}
                 ],
+                
+                # سولوشن باید به صورت لیست باشد (چون سیستم جدید چند‌انتخابی است)
                 "solution": {
-                    "z_conc": "o1",
-                    "z_auc": "o2",
-                    "z_time": "o3"
-                },
-                "points_per_correct": 20
+                    "z_conc": ["o1"],
+                    "z_auc":  ["o2"],
+                    "z_time": ["o3"]
+                }
+            },
+            {
+                "id": "q3_pkpd_chart",
+                "type": "image-labeling",
+                "text": "هر آنتی‌بیوتیک را بر اساس رفتار فارماکودینامیک، در جایگاه صحیح نمودار قرار دهید.",
+                "image": "/images/questions/pkpd_chart.png",
+                "points_per_correct": 10,
+                
+                # گزینه‌های سمت راست (داروها)
+                "options": [
+                    {"id": "amikacin", "text": "Amikacin"},
+                    {"id": "gentamicin", "text": "Gentamicin"},
+                    {"id": "meropenem", "text": "Meropenem"},
+                    {"id": "pip_tazo", "text": "Pip/Tazo"},
+                    {"id": "vancomycin", "text": "Vancomycin"}
+                ],
+                
+                # نواحی پاسخ روی نمودار (مختصات باید بر اساس عکس شما تنظیم دقیق شود)
+                # فرض: عرض عکس 100% و ارتفاع 100% است.
+                "zones": [
+                    # ناحیه ۱: بالا (Concentration Dependent) -> برای آمینوگلیکوزیدها
+                    {"id": "z_conc", "x": 65, "y": 10, "width": 30, "height": 25},
+                    
+                    # ناحیه ۲: وسط (AUC/MIC) -> برای ونکومایسین
+                    {"id": "z_auc", "x": 65, "y": 40, "width": 30, "height": 25},
+                    
+                    # ناحیه ۳: پایین (Time Dependent) -> برای بتالاکتام‌ها
+                    {"id": "z_time", "x": 65, "y": 70, "width": 30, "height": 25}
+                ],
+                
+                # پاسخ صحیح (چند گزینه برای هر ناحیه)
+                "solution": {
+                    "z_conc": ["amikacin", "gentamicin"],
+                    "z_auc": ["vancomycin"],
+                    "z_time": ["meropenem", "pip_tazo"]
+                }
             }
         ]
     },
