@@ -341,7 +341,7 @@ const authStore = useAuthStore();
 }
 .cta-btn {
   background: white;
-  color: var(--color-primary) !important; /* Force color on default */
+  color: var(--color-primary) !important;
   min-width: 250px;
   font-size: 1.2rem;
   padding: 1rem 2rem;
@@ -354,8 +354,8 @@ const authStore = useAuthStore();
 }
 .cta-btn:hover {
   transform: translateY(-3px);
-  background: #f1f5f9 !important; /* Light gray on hover */
-  color: var(--color-primary-dark) !important; /* Dark green on hover */
+  background: #f0fdf4 !important; /* رنگ سبز خیلی روشن */
+  color: #15803d !important; /* رنگ سبز تیره ثابت برای خوانایی */
 }
 
 /* Footer */

@@ -69,6 +69,7 @@ library.add(faScroll, faCheckCircle, faArrowRight);
   right: 2rem;
   width: 50px;
   height: 50px;
+  min-width: 0; /* <--- این خط را اضافه کنید تا قانون کلی ۱۲۰ پیکسل را نادیده بگیرد */
   border-radius: 50%;
   background: white;
   border: none;

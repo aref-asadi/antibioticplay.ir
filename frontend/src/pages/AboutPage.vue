@@ -104,6 +104,7 @@ library.add(faUniversity, faArrowRight);
   right: 2rem;
   width: 50px;
   height: 50px;
+  min-width: 0; /* <--- این خط را اضافه کنید تا قانون کلی ۱۲۰ پیکسل را نادیده بگیرد */
   border-radius: 50%;
   background: white;
   border: none;
@@ -116,8 +117,8 @@ library.add(faUniversity, faArrowRight);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0; /* Reset padding to ensure perfect circle */
-  aspect-ratio: 1; /* Force square aspect ratio */
+  padding: 0;
+  aspect-ratio: 1;
 }
 
 .back-button:hover {
