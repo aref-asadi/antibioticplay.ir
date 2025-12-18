@@ -245,6 +245,7 @@ const isAnswerComplete = computed(() => {
     if (type === 'multiple-select') return Array.isArray(answer) && answer.length > 0;
     if (type === 'true-false') return currentQuestion.value.statements.length === Object.keys(answer).length;
     if (type === 'drag-drop-fill') return currentQuestion.value.blanks.length === Object.values(answer).filter(Boolean).length;
+    if (type === 'image-labeling') return currentQuestion.value.drop_zones.length === Object.keys(answer).length;
     return true;
 });
 
