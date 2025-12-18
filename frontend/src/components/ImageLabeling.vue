@@ -96,20 +96,19 @@ const onOptionClick = (option) => {
 const onZoneClick = (zoneId) => {
   if (props.disabled) return;
   
-  // اگر گزینه‌ای انتخاب شده، آن را اینجا قرار بده
   if (selectedOptionId.value) {
-    // اگر قبلاً چیزی اینجا بوده، برش گردون به بانک (با جایگزینی)
     userAnswers.value[zoneId] = selectedOptionId.value;
     selectedOptionId.value = null;
-    emit('update:answer', userAnswers.value);
+    // تغییر مهم: ارسال کپی آبجکت برای جلوگیری از باگ‌های پروکسی
+    emit('update:answer', { ...userAnswers.value });
   }
 };
 
 const onPlacedItemClick = (zoneId) => {
   if (props.disabled) return;
-  // حذف گزینه از زون و بازگشت به بانک
   delete userAnswers.value[zoneId];
-  emit('update:answer', userAnswers.value);
+  // تغییر مهم: ارسال کپی آبجکت
+  emit('update:answer', { ...userAnswers.value });
 };
 </script>
 

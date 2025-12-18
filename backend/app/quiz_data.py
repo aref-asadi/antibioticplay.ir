@@ -41,26 +41,37 @@ QUIZZES = {
                 "points_per_correct": 10
             },
             {
-                "id": "q_pd_chart_label",
+                "id": "q_pkpd_chart_labeling",
                 "type": "image-labeling",
-                "title": "نمودار PK/PD",
-                "instruction": "پارامترهای فارماکودینامیک را در جای صحیح روی نمودار قرار دهید.",
-                "question_image": "/images/questions/pkpd_chart.png", # عکس باید در پوشه public باشد
-                # مختصات حدودی بر اساس نمودار پاورپوینت
+                "title": "رفتار آنتی‌بیوتیک‌ها",
+                "instruction": "هر گروه دارویی را در ناحیه صحیح (بر اساس رفتار فارماکودینامیک) روی نمودار قرار دهید.",
+                "question_image": "/images/questions/pkpd_chart.png", # مطمئن شوید عکس در این مسیر موجود است
+                
+                # تعریف نواحی (دراپ‌زون‌ها)
+                # نکته: مقادیر top/left را باید بر اساس عکس واقعی خودتان تنظیم دقیق کنید
                 "drop_zones": [
-                    {"id": "z_conc", "top": "10%", "left": "60%", "width": "35%", "height": "15%"}, # بالا: Concentration
-                    {"id": "z_auc", "top": "40%", "left": "60%", "width": "35%", "height": "15%"},  # وسط: AUC
-                    {"id": "z_time", "top": "75%", "left": "60%", "width": "35%", "height": "15%"}  # پایین: Time
+                    # ناحیه بالا (وابسته به غلظت)
+                    {"id": "zone_conc", "top": "15%", "left": "65%", "width": "30%", "height": "15%"}, 
+                    
+                    # ناحیه وسط (وابسته به AUC)
+                    {"id": "zone_auc", "top": "45%", "left": "65%", "width": "30%", "height": "15%"},
+                    
+                    # ناحیه پایین (وابسته به زمان)
+                    {"id": "zone_time", "top": "75%", "left": "65%", "width": "30%", "height": "15%"}
                 ],
+                
+                # گزینه‌ها (طبق فایل پاورپوینت)
                 "options": [
-                    {"id": "o1", "text": "وابسته به غلظت (آمینوگلیکوزید)"},
-                    {"id": "o2", "text": "وابسته به AUC (ونکومایسین)"},
-                    {"id": "o3", "text": "وابسته به زمان (بتا-لاکتام)"}
+                    {"id": "opt_ami", "text": "آمیکاسین / جنتامایسین"},
+                    {"id": "opt_vanco", "text": "ونکومایسین"},
+                    {"id": "opt_beta", "text": "مروپنم / پیپراسیلین-تازوباکتام"}
                 ],
+                
+                # پاسخنامه دقیق (باید دقیقاً با id دراپ‌زون‌ها یکی باشد)
                 "solution": {
-                    "z_conc": "o1",
-                    "z_auc": "o2",
-                    "z_time": "o3"
+                    "zone_conc": "opt_ami",   # آمینوگلیکوزیدها -> Concentration
+                    "zone_auc": "opt_vanco",  # ونکومایسین -> AUC
+                    "zone_time": "opt_beta"   # بتا-لاکتام‌ها -> Time
                 },
                 "points_per_correct": 20
             }
