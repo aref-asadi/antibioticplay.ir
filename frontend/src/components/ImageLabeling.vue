@@ -40,7 +40,7 @@
             @dragover.prevent="onDragOver(zone.id)"
             @dragleave="onDragLeave"
             @drop="onDrop($event, zone.id)"
-            @click="removeLastItem(zone.id)"
+            @click="handleZoneClick(zone.id)"
             :title="getZoneTooltip(zone.id)"
           >
             <div v-if="userAnswers[zone.id] && userAnswers[zone.id].length > 0" class="zone-badges">
@@ -62,14 +62,16 @@
       </div>
 
       <div class="options-pool" v-if="availableOptions.length > 0">
-        <p class="pool-title">گزینه‌ها را بکشید:</p>
+        <p class="pool-title">گزینه‌ها را بکشید یا کلیک کنید:</p>
         <div class="options-grid">
           <div 
             v-for="option in availableOptions" 
             :key="option.id"
             class="draggable-option"
+            :class="{ 'selected': selectedOptionId === option.id }"
             draggable="true"
             @dragstart="onDragStart($event, option)"
+            @click="toggleSelection(option)"
           >
             {{ option.text }}
           </div>
@@ -88,10 +90,11 @@ import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 const props = defineProps(['question', 'feedback']);
 const emit = defineEmits(['answer']);
 
-const userAnswers = ref({}); 
+const userAnswers = ref({});
 const isDragOver = ref(null);
 const imageRef = ref(null);
-const imgElement = ref(null); // رفرنس مستقیم به تگ img
+const imgElement = ref(null);
+const selectedOptionId = ref(null); // برای حالت کلیکی (موبایل)
 
 const imageLoaded = ref(false);
 const imageError = ref(false);
@@ -109,21 +112,19 @@ const availableOptions = computed(() => {
   return props.question.options.filter(opt => !usedOptionIds.has(opt.id));
 });
 
-// ریست کردن وضعیت با تغییر سوال
 watch(() => props.question.id, () => {
   userAnswers.value = {};
   imageLoaded.value = false;
   imageError.value = false;
+  selectedOptionId.value = null;
 });
 
 function onImageLoad() {
   imageLoaded.value = true;
   imageError.value = false;
-  calculateScale();
 }
 
 function onImageError() {
-  console.error("خطا در بارگذاری تصویر:", props.question.image);
   imageLoaded.value = false;
   imageError.value = true;
 }
@@ -132,7 +133,6 @@ function retryImage() {
   imageError.value = false;
   imageLoaded.value = false;
   if (imgElement.value) {
-    // ترفند برای لود مجدد عکس با تغییر کوئری استرینگ
     const src = props.question.image;
     imgElement.value.src = '';
     nextTick(() => {
@@ -147,19 +147,43 @@ function getOptionText(id) {
 }
 
 function getZoneTooltip(zoneId) {
-  if (props.feedback && props.feedback[zoneId] === 'incorrect') {
-    return 'پاسخ اشتباه است. کلیک کنید تا حذف شود.';
-  }
-  return 'برای حذف آخرین آیتم کلیک کنید';
+  if (props.feedback) return '';
+  return selectedOptionId.value ? 'کلیک کنید تا گزینه اضافه شود' : 'کلیک کنید تا آخرین گزینه حذف شود';
 }
 
-// --- Drag & Drop Logic ---
+// --- Interaction Logic (Drag & Click) ---
+
+// 1. انتخاب گزینه با کلیک (برای موبایل)
+function toggleSelection(option) {
+  if (props.feedback && Object.keys(props.feedback).length > 0) return;
+  
+  if (selectedOptionId.value === option.id) {
+    selectedOptionId.value = null; // لغو انتخاب
+  } else {
+    selectedOptionId.value = option.id; // انتخاب
+  }
+}
+
+// 2. هندل کردن کلیک روی زون (هم برای افزودن و هم حذف)
+function handleZoneClick(zoneId) {
+  if (props.feedback && Object.keys(props.feedback).length > 0) return;
+
+  if (selectedOptionId.value) {
+    // اگر گزینه‌ای انتخاب شده، آن را به زون اضافه کن
+    addItemToZone(zoneId, selectedOptionId.value);
+    selectedOptionId.value = null; // پاک کردن انتخاب بعد از اضافه کردن
+  } else {
+    // اگر چیزی انتخاب نشده، آخرین آیتم زون را حذف کن
+    removeLastItem(zoneId);
+  }
+}
 
 function onDragStart(event, option) {
   if (props.feedback && Object.keys(props.feedback).length > 0) {
     event.preventDefault();
     return;
   }
+  selectedOptionId.value = option.id; // برای هماهنگی با کلیک
   event.dataTransfer.dropEffect = 'move';
   event.dataTransfer.effectAllowed = 'move';
   event.dataTransfer.setData('optionId', option.id);
@@ -179,40 +203,43 @@ function onDrop(event, zoneId) {
   
   const optionId = event.dataTransfer.getData('optionId');
   if (optionId) {
-    if (!userAnswers.value[zoneId]) {
-      userAnswers.value[zoneId] = [];
-    }
-    
-    if (!userAnswers.value[zoneId].includes(optionId)) {
-      userAnswers.value[zoneId].push(optionId);
-      userAnswers.value = { ...userAnswers.value };
-      emit('answer', userAnswers.value);
-    }
+    addItemToZone(zoneId, optionId);
   }
   isDragOver.value = null;
+  selectedOptionId.value = null;
+}
+
+// تابع کمکی برای اضافه کردن آیتم
+function addItemToZone(zoneId, optionId) {
+  if (!userAnswers.value[zoneId]) {
+    userAnswers.value[zoneId] = [];
+  }
+  
+  if (!userAnswers.value[zoneId].includes(optionId)) {
+    userAnswers.value[zoneId].push(optionId);
+    
+    // کپی جدید برای تریگر کردن reactivity
+    const newAnswer = { ...userAnswers.value };
+    userAnswers.value = newAnswer;
+    emit('answer', newAnswer);
+  }
 }
 
 function removeLastItem(zoneId) {
-  if (props.feedback && Object.keys(props.feedback).length > 0) return;
-
   if (userAnswers.value[zoneId] && userAnswers.value[zoneId].length > 0) {
     userAnswers.value[zoneId].pop();
+    
     if (userAnswers.value[zoneId].length === 0) {
       delete userAnswers.value[zoneId];
     }
-    userAnswers.value = { ...userAnswers.value };
-    emit('answer', userAnswers.value);
+    
+    const newAnswer = { ...userAnswers.value };
+    userAnswers.value = newAnswer;
+    emit('answer', newAnswer);
   }
 }
 
 // --- Scaling Logic ---
-const scale = ref(1);
-const calculateScale = () => {
-  // اگر نیاز به محاسبات خاصی روی سایز عکس بود اینجا قرار میگیرد
-  // فعلا برای ریسپانسیو بودن CSS کافی است
-  scale.value = 1; 
-};
-
 const getZoneStyle = (zone) => {
   return {
     left: `${zone.x}%`,
@@ -223,18 +250,9 @@ const getZoneStyle = (zone) => {
 };
 
 onMounted(() => {
-  window.addEventListener('resize', calculateScale);
-  
-  // بررسی اینکه آیا عکس از کش لود شده است؟
   if (imgElement.value && imgElement.value.complete) {
-    if (imgElement.value.naturalWidth > 0) {
-        onImageLoad();
-    } 
+    if (imgElement.value.naturalWidth > 0) onImageLoad();
   }
-});
-
-onUnmounted(() => {
-  window.removeEventListener('resize', calculateScale);
 });
 </script>
 
@@ -244,7 +262,7 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  max-width: 900px;
+  max-width: 900px; /* حداکثر عرض کلی */
   margin: 0 auto;
 }
 
@@ -266,69 +284,53 @@ onUnmounted(() => {
 /* --- Image Wrapper --- */
 .image-wrapper {
   position: relative;
-  width: 100%;
-  max-width: 800px;
+  /* نکته مهم: این تنظیمات باعث می‌شود رپر به اندازه عکس کوچک شود */
+  display: inline-block; 
+  width: auto;
+  max-width: 100%;
+  
+  /* محدودیت ارتفاع برای جلوگیری از اسکرول زیاد */
+  max-height: 60vh; 
+  
   border-radius: 12px;
-  overflow: hidden;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   background-color: #f8f9fa;
-  min-height: 300px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  min-height: 200px;
+  overflow: hidden; /* جلوگیری از بیرون زدن */
 }
 
 .question-image {
-  width: 100%;
-  height: auto;
   display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  /* ارتفاع عکس محدود به ارتفاع رپر می‌شود */
+  max-height: 60vh; 
+  object-fit: contain; /* حفظ نسبت تصویر */
   transition: opacity 0.3s ease;
 }
 
 .question-image.hidden {
   opacity: 0;
   position: absolute;
-  width: 0; 
-  height: 0;
 }
 
 .image-loading, .image-error-state {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: #7f8c8d;
-  width: 100%;
-  height: 100%;
+  background: #f8f9fa;
   min-height: 300px;
   text-align: center;
 }
 
-.image-error-state p {
-    color: #e74c3c;
-    font-weight: bold;
-    margin-bottom: 1rem;
-}
-
-.btn-retry {
-    padding: 0.5rem 1rem;
-    background: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid var(--color-primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 10px;
-}
-
+.image-error-state p { color: #e74c3c; font-weight: bold; margin-bottom: 1rem; }
+.btn-retry { padding: 0.5rem 1rem; background: #e74c3c; color: white; border: none; border-radius: 6px; cursor: pointer; }
+.spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--color-primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
 /* --- Drop Zones --- */
@@ -365,33 +367,17 @@ onUnmounted(() => {
 }
 
 /* Feedback Styles */
-.drop-zone.feedback-correct {
-  border-color: #2ecc71;
-  background-color: rgba(46, 204, 113, 0.2);
-}
+.drop-zone.feedback-correct { border-color: #2ecc71; background-color: rgba(46, 204, 113, 0.2); }
+.drop-zone.feedback-incorrect { border-color: #e74c3c; background-color: rgba(231, 76, 60, 0.2); }
 
-.drop-zone.feedback-incorrect {
-  border-color: #e74c3c;
-  background-color: rgba(231, 76, 60, 0.2);
-}
-
-.zone-placeholder {
-  color: #555;
-  font-weight: bold;
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.plus-icon {
-  font-size: 1.5rem;
-  line-height: 1;
-}
+.zone-placeholder { color: #555; font-weight: bold; opacity: 0.7; pointer-events: none; }
+.plus-icon { font-size: 1.5rem; line-height: 1; }
 
 /* --- Zone Badges --- */
 .zone-badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 3px;
+  gap: 2px;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -402,30 +388,25 @@ onUnmounted(() => {
 .mini-badge {
   background: #34495e;
   color: white;
-  font-size: 0.7rem;
-  padding: 2px 6px;
+  font-size: 0.65rem;
+  padding: 2px 4px;
   border-radius: 4px;
   white-space: nowrap;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  max-width: 95%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  max-width: 98%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .feedback-icon {
   position: absolute;
-  top: -10px;
-  right: -10px;
+  top: -8px; right: -8px;
   background: white;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 20px; height: 20px;
+  display: flex; justify-content: center; align-items: center;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  font-size: 0.8rem;
-  z-index: 20;
+  font-size: 0.8rem; z-index: 20;
 }
 
 /* --- Options Pool --- */
@@ -437,31 +418,22 @@ onUnmounted(() => {
   border: 1px solid #dfe4ea;
 }
 
-.pool-title {
-  font-size: 1rem;
-  color: #57606f;
-  margin-bottom: 1rem;
-  font-weight: bold;
-}
-
-.options-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  justify-content: center;
-}
+.pool-title { font-size: 1rem; color: #57606f; margin-bottom: 1rem; font-weight: bold; }
+.options-grid { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
 
 .draggable-option {
   background-color: white;
-  padding: 0.6rem 1.2rem;
+  padding: 0.6rem 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  cursor: grab;
+  cursor: pointer; /* تغییر به پوینتر برای نشان دادن قابلیت کلیک */
   font-weight: 500;
   color: #2f3542;
-  border: 1px solid #ced6e0;
+  border: 2px solid transparent; /* برای جلوگیری از پرش موقع بوردر دادن */
+  border-color: #ced6e0;
   transition: all 0.2s;
   user-select: none;
+  font-size: 0.9rem;
 }
 
 .draggable-option:hover {
@@ -470,25 +442,20 @@ onUnmounted(() => {
   border-color: var(--color-primary);
 }
 
-.draggable-option:active {
-  cursor: grabbing;
+/* کلاس برای حالت انتخاب شده (کلیک شده) */
+.draggable-option.selected {
+  background-color: #e3f2fd; /* آبی کمرنگ */
+  border-color: var(--color-primary);
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px rgba(66, 185, 131, 0.2); /* حلقه دور */
 }
 
-.options-pool.empty {
-  text-align: center;
-  color: #a4b0be;
-  font-style: italic;
-  padding: 2rem;
-}
+.draggable-option:active { cursor: grabbing; }
+.options-pool.empty { text-align: center; color: #a4b0be; font-style: italic; padding: 2rem; }
 
 @media (max-width: 600px) {
-  .mini-badge {
-    font-size: 0.6rem;
-    padding: 1px 3px;
-  }
-  .draggable-option {
-    font-size: 0.9rem;
-    padding: 0.5rem 0.8rem;
-  }
+  .image-wrapper { max-height: 50vh; }
+  .mini-badge { font-size: 0.55rem; padding: 1px 3px; }
+  .draggable-option { font-size: 0.85rem; padding: 0.5rem 0.8rem; }
 }
 </style>
