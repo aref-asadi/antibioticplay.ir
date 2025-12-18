@@ -56,6 +56,10 @@
 
       <div v-else-if="currentQuestion" class="question-container" :class="{ 'shake-animation': applyShake }">
         <h2 class="question-title">{{ currentQuestion.title }}</h2>
+
+        <div v-if="currentQuestion.question_image && currentQuestion.type !== 'image-labeling'" class="question-image-container">
+          <img :src="currentQuestion.question_image" alt="Question Image" />
+        </div>
         
         <component 
           :is="getComponentType(currentQuestion.type)"
@@ -152,6 +156,7 @@ import DragDropMatch from '../components/DragDropMatch.vue';
 import MultipleSelect from '../components/MultipleSelect.vue';
 import TrueFalse from '../components/TrueFalse.vue';
 import DragDropFill from '../components/DragDropFill.vue';
+import ImageLabeling from '../components/ImageLabeling.vue';
 
 import Confetti from '../components/Confetti.vue';
 
@@ -222,6 +227,7 @@ const getComponentType = (type) => {
   if (type === 'multiple-select') return MultipleSelect;
   if (type === 'true-false') return TrueFalse;
   if (type === 'drag-drop-fill') return DragDropFill;
+  if (type === 'image-labeling') return ImageLabeling;
   return null;
 };
 
@@ -427,6 +433,16 @@ const confirmExit = () => {
 }
 .question-container { width: 100%; max-width: 800px; text-align: center; margin-top: 1rem; }
 .question-title { font-size: 1.8rem; color: var(--color-text); margin-bottom: 2rem; text-align: right; font-weight: 800; }
+.question-image-container {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.question-image-container img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
 
 /* Character Animation */
 .character-popup { position: fixed; bottom: 160px; right: 20px; z-index: 90; display: flex; align-items: flex-end; gap: 10px; pointer-events: none; }

@@ -42,36 +42,44 @@
     <main class="dashboard-main">
       
       <div class="learning-path-column">
-        <div v-if="quizStore.loading && !quizStore.modules.length" class="loading-state">
-          در حال بارگذاری مسیر یادگیری...
-        </div>
         
-        <div v-else class="units-list">
-          <div 
-            v-for="(module, index) in quizStore.modules"
-            :key="module.id"
-            class="unit-card"
-            :style="{ borderColor: getModuleColor(index) }"
-          >
-            <header class="unit-header" :style="{ backgroundColor: getModuleColor(index) }">
-              <h3>بخش {{ index + 1 }}: {{ module.title }}</h3>
-              <p>{{ module.description }}</p>
-            </header>
-            
-            <div class="unit-body">
-              <div class="path-node">
-                <button 
-                  class="node-button" 
-                  :style="{ backgroundColor: getModuleColor(index) }"
-                  @click="startQuiz(module.id, index)"
-                >
-                  <font-awesome-icon :icon="['fas', module.icon || 'star']" class="node-icon" />
-                </button>
-                <span class="start-label" :style="{ color: getModuleColor(index) }">شروع</span>
-              </div>
+        <div v-for="(unit, unitIndex) in quizStore.modules" :key="unit.id" class="unit-section">
+          
+          <header class="unit-header" :style="{ backgroundColor: unit.color }">
+            <div class="unit-info">
+              <h3>{{ unit.title }}</h3>
+              <p>{{ unit.description }}</p>
+            </div>
+            <router-link to="/guide" class="btn-guide">
+              <font-awesome-icon icon="fas fa-book" /> راهنما
+            </router-link>
+          </header>
+          
+          <div class="unit-levels">
+            <div 
+              v-for="(level, index) in unit.levels" 
+              :key="level.id" 
+              class="level-node-wrapper"
+              :class="{ 'completed': level.is_completed }"
+            >
+              <button 
+                class="level-button" 
+                :style="{ 
+                  backgroundColor: level.is_completed ? '#ffc107' : unit.color,
+                  boxShadow: `0 6px 0 ${adjustColor(level.is_completed ? '#ffc107' : unit.color, -40)}`
+                }"
+                @click="startQuiz(level.id, unit.color)"
+              >
+                <font-awesome-icon v-if="level.is_completed" icon="fas fa-check" class="check-icon" />
+                <font-awesome-icon v-else icon="fas fa-star" class="level-icon" />
+              </button>
+              
+              <span class="level-title">{{ level.title }}</span>
             </div>
           </div>
+
         </div>
+
       </div>
 
       <aside class="sidebar-column">
@@ -229,6 +237,10 @@ const handleLogout = () => {
   authStore.logout();
 };
 
+const adjustColor = (color, amount) => {
+    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+}
+
 const startQuiz = async (quizId, index) => {
   await quizStore.fetchQuizDetails(quizId);
   if (!quizStore.error) {
@@ -272,16 +284,41 @@ const startQuiz = async (quizId, index) => {
 .learning-path-column { flex: 1; }
 
 /* Unit Cards */
-.unit-card { border: 2px solid; border-radius: 20px; overflow: hidden; margin-bottom: 2rem; text-align: right; }
-.unit-header { padding: 1.5rem; color: white; }
-.unit-header h3 { margin: 0 0 0.5rem 0; font-size: 1.4rem; }
-.unit-header p { margin: 0; opacity: 0.9; font-size: 0.95rem; }
-.unit-body { padding: 2rem; display: flex; justify-content: center; background-color: white; }
-.path-node { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
-.node-button { width: 80px; height: 80px; border-radius: 50%; border: none; box-shadow: 0 6px 0 rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
-.node-button:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
-.node-icon { font-size: 2.5rem; color: white; }
-.start-label { font-weight: 800; font-size: 0.9rem; text-transform: uppercase; }
+.unit-section { margin-bottom: 3rem; }
+
+.unit-header {
+  border-radius: 16px; padding: 1.5rem 2rem; color: white;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 2rem; position: sticky; top: 80px; z-index: 10;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.unit-info h3 { margin: 0 0 0.5rem 0; font-size: 1.5rem; }
+.unit-info p { margin: 0; opacity: 0.9; }
+
+.unit-levels {
+  display: flex; flex-direction: column; align-items: center; gap: 2rem;
+  padding: 1rem 0;
+}
+
+.level-button {
+  width: 70px; height: 70px; border-radius: 50%; border: none;
+  cursor: pointer; display: flex; justify-content: center; align-items: center;
+  font-size: 2rem; color: white; transition: transform 0.1s;
+  position: relative; z-index: 1;
+}
+.level-button:active { transform: translateY(4px); box-shadow: none !important; }
+
+.level-title {
+  margin-top: 0.5rem; font-weight: bold; color: #777; font-size: 0.9rem;
+  background: white; padding: 0.2rem 0.6rem; border-radius: 10px; border: 2px solid #eee;
+}
+
+.level-node-wrapper {
+  display: flex; flex-direction: column; align-items: center;
+}
+
+.level-node-wrapper:nth-child(odd) { transform: translateX(-30px); }
+.level-node-wrapper:nth-child(even) { transform: translateX(30px); }
 
 /* Sidebar */
 .sidebar-column { width: 350px; display: flex; flex-direction: column; gap: 1.5rem; }

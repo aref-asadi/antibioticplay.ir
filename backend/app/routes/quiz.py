@@ -5,21 +5,43 @@ from bson.objectid import ObjectId
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import math
 import pymongo
+from app.quiz_data import QUIZZES, LEARNING_PATH
+from app.models.user import User
 
 class QuizList(Resource):
     @jwt_required()
     def get(self):
-        try:
-            # دریافت لیست آزمون‌ها به همراه توضیحات و آیکون
-            quizzes = list(mongo.db.quizzes.find(
-                {},
-                {"_id": 1, "id": 1, "title": 1, "icon": 1, "description": 1}
-            ))
-            for quiz in quizzes:
-                quiz["_id"] = str(quiz["_id"])
-            return quizzes, 200
-        except Exception as e:
-            return {"message": str(e)}, 500
+        current_user = get_jwt_identity()
+        user = User.find_by_username(current_user)
+        
+        completed_quizzes = user.get('completed_quizzes', [])
+        
+        path_data = []
+        for unit in LEARNING_PATH:
+            unit_data = {
+                "id": unit["id"],
+                "title": unit["title"],
+                "description": unit["description"],
+                "color": unit["color"],
+                "levels": []
+            }
+            
+            for quiz_id in unit["levels"]:
+                quiz_info = QUIZZES.get(quiz_id)
+                if quiz_info:
+                    is_completed = quiz_id in completed_quizzes
+                    
+                    unit_data["levels"].append({
+                        "id": quiz_id,
+                        "title": quiz_info["title"],
+                        "icon": "star",
+                        "is_completed": is_completed,
+                        "total_questions": len(quiz_info["questions"])
+                    })
+            
+            path_data.append(unit_data)
+
+        return path_data, 200
 
 class QuizDetail(Resource):
     @jwt_required()
