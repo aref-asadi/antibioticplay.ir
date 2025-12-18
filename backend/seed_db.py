@@ -1,5 +1,5 @@
 from app import create_app, mongo
-from app.quiz_data import QUIZZES
+from app.quiz_data import QUIZZES, LEARNING_PATH
 from app.badge_data import BADGES
 
 app = create_app()
@@ -13,8 +13,8 @@ with app.app_context():
     mongo.db.badges.drop()
     print("✅ Existing badges collection dropped.")
 
-    mongo.db.users.drop()
-    print("✅ Users collection dropped (Fresh Start).")
+    # mongo.db.users.drop()
+    # print("✅ Users collection dropped (Fresh Start).")
 
     all_quizzes = list(QUIZZES.values())
     if all_quizzes:
