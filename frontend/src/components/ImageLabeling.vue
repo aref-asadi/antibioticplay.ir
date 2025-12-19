@@ -101,7 +101,6 @@ const imageError = ref(false);
 
 const isLoading = computed(() => !imageLoaded.value && !imageError.value);
 
-// محاسبه گزینه‌های باقی‌مانده
 const availableOptions = computed(() => {
   const usedOptionIds = new Set();
   Object.values(userAnswers.value).forEach(list => {
@@ -112,11 +111,19 @@ const availableOptions = computed(() => {
   return props.question.options.filter(opt => !usedOptionIds.has(opt.id));
 });
 
-watch(() => props.question.id, () => {
+watch(() => props.question.id, async () => {
   userAnswers.value = {};
   imageLoaded.value = false;
   imageError.value = false;
   selectedOptionId.value = null;
+
+  await nextTick();
+  
+  if (imgElement.value) {
+    if (imgElement.value.complete && imgElement.value.naturalWidth > 0) {
+      onImageLoad();
+    }
+  }
 });
 
 function onImageLoad() {
@@ -136,7 +143,7 @@ function retryImage() {
     const src = props.question.image;
     imgElement.value.src = '';
     nextTick(() => {
-        imgElement.value.src = src + '?t=' + new Date().getTime();
+        imgElement.value.src = src;
     });
   }
 }
