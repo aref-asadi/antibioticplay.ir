@@ -88,13 +88,13 @@
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 
 const props = defineProps(['question', 'feedback']);
-const emit = defineEmits(['answer']);
+const emit = defineEmits(['update:answer']);
 
 const userAnswers = ref({});
 const isDragOver = ref(null);
 const imageRef = ref(null);
 const imgElement = ref(null);
-const selectedOptionId = ref(null); // برای حالت کلیکی (موبایل)
+const selectedOptionId = ref(null);
 
 const imageLoaded = ref(false);
 const imageError = ref(false);
@@ -152,28 +152,23 @@ function getZoneTooltip(zoneId) {
 }
 
 // --- Interaction Logic (Drag & Click) ---
-
-// 1. انتخاب گزینه با کلیک (برای موبایل)
 function toggleSelection(option) {
   if (props.feedback && Object.keys(props.feedback).length > 0) return;
   
   if (selectedOptionId.value === option.id) {
-    selectedOptionId.value = null; // لغو انتخاب
+    selectedOptionId.value = null;
   } else {
-    selectedOptionId.value = option.id; // انتخاب
+    selectedOptionId.value = option.id;
   }
 }
 
-// 2. هندل کردن کلیک روی زون (هم برای افزودن و هم حذف)
 function handleZoneClick(zoneId) {
   if (props.feedback && Object.keys(props.feedback).length > 0) return;
 
   if (selectedOptionId.value) {
-    // اگر گزینه‌ای انتخاب شده، آن را به زون اضافه کن
     addItemToZone(zoneId, selectedOptionId.value);
-    selectedOptionId.value = null; // پاک کردن انتخاب بعد از اضافه کردن
+    selectedOptionId.value = null;
   } else {
-    // اگر چیزی انتخاب نشده، آخرین آیتم زون را حذف کن
     removeLastItem(zoneId);
   }
 }
@@ -183,7 +178,7 @@ function onDragStart(event, option) {
     event.preventDefault();
     return;
   }
-  selectedOptionId.value = option.id; // برای هماهنگی با کلیک
+  selectedOptionId.value = option.id;
   event.dataTransfer.dropEffect = 'move';
   event.dataTransfer.effectAllowed = 'move';
   event.dataTransfer.setData('optionId', option.id);
@@ -209,7 +204,6 @@ function onDrop(event, zoneId) {
   selectedOptionId.value = null;
 }
 
-// تابع کمکی برای اضافه کردن آیتم
 function addItemToZone(zoneId, optionId) {
   if (!userAnswers.value[zoneId]) {
     userAnswers.value[zoneId] = [];
@@ -218,10 +212,9 @@ function addItemToZone(zoneId, optionId) {
   if (!userAnswers.value[zoneId].includes(optionId)) {
     userAnswers.value[zoneId].push(optionId);
     
-    // کپی جدید برای تریگر کردن reactivity
     const newAnswer = { ...userAnswers.value };
     userAnswers.value = newAnswer;
-    emit('answer', newAnswer);
+    emit('update:answer', newAnswer);
   }
 }
 
@@ -235,7 +228,7 @@ function removeLastItem(zoneId) {
     
     const newAnswer = { ...userAnswers.value };
     userAnswers.value = newAnswer;
-    emit('answer', newAnswer);
+    emit('update:answer', newAnswer);
   }
 }
 
@@ -262,7 +255,7 @@ onMounted(() => {
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  max-width: 900px; /* حداکثر عرض کلی */
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -284,19 +277,17 @@ onMounted(() => {
 /* --- Image Wrapper --- */
 .image-wrapper {
   position: relative;
-  /* نکته مهم: این تنظیمات باعث می‌شود رپر به اندازه عکس کوچک شود */
   display: inline-block; 
   width: auto;
   max-width: 100%;
   
-  /* محدودیت ارتفاع برای جلوگیری از اسکرول زیاد */
   max-height: 60vh; 
   
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   background-color: #f8f9fa;
   min-height: 200px;
-  overflow: hidden; /* جلوگیری از بیرون زدن */
+  overflow: hidden;
 }
 
 .question-image {
@@ -304,9 +295,8 @@ onMounted(() => {
   width: auto;
   height: auto;
   max-width: 100%;
-  /* ارتفاع عکس محدود به ارتفاع رپر می‌شود */
   max-height: 60vh; 
-  object-fit: contain; /* حفظ نسبت تصویر */
+  object-fit: contain;
   transition: opacity 0.3s ease;
 }
 
@@ -426,10 +416,10 @@ onMounted(() => {
   padding: 0.6rem 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  cursor: pointer; /* تغییر به پوینتر برای نشان دادن قابلیت کلیک */
+  cursor: pointer;
   font-weight: 500;
   color: #2f3542;
-  border: 2px solid transparent; /* برای جلوگیری از پرش موقع بوردر دادن */
+  border: 2px solid transparent;
   border-color: #ced6e0;
   transition: all 0.2s;
   user-select: none;
@@ -442,12 +432,11 @@ onMounted(() => {
   border-color: var(--color-primary);
 }
 
-/* کلاس برای حالت انتخاب شده (کلیک شده) */
 .draggable-option.selected {
-  background-color: #e3f2fd; /* آبی کمرنگ */
+  background-color: #e3f2fd;
   border-color: var(--color-primary);
   transform: scale(1.05);
-  box-shadow: 0 0 0 3px rgba(66, 185, 131, 0.2); /* حلقه دور */
+  box-shadow: 0 0 0 3px rgba(66, 185, 131, 0.2);
 }
 
 .draggable-option:active { cursor: grabbing; }
