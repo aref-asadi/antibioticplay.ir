@@ -1,1074 +1,415 @@
+# backend/app/quiz_data.py
+
 QUIZZES = {
-    # ====================================================================
-    # UNIT 1: Classification & Structure (مبانی و ساختار)
-    # ====================================================================
+    # =========================================================================
+    # MODULE 1: CLASSIFICATION & STRUCTURE
+    # =========================================================================
     
-    # --- Level 1: پنی‌سیلین‌ها ---
-    "class_1_penicillins": {
-        "id": "class_1_penicillins",
-        "title": "پنی‌سیلین‌ها",
-        "icon": "capsules",
-        "description": "دسته‌بندی خانواده پنی‌سیلین بر اساس طیف اثر",
+    # --- Module 1 - Stage 1: Cell Wall Synthesis Inhibitors ---
+    "q_class_stage_1": {
+        "id": "q_class_stage_1",
+        "title": "دیواره سلولی (Cell Wall)",
+        "icon": "fa-shield-virus",
+        "description": "مرحله ۱: طبقه بندی آنتی‌بیوتیک‌های موثر بر دیواره سلولی",
         "questions": [
             {
-                "id": "q_pen_class_1",
-                "type": "drag-drop-match",
-                "title": "دسته‌بندی پنی‌سیلین‌ها",
-                "instruction": "هر دارو را در گروه صحیح قرار دهید.",
-                "hint": "پنی‌سیلین‌های G و V طبیعی هستند. کلوگزاسیلین ضد استاف است.",
-                "items": [
-                    {"id": "p1", "text": "پنی سیلین جی"},
-                    {"id": "p2", "text": "پنی سیلین وی"},
-                    {"id": "p3", "text": "آمپی سیلین"},
-                    {"id": "p4", "text": "آموکسی سیلین"},
-                    {"id": "p5", "text": "کلوگزاسیلین"},
-                    {"id": "p6", "text": "نفی سیلین"},
-                    {"id": "p7", "text": "پیپراسیلین"},
-                    {"id": "p8", "text": "پنی سیلین بنزاتین"}
-                ],
-                "categories": [
-                    {"id": "c1", "text": "طبیعی (Natural)"},
-                    {"id": "c2", "text": "آمینوپنی‌سیلین (وسیع‌الطیف)"},
-                    {"id": "c3", "text": "ضد استافیلوکوک"},
-                    {"id": "c4", "text": "ضد سودومونا"}
-                ],
-                "solution": {
-                    "p1": "c1", "p2": "c1", "p8": "c1",
-                    "p3": "c2", "p4": "c2",
-                    "p5": "c3", "p6": "c3",
-                    "p7": "c4"
-                },
-                "points_per_correct": 10
-            },
-            {
-                "id": "q_pd_chart_label",
+                "id": "q_cws_1",
                 "type": "image-labeling",
-                # تغییر title و instruction به text (چون کامپوننت question.text را نمایش می‌دهد)
-                "text": "پارامترهای فارماکودینامیک را در جای صحیح روی نمودار قرار دهید.",
-                
-                # تغییر question_image به image
-                "image": "/images/questions/pkpd_chart.png", 
-                
-                "points_per_correct": 20,
-                
-                # تغییر drop_zones به zones و تبدیل مختصات به x, y (به صورت عدد بدون %)
-                "zones": [
-                    # left -> x, top -> y (اعداد باید درصد باشند اما بدون علامت %)
-                    {"id": "z_conc", "y": 10, "x": 60, "width": 35, "height": 15}, # بالا
-                    {"id": "z_auc",  "y": 40, "x": 60, "width": 35, "height": 15}, # وسط
-                    {"id": "z_time", "y": 75, "x": 60, "width": 35, "height": 15}  # پایین
-                ],
-                
-                "options": [
-                    {"id": "o1", "text": "وابسته به غلظت (آمینوگلیکوزید)"},
-                    {"id": "o2", "text": "وابسته به AUC (ونکومایسین)"},
-                    {"id": "o3", "text": "وابسته به زمان (بتا-لاکتام)"}
-                ],
-                
-                # سولوشن باید به صورت لیست باشد (چون سیستم جدید چند‌انتخابی است)
-                "solution": {
-                    "z_conc": ["o1"],
-                    "z_auc":  ["o2"],
-                    "z_time": ["o3"]
-                }
-            },
-            {
-                "id": "q3_pkpd_chart",
-                "type": "image-labeling",
-                "text": "هر آنتی‌بیوتیک را بر اساس رفتار فارماکودینامیک، در جایگاه صحیح نمودار قرار دهید.",
-                "image": "/images/questions/pkpd_chart.png",
+                "title": "دیواره سلولی",
+                "text": "آنتی بیوتیک های زیر همگی بر ساختار دیواره سلولی باکتری موثرند. هر آنتی بیوتیک را در جایگاه درست از نطر طبقه بندی قرار دهید.",
+                "hint": "پنی‌سیلین‌ها معمولاً به 'cillin' ختم می‌شوند، سفالوسپورین‌ها با 'cef/ceph' شروع می‌شوند و کارباپنم‌ها به 'penem' ختم می‌شوند.",
+                "image": "/images/questions/cws_classification.png",
                 "points_per_correct": 10,
-                
-                # گزینه‌های سمت راست (داروها)
-                "options": [
-                    {"id": "amikacin", "text": "Amikacin"},
-                    {"id": "gentamicin", "text": "Gentamicin"},
-                    {"id": "meropenem", "text": "Meropenem"},
-                    {"id": "pip_tazo", "text": "Pip/Tazo"},
-                    {"id": "vancomycin", "text": "Vancomycin"}
-                ],
-                
-                # نواحی پاسخ روی نمودار (مختصات باید بر اساس عکس شما تنظیم دقیق شود)
-                # فرض: عرض عکس 100% و ارتفاع 100% است.
                 "zones": [
-                    # left -> x, top -> y (اعداد باید درصد باشند اما بدون علامت %)
-                    {"id": "z_conc", "y": 10, "x": 60, "width": 35, "height": 15}, # بالا
-                    {"id": "z_auc",  "y": 40, "x": 60, "width": 35, "height": 15}, # وسط
-                    {"id": "z_time", "y": 75, "x": 60, "width": 35, "height": 15}  # پایین
+                    {"id": "z_penicillins", "label": "Penicillins", "y": 15, "x": 5, "width": 20, "height": 20},
+                    {"id": "z_cephalosporins", "label": "Cephalosporins", "y": 15, "x": 30, "width": 20, "height": 20},
+                    {"id": "z_carbapenems", "label": "Carbapenems", "y": 15, "x": 55, "width": 20, "height": 20},
+                    {"id": "z_glycopeptides", "label": "Glycopeptides", "y": 45, "x": 15, "width": 20, "height": 20},
+                    {"id": "z_others", "label": "Others/Monobactams", "y": 45, "x": 45, "width": 20, "height": 20}
                 ],
-                
-                # پاسخ صحیح (چند گزینه برای هر ناحیه)
+                "options": [
+                    {"id": "ampicillin", "text": "آمپی سیلین"},
+                    {"id": "oxacillin", "text": "اگزاسیلین"},
+                    {"id": "pen_v", "text": "پنی سیلین V"},
+                    {"id": "pen_benz", "text": "پنی سیلین بنزاتین"},
+                    {"id": "nafcillin", "text": "نفی سیلین"},
+                    {"id": "cefazolin", "text": "سفازولین"},
+                    {"id": "cephalexin", "text": "سفالکسین"},
+                    {"id": "cephalothin", "text": "سفالوتین"},
+                    {"id": "ceftazidime", "text": "سفتازیدیم"},
+                    {"id": "cefotaxime", "text": "سفوتاکسیم"},
+                    {"id": "ceftriaxone", "text": "سفتریاکسون"},
+                    {"id": "cefixime", "text": "سفکسیم"},
+                    {"id": "cefepime", "text": "سفپیم"},
+                    {"id": "ceftaroline", "text": "سفتارولین"},
+                    {"id": "azobactam", "text": "آزوباکتام"}, 
+                    {"id": "meropenem", "text": "مروپنم"},
+                    {"id": "ertapenem", "text": "ارتاپنم"},
+                    {"id": "vancomycin", "text": "ونکومایسین"},
+                    {"id": "teicoplanin", "text": "تیکوپلانین"}
+                ],
                 "solution": {
-                    "z_conc": ["amikacin", "gentamicin"],
-                    "z_auc": ["vancomycin"],
-                    "z_time": ["meropenem", "pip_tazo"]
+                    "z_penicillins": ["ampicillin", "oxacillin", "pen_v", "pen_benz", "nafcillin"],
+                    "z_cephalosporins": ["cefazolin", "cephalexin", "cephalothin", "ceftazidime", "cefotaxime", "ceftriaxone", "cefixime", "cefepime", "ceftaroline"],
+                    "z_carbapenems": ["meropenem", "ertapenem"],
+                    "z_glycopeptides": ["vancomycin", "teicoplanin"],
+                    "z_others": ["azobactam"] 
                 }
             }
         ]
     },
 
-    # --- Level 2: سفالوسپورین‌ها (نسل ۱ تا ۳) ---
-    "class_2_ceph_basic": {
-        "id": "class_2_ceph_basic",
-        "title": "سفالوسپورین‌ها (۱)",
-        "icon": "tablets",
-        "description": "شناسایی نسل‌های اول، دوم و سوم سفالوسپورین‌ها",
+    # --- Module 1 - Stage 2: Other Antibiotics ---
+    "q_class_stage_2": {
+        "id": "q_class_stage_2",
+        "title": "سایر مکانیسم‌ها (Other Mechanisms)",
+        "icon": "fa-pills",
+        "description": "مرحله ۲: طبقه بندی آنتی‌بیوتیک‌های موثر بر پروتئین و DNA",
         "questions": [
             {
-                "id": "q_ceph_123",
-                "type": "drag-drop-match",
-                "title": "نسل‌های ۱ تا ۳",
-                "instruction": "داروها را به نسل صحیح متصل کنید.",
-                "hint": "سفازولین نسل ۱ است. سفتریاکسون معروف‌ترین نسل ۳ است.",
-                "items": [
-                    {"id": "c1", "text": "سفازولین"},
-                    {"id": "c2", "text": "سفالکسین"},
-                    {"id": "c3", "text": "سفوروکسیم"},
-                    {"id": "c4", "text": "سفوکسیتین"},
-                    {"id": "c5", "text": "سفتریاکسون"},
-                    {"id": "c6", "text": "سفیکسیم"},
-                    {"id": "c7", "text": "سفتازیدیم"}
+                "id": "q_others_1",
+                "type": "image-labeling",
+                "title": "سایر طبقه بندی ها",
+                "text": "آنتی بیوتیک های زیر را به طبقه بندی درست از جدول انتقال دهید.",
+                "hint": "فلوروکینولون‌ها به 'floxacin' ختم می‌شوند. ماکرولیدها معمولاً پسوند 'mycin' دارند اما ساختار حلقه بزرگ لاکتونی دارند (مثل آزیترومایسین).",
+                "image": "/images/questions/o_classification.png",
+                "points_per_correct": 10,
+                "zones": [
+                    {"id": "z_aminoglycosides", "label": "Aminoglycosides", "y": 10, "x": 10, "width": 25, "height": 15},
+                    {"id": "z_tetracyclines", "label": "Tetracyclines", "y": 10, "x": 40, "width": 25, "height": 15},
+                    {"id": "z_macrolides", "label": "Macrolides/Lincosamides", "y": 35, "x": 10, "width": 25, "height": 15},
+                    {"id": "z_fluoroquinolones", "label": "Fluoroquinolones", "y": 35, "x": 40, "width": 25, "height": 15},
+                    {"id": "z_others_2", "label": "Others (Sulfa/Nitro/etc)", "y": 60, "x": 25, "width": 25, "height": 15}
                 ],
-                "categories": [
-                    {"id": "g1", "text": "نسل اول"},
-                    {"id": "g2", "text": "نسل دوم"},
-                    {"id": "g3", "text": "نسل سوم"}
+                "options": [
+                    {"id": "neomycin", "text": "نئومایسین"},
+                    {"id": "tobramycin", "text": "توبرامایسین"},
+                    {"id": "amikacin", "text": "آمیکاسین"},
+                    {"id": "minocycline", "text": "مینوسیکلین"},
+                    {"id": "tigecycline", "text": "تیگسیکلین"},
+                    {"id": "linezolid", "text": "لینزولید"},
+                    {"id": "azithromycin", "text": "آزیترومایسین"},
+                    {"id": "clindamycin", "text": "کلیندامایسین"},
+                    {"id": "levofloxacin", "text": "لووفلوکساین"},
+                    {"id": "ofloxacin", "text": "افلوکساسین"},
+                    {"id": "moxifloxacin", "text": "موکسی فلوکساین"},
+                    {"id": "nalidixic_acid", "text": "نالیدیکسیک اسید"},
+                    {"id": "sulfasalazine", "text": "سولفاسالازین"},
+                    {"id": "sulfadiazine", "text": "سولفادیازین"},
+                    {"id": "metronidazole", "text": "مترونیدازول"}
                 ],
                 "solution": {
-                    "c1": "g1", "c2": "g1",
-                    "c3": "g2", "c4": "g2",
-                    "c5": "g3", "c6": "g3", "c7": "g3"
-                },
-                "points_per_correct": 10
+                    "z_aminoglycosides": ["neomycin", "tobramycin", "amikacin"],
+                    "z_tetracyclines": ["minocycline", "tigecycline"],
+                    "z_macrolides": ["azithromycin", "clindamycin"], 
+                    "z_fluoroquinolones": ["levofloxacin", "ofloxacin", "moxifloxacin", "nalidixic_acid"],
+                    "z_others_2": ["sulfasalazine", "sulfadiazine", "linezolid", "metronidazole"]
+                }
             }
         ]
     },
 
-    # --- Level 3: سفالوسپورین‌های پیشرفته (نسل ۴ و ۵) ---
-    "class_3_ceph_adv": {
-        "id": "class_3_ceph_adv",
-        "title": "سفالوسپورین‌ها (۲)",
-        "icon": "shield-virus",
-        "description": "نسل‌های پیشرفته سفالوسپورین‌ها",
+    # =========================================================================
+    # MODULE 2: DOSAGE FORMS
+    # =========================================================================
+
+    # --- Module 2 - Stage 1: Beta-lactams & Combinations ---
+    "q_dosage_stage_1": {
+        "id": "q_dosage_stage_1",
+        "title": "اشکال دارویی - بخش اول",
+        "icon": "fa-flask",
+        "description": "فرمولاسیون‌های بتالاکتام، نسبت‌ها و دوزینگ",
         "questions": [
             {
-                "id": "q_ceph_45",
+                # Q1: Beta-lactam Combinations
+                "id": "q_betalactam_combo",
                 "type": "drag-drop-match",
-                "title": "نسل‌های پیشرفته",
-                "instruction": "داروهای نسل جدید را دسته‌بندی کنید.",
-                "items": [
-                    {"id": "c8", "text": "سفپیم"},
-                    {"id": "c9", "text": "سفتارولین"},
-                    {"id": "c10", "text": "سفپیریم"}
+                "title": "ترکیب با مهارکننده بتالاکتاماز",
+                "text": "هر آنتی‌بیوتیک بتالاکتام را به مهارکننده بتالاکتاماز که با آن فرموله شده وصل کنید.",
+                "hint": "آموکسی‌سیلین و کلاوولانات هر دو خوراکی هستند. پیپراسیلین با تازوباکتام (Tazocin) ترکیب می‌شود. ترکیب جدید سفتازیدیم با آویباکتام است.",
+                "points_per_correct": 10,
+                "items_left": [
+                    {"id": "l_amox", "text": "آموکسی سیلین"},
+                    {"id": "l_amp", "text": "آمپی سیلین"},
+                    {"id": "l_pip", "text": "پیپراسیلین"},
+                    {"id": "l_cef", "text": "سفتازیدیم"}
                 ],
-                "categories": [
-                    {"id": "g4", "text": "نسل چهارم"},
-                    {"id": "g5", "text": "نسل پنجم (ضد MRSA)"}
+                "items_right": [
+                    {"id": "r_clav", "text": "کلاوولانات"},
+                    {"id": "r_sulb", "text": "سولباکتام"},
+                    {"id": "r_tazo", "text": "تازوباکتام"},
+                    {"id": "r_avi", "text": "آویباکتام"}
                 ],
                 "solution": {
-                    "c8": "g4", "c10": "g4",
-                    "c9": "g5"
-                },
-                "points_per_correct": 15
-            }
-        ]
-    },
-
-    # --- Level 4: سایر بتا-لاکتام‌ها و دیواره سلولی ---
-    "class_4_cellwall_others": {
-        "id": "class_4_cellwall_others",
-        "title": "سایر مهارکنندگان دیواره",
-        "icon": "wall", # آیکون فرضی
-        "description": "کارباپنم‌ها، مونوباکتام‌ها و گلیکوپپتیدها",
-        "questions": [
-            {
-                "id": "q_carb_glyco",
-                "type": "drag-drop-match",
-                "title": "خانواده‌های دیگر",
-                "instruction": "هر آنتی‌بیوتیک متعلق به کدام خانواده است؟",
-                "items": [
-                    {"id": "o1", "text": "مروپنم"},
-                    {"id": "o2", "text": "ایمی پنم"},
-                    {"id": "o3", "text": "آزترئونام"},
-                    {"id": "o4", "text": "ونکومایسین"},
-                    {"id": "o5", "text": "تیکوپلانین"},
-                    {"id": "o6", "text": "باستیرایسین"}
-                ],
-                "categories": [
-                    {"id": "cat1", "text": "کارباپنم‌ها"},
-                    {"id": "cat2", "text": "مونوباکتام‌ها"},
-                    {"id": "cat3", "text": "گلیکوپپتیدها"},
-                    {"id": "cat4", "text": "پلی‌پپتیدها"}
-                ],
-                "solution": {
-                    "o1": "cat1", "o2": "cat1",
-                    "o3": "cat2",
-                    "o4": "cat3", "o5": "cat3",
-                    "o6": "cat4"
-                },
-                "points_per_correct": 10
-            }
-        ]
-    },
-
-    # --- Level 5: مهارکنندگان پروتئین (30S و 50S) ---
-    "class_5_protein": {
-        "id": "class_5_protein",
-        "title": "مهارکنندگان پروتئین",
-        "icon": "dna",
-        "description": "آمینوگلیکوزیدها، تتراسیکلین‌ها و ماکرولیدها",
-        "questions": [
-            {
-                "id": "q_protein_syn",
-                "type": "drag-drop-match",
-                "title": "دسته‌بندی مهارکنندگان پروتئین",
-                "instruction": "داروها را در خانواده صحیح قرار دهید.",
-                "items": [
-                    {"id": "pr1", "text": "جنتامایسین"},
-                    {"id": "pr2", "text": "آمیکاسین"},
-                    {"id": "pr3", "text": "داکسی سیکلین"},
-                    {"id": "pr4", "text": "تتراسیکلین"},
-                    {"id": "pr5", "text": "آزیترومایسین"},
-                    {"id": "pr6", "text": "کلیندامایسین"},
-                    {"id": "pr7", "text": "لینزولید"}
-                ],
-                "categories": [
-                    {"id": "pc1", "text": "آمینوگلیکوزید"},
-                    {"id": "pc2", "text": "تتراسیکلین"},
-                    {"id": "pc3", "text": "ماکرولید/لینکوزامید"},
-                    {"id": "pc4", "text": "اکسازولیدینون"}
-                ],
-                "solution": {
-                    "pr1": "pc1", "pr2": "pc1",
-                    "pr3": "pc2", "pr4": "pc2",
-                    "pr5": "pc3", "pr6": "pc3",
-                    "pr7": "pc4"
-                },
-                "points_per_correct": 10
-            }
-        ]
-    },
-
-    # --- Level 6: مهارکنندگان DNA و فولات ---
-    "class_6_dna": {
-        "id": "class_6_dna",
-        "title": "مهارکنندگان DNA و فولات",
-        "icon": "bacteria",
-        "description": "فلوروکینولون‌ها و آنتی‌متابولیت‌ها",
-        "questions": [
-            {
-                "id": "q_dna_folate",
-                "type": "drag-drop-match",
-                "title": "هدف آنتی‌بیوتیک",
-                "instruction": "مکانیسم اثر یا خانواده دارو را مشخص کنید.",
-                "items": [
-                    {"id": "d1", "text": "سیپروفلوکساسین"},
-                    {"id": "d2", "text": "لووفلوکساسین"},
-                    {"id": "d3", "text": "کوتریموکسازول"},
-                    {"id": "d4", "text": "مترونیدازول"},
-                    {"id": "d5", "text": "ریفامپین"}
-                ],
-                "categories": [
-                    {"id": "dc1", "text": "فلوروکینولون (DNA Gyrase)"},
-                    {"id": "dc2", "text": "آنتی‌متابولیت (فولات)"},
-                    {"id": "dc3", "text": "آسیب مستقیم DNA"},
-                    {"id": "dc4", "text": "مهار RNA پلیمراز"}
-                ],
-                "solution": {
-                    "d1": "dc1", "d2": "dc1",
-                    "d3": "dc2",
-                    "d4": "dc3",
-                    "d5": "dc4"
-                },
-                "points_per_correct": 10
-            }
-        ]
-    },
-
-    # ====================================================================
-    # UNIT 2: Dosage Forms (اشکال دارویی)
-    # ====================================================================
-
-    # --- Level 1: بتا-لاکتام‌ها و مهارکننده‌ها ---
-    "dosage_1_betalactams": {
-        "id": "dosage_1_betalactams",
-        "title": "بتا-لاکتام‌ها و مهارکننده‌ها",
-        "icon": "vials",
-        "description": "ترکیبات آنتی‌بیوتیک با مهارکننده‌های بتالاکتاماز و نسبت‌های آن‌ها",
-        "questions": [
-            {
-                "id": "q_inhibitors_match",
-                "type": "drag-drop-match",
-                "title": "ترکیب با مهارکننده",
-                "instruction": "هر آنتی‌بیوتیک را به مهارکننده بتالاکتاماز مخصوص آن وصل کنید.",
-                "items": [
-                    {"id": "i1", "text": "آموکسی سیلین"},
-                    {"id": "i2", "text": "آمپی سیلین"},
-                    {"id": "i3", "text": "پیپراسیلین"},
-                    {"id": "i4", "text": "سفتازیدیم"}
-                ],
-                "categories": [
-                    {"id": "c1", "text": "کلاوولانات"},
-                    {"id": "c2", "text": "سولباکتام"},
-                    {"id": "c3", "text": "تازوباکتام"},
-                    {"id": "c4", "text": "آویباکتام"}
-                ],
-                "solution": {
-                    "i1": "c1",
-                    "i2": "c2",
-                    "i3": "c3",
-                    "i4": "c4"
-                },
-                "points_per_correct": 10
+                    "l_amox": "r_clav",
+                    "l_amp": "r_sulb",
+                    "l_pip": "r_tazo",
+                    "l_cef": "r_avi"
+                }
             },
             {
+                # Q2: Co-Amoxiclav Ratios
                 "id": "q_coamox_ratios",
-                "type": "drag-drop-match",
+                "type": "drag-drop-ordering",
                 "title": "نسبت‌های کوآموکسی‌کلاو",
-                "instruction": "هر دوز سوسپانسیون را به نسبت صحیح آموکسی‌سیلین به کلاوولانات وصل کنید.",
-                "hint": "دوز ۶۴۳ بالاترین نسبت (۱:۱۴) را دارد.",
-                "items": [
-                    {"id": "r1", "text": "سوسپانسیون ۱۵۶ و ۳۱۲"},
-                    {"id": "r2", "text": "سوسپانسیون ۲۲۸ و ۴۵۷"},
-                    {"id": "r3", "text": "سوسپانسیون ۶۴۳"}
+                "text": "هر سوسپانسیون کوآموکسی‌کلاو را در دسته مربوط به نسبت (آموکسی‌سیلین به کلاوولانات) صحیح قرار دهید.",
+                "hint": "در سوسپانسیون‌های معمول (156 و 312) نسبت 4:1 است. سوسپانسیون 643 غلیظ‌ترین فرم با نسبت 14:1 است.",
+                "points_per_correct": 10,
+                "buckets": [
+                    {"id": "b_1_4", "label": "نسبت 4:1"},
+                    {"id": "b_1_7", "label": "نسبت 7:1"},
+                    {"id": "b_1_14", "label": "نسبت 14:1"}
                 ],
-                "categories": [
-                    {"id": "rc1", "text": "نسبت ۱:۴"},
-                    {"id": "rc2", "text": "نسبت ۱:۷"},
-                    {"id": "rc3", "text": "نسبت ۱:۱۴"}
+                "items": [
+                    {"id": "s_156", "text": "سوسپانسیون 156"},
+                    {"id": "s_312", "text": "سوسپانسیون 312"},
+                    {"id": "s_228", "text": "سوسپانسیون 228"},
+                    {"id": "s_457", "text": "سوسپانسیون 457"},
+                    {"id": "s_643", "text": "سوسپانسیون 643"}
                 ],
                 "solution": {
-                    "r1": "rc1",
-                    "r2": "rc2",
-                    "r3": "rc3"
-                },
-                "points_per_correct": 10
+                    "s_156": "b_1_4",
+                    "s_312": "b_1_4",
+                    "s_228": "b_1_7",
+                    "s_457": "b_1_7",
+                    "s_643": "b_1_14"
+                }
+            },
+            {
+                # Q3: Ampicillin-Sulbactam Details
+                "id": "q_amp_sulb_fill",
+                "type": "drag-drop-fill",
+                "title": "اطلاعات آمپی‌سیلین-سولباکتام",
+                "text": "جاهای خالی را با توجه به اطلاعات دارویی آمپی‌سیلین-سولباکتام در ایران پر کنید.",
+                "hint": "نسبت این دارو 2 به 1 است (مثلاً ویال 1.5 گرمی شامل 1 گرم آمپی‌سیلین است). دوزینگ همیشه بر اساس جزء آنتی‌بیوتیک (آمپی‌سیلین) است.",
+                "points_per_correct": 10,
+                "blanks": [
+                    {"id": "b_form1", "text": "این دارو با اشکال دارویی", "solution_id": "opt_1_5"},
+                    {"id": "b_form2", "text": "و", "solution_id": "opt_3"},
+                    {"id": "b_ratio", "text": "در بازار وجود دارد و نسبت آمپی‌سیلین به سولباکتام", "solution_id": "opt_2_1"},
+                    {"id": "b_dosing", "text": "است. دوزینگ بر اساس جزء", "solution_id": "opt_amp_part"},
+                    {"id": "b_end", "text": "صورت می‌گیرد.", "solution_id": None}
+                ],
+                "options": [
+                    {"id": "opt_1_5", "text": "1.5 گرم"},
+                    {"id": "opt_3", "text": "3 گرم"},
+                    {"id": "opt_2_1", "text": "2:1"},
+                    {"id": "opt_amp_part", "text": "آمپی‌سیلین"},
+                    {"id": "opt_sulb_part", "text": "سولباکتام"},
+                    {"id": "opt_total", "text": "مجموع"}
+                ]
+            },
+            {
+                # Q4: Pip-Tazo Details
+                "id": "q_pip_tazo_fill",
+                "type": "drag-drop-fill",
+                "title": "اطلاعات پیپراسیلین-تازوباکتام",
+                "text": "جاهای خالی را با توجه به اطلاعات دارویی پیپراسیلین-تازوباکتام پر کنید.",
+                "hint": "برخلاف آمپی-سولباکتام، دوزینگ این دارو بر اساس **مجموع** هر دو جزء بیان می‌شود. نسبت پیپراسیلین به تازوباکتام 8 به 1 است.",
+                "points_per_correct": 10,
+                "blanks": [
+                    {"id": "b_forms", "text": "این دارو با اشکال دارویی 2.25، 3.375 و", "solution_id": "opt_4_5"},
+                    {"id": "b_ratio", "text": "گرم موجود است و نسبت پیپراسیلین به تازوباکتام", "solution_id": "opt_8_1"},
+                    {"id": "b_dosing", "text": "است. دوزینگ بر اساس جزء", "solution_id": "opt_total_pip"},
+                    {"id": "b_end", "text": "صورت می‌گیرد.", "solution_id": None}
+                ],
+                "options": [
+                    {"id": "opt_4_5", "text": "4.5 گرم"},
+                    {"id": "opt_8_1", "text": "8:1"},
+                    {"id": "opt_16_1", "text": "16:1"},
+                    {"id": "opt_pip_part", "text": "پیپراسیلین"},
+                    {"id": "opt_tazo_part", "text": "تازوباکتام"},
+                    {"id": "opt_total_pip", "text": "مجموع پیپراسیلین-تازوباکتام"}
+                ]
+            },
+            {
+                # Q5: Imipenem Dosing (Multiple Select)
+                "id": "q_imipenem_calc",
+                "type": "multiple-select",
+                "title": "محاسبه دوز ایمی‌پنم",
+                "text": "برای بیماری ایمی‌پنم-سیلاستاتین 500 میلی‌گرم تجویز شده است. کدام گزینه‌ها برای هر بار تزریق قابل انتخاب هستند؟",
+                "hint": "هر ویال معمولاً به صورت 500/500 (مجموع 1g) یا 250/250 (مجموع 500mg) است. صورت سوال 500mg ایمی‌پنم خواسته است.",
+                "points_per_correct": 10,
+                "options": [
+                    {"id": "opt_1_500", "text": "یک ویال 500/500 میلی گرم"},
+                    {"id": "opt_1_250", "text": "یک ویال 250/250 میلی گرم"},
+                    {"id": "opt_2_250", "text": "دو ویال 250/250 میلی گرم"},
+                    {"id": "opt_half_500", "text": "نصف ویال 500/500 میلی گرم"},
+                    {"id": "opt_half_750", "text": "نصف ویال 750/250 میلی گرم"}
+                ],
+                "solution": ["opt_1_500", "opt_2_250"]
             }
         ]
     },
 
-    # --- Level 2: محاسبات دوزینگ (Dosing) ---
-    "dosage_2_dosing": {
-        "id": "dosage_2_dosing",
-        "title": "محاسبات دوزینگ",
-        "icon": "calculator",
-        "description": "دوزینگ داروهای ترکیبی و نکات مهم تجویز",
+    # --- Module 2 - Stage 2: Other Classes Formulations ---
+    "q_dosage_stage_2": {
+        "id": "q_dosage_stage_2",
+        "title": "اشکال دارویی - بخش دوم",
+        "icon": "fa-pills",
+        "description": "فلوروکینولون‌ها، ماکرولیدها و داروهای ضدویروس/ضدقارچ",
         "questions": [
             {
-                "id": "q_amp_sul_fill",
-                "type": "drag-drop-fill",
-                "title": "آمپی‌سیلین-سولباکتام",
-                "instruction_template": "این دارو با نسبت _BLANK1_ فرموله شده است. اشکال دارویی _BLANK2_ و _BLANK3_ دارد و دوزینگ بر اساس _BLANK4_ انجام می‌شود.",
-                "options": [
-                    {"id": "o1", "text": "۲:۱"},
-                    {"id": "o2", "text": "۱/۵ گرم"},
-                    {"id": "o3", "text": "۳ گرم"},
-                    {"id": "o4", "text": "مجموع (کل دارو)"},
-                    {"id": "o5", "text": "۴:۱"},
-                    {"id": "o6", "text": "فقط آمپی‌سیلین"}
-                ],
-                "blanks": [
-                    {"id": "_BLANK1_", "solution_id": "o1"},
-                    {"id": "_BLANK2_", "solution_id": "o2"},
-                    {"id": "_BLANK3_", "solution_id": "o3"},
-                    {"id": "_BLANK4_", "solution_id": "o4"}
-                ],
-                "points_per_correct": 15
-            },
-            {
-                "id": "q_pip_taz_fill",
-                "type": "drag-drop-fill",
-                "title": "پیپراسیلین-تازوباکتام",
-                "instruction_template": "این دارو با نسبت _BLANK1_ فرموله شده است. اشکال دارویی رایج شامل _BLANK2_ و _BLANK3_ است.",
-                "options": [
-                    {"id": "p1", "text": "۸:۱"},
-                    {"id": "p2", "text": "۲/۲۵۰ گرم"},
-                    {"id": "p3", "text": "۴/۵ گرم"},
-                    {"id": "p4", "text": "۴:۱"},
-                    {"id": "p5", "text": "۳ گرم"}
-                ],
-                "blanks": [
-                    {"id": "_BLANK1_", "solution_id": "p1"},
-                    {"id": "_BLANK2_", "solution_id": "p2"},
-                    {"id": "_BLANK3_", "solution_id": "p3"}
-                ],
-                "points_per_correct": 15
-            },
-            {
-                "id": "q_imipenem_select",
+                # Q6: Fluoroquinolone Eye Drops
+                "id": "q_fq_eyes",
                 "type": "multiple-select",
-                "title": "انتخاب دوز ایمی‌پنم",
-                "instruction": "برای تجویز دوز ۵۰۰ میلی‌گرم ایمی‌پنم-سیلاستاتین، کدام گزینه‌ها صحیح هستند؟ (ویال‌ها به صورت مجموع نوشته می‌شوند)",
+                "title": "قطره‌های چشمی فلوروکینولون",
+                "text": "کدام یک از داروهای زیر در بازار دارویی ایران شکل دارویی قطره چشمی دارند؟",
+                "hint": "جمی‌فلوکساسین (Factive) فقط به صورت قرص خوراکی موجود است. بقیه گزینه‌ها قطره چشمی دارند.",
+                "points_per_correct": 10,
                 "options": [
-                    "یک ویال ۵۰۰/۵۰۰ (مجموع ۱ گرم)",
-                    "دو ویال ۲۵۰/۲۵۰ (مجموع ۵۰۰ میلی‌گرم)",
-                    "نصف ویال ۵۰۰/۵۰۰",
-                    "یک ویال ۲۵۰/۲۵۰"
+                    {"id": "cipro", "text": "سیپروفلوکساسین"},
+                    {"id": "levo", "text": "لووفلوکساسین"},
+                    {"id": "moxi", "text": "موکسی فلوکساسین"},
+                    {"id": "gemi", "text": "جمی فلوکساسین"}
                 ],
-                "solution": [
-                    "یک ویال ۵۰۰/۵۰۰ (مجموع ۱ گرم)",
-                    "دو ویال ۲۵۰/۲۵۰ (مجموع ۵۰۰ میلی‌گرم)"
-                ],
-                "explanation": "دوز ۵۰۰ میلی‌گرم یعنی ۵۰۰ میلی‌گرم از جزء ایمی‌پنم. ویال ۵۰۰/۵۰۰ حاوی ۵۰۰ ایمی‌پنم است. دو ویال ۲۵۰/۲۵۰ نیز حاوی ۵۰۰ ایمی‌پنم هستند.",
-                "points_per_correct": 20
-            }
-        ]
-    },
-
-    # --- Level 3: اشکال دارویی آنتی‌بیوتیک‌ها ---
-    "dosage_3_abx_forms": {
-        "id": "dosage_3_abx_forms",
-        "title": "اشکال دارویی آنتی‌بیوتیک‌ها",
-        "icon": "eye-dropper",
-        "description": "قطره‌های چشمی، سوسپانسیون‌ها و فرمولاسیون‌های خاص",
-        "questions": [
-            {
-                "id": "q_quinolone_eyes",
-                "type": "multiple-select",
-                "title": "قطره‌های چشمی کینولون",
-                "instruction": "کدام یک از داروهای زیر شکل دارویی قطره چشمی دارند؟",
-                "options": [
-                    "سیپروفلوکساسین",
-                    "لووفلوکساسین",
-                    "موکسی فلوکساسین",
-                    "جمی فلوکساسین"
-                ],
-                "solution": [
-                    "سیپروفلوکساسین",
-                    "لووفلوکساسین",
-                    "موکسی فلوکساسین"
-                ],
-                "points_per_correct": 10
+                "solution": ["cipro", "levo", "moxi"]
             },
             {
+                # Q7: Macrolides Forms
                 "id": "q_macrolide_forms",
-                "type": "drag-drop-match",
-                "title": "اشکال ماکرولیدها",
-                "instruction": "اشکال دارویی را به داروی مربوطه وصل کنید.",
-                "items": [
-                    {"id": "m1", "text": "سوسپانسیون ۲۵۰ و ۱۲۵"},
-                    {"id": "m2", "text": "سوسپانسیون ER دو گرمی"},
-                    {"id": "m3", "text": "قطره چشمی ۱٪"},
-                    {"id": "m4", "text": "ویال تزریقی ۵۰۰"},
-                    {"id": "m5", "text": "محلول موضعی ۴٪"},
-                    {"id": "m6", "text": "پماد چشمی و ژل ۲٪"}
+                "type": "drag-drop-ordering",
+                "title": "اشکال دارویی ماکرولیدها",
+                "text": "اشکال دارویی موجود در بازار ایران را به داروی ماکرولید مربوطه وصل کنید.",
+                "hint": "اریترومایسین قدیمی‌ترین ماکرولید است و اشکال موضعی و پماد چشمی دارد. آزیترومایسین سوسپانسیون ER و قطره چشمی دارد.",
+                "points_per_correct": 10,
+                "buckets": [
+                    {"id": "b_clari", "label": "کلاریترومایسین"},
+                    {"id": "b_azithro", "label": "آزیترومایسین"},
+                    {"id": "b_erythro", "label": "اریترومایسین"}
                 ],
-                "categories": [
-                    {"id": "azi", "text": "آزیترومایسین"},
-                    {"id": "ery", "text": "اریترومایسین"}
+                "items": [
+                    {"id": "i_susp_125", "text": "سوسپانسیون 125"},
+                    {"id": "i_susp_250", "text": "سوسپانسیون 250"}, 
+                    {"id": "i_susp_er", "text": "سوسپانسیون ER دو گرمی"},
+                    {"id": "i_eye_drop", "text": "قطره چشمی 1 درصد"},
+                    {"id": "i_topical_4", "text": "محلول موضعی 4 درصد"},
+                    {"id": "i_eye_oint", "text": "پماد چشمی"},
+                    {"id": "i_inj_500", "text": "پودر تزریقی 500 میلی گرم"},
+                    {"id": "i_gel_2", "text": "ژل موضعی 2 درصد"}
                 ],
                 "solution": {
-                    "m1": "azi", "m2": "azi", "m3": "azi", "m4": "azi",
-                    "m5": "ery", "m6": "ery"
-                },
-                "points_per_correct": 10
+                    "i_susp_125": "b_clari",
+                    "i_susp_250": "b_azithro",
+                    "i_susp_er": "b_azithro",
+                    "i_eye_drop": "b_azithro", 
+                    "i_inj_500": "b_azithro",
+                    "i_topical_4": "b_erythro",
+                    "i_eye_oint": "b_erythro",
+                    "i_gel_2": "b_erythro"
+                }
             },
             {
+                # Q8: Nitrofurantoin Forms
                 "id": "q_nitro_forms",
-                "type": "drag-drop-match",
+                "type": "drag-drop-ordering",
                 "title": "فرمولاسیون نیتروفورانتوئین",
-                "instruction": "ویژگی را به فرمولاسیون صحیح وصل کنید.",
-                "items": [
-                    {"id": "n1", "text": "دوزینگ ۴ بار در روز"},
-                    {"id": "n2", "text": "دوزینگ ۲ بار در روز"},
-                    {"id": "n3", "text": "تشکیل ژل و عوارض گوارشی کمتر"}
+                "text": "ویژگی‌های هر فرمولاسیون نیتروفورانتوئین را در دسته صحیح قرار دهید.",
+                "hint": "فرم 'ماکروکریستال' جذب سریع‌تر و عوارض گوارشی بیشتری دارد (4 بار در روز). فرم 'مونوهیدرات' در معده ژل تشکیل می‌دهد و آهسته‌رهش است (2 بار در روز).",
+                "points_per_correct": 10,
+                "buckets": [
+                    {"id": "b_macro", "label": "ماکروکریستال"},
+                    {"id": "b_mono_macro", "label": "مونوهیدرات/ماکروکریستال"}
                 ],
-                "categories": [
-                    {"id": "macro", "text": "ماکروکریستال"},
-                    {"id": "mono", "text": "مونوهیدرات ماکروکریستال"}
+                "items": [
+                    {"id": "i_dosing_4", "text": "دوزینگ 4 بار در روز"},
+                    {"id": "i_dosing_2", "text": "دوزینگ 2 بار در روز"},
+                    {"id": "i_slow_diss", "text": "انحلال کند در معده"},
+                    {"id": "i_gel_form", "text": "تشکیل ژل و آزادسازی طولانی"},
+                    {"id": "i_less_gi", "text": "عوارض گوارشی کمتر"}
                 ],
                 "solution": {
-                    "n1": "macro",
-                    "n2": "mono",
-                    "n3": "mono"
-                },
-                "points_per_correct": 10
-            }
-        ]
-    },
-
-    # --- Level 4: ضد ویروس و ضد قارچ ---
-    "dosage_4_av_af": {
-        "id": "dosage_4_av_af",
-        "title": "ضد ویروس و ضد قارچ",
-        "icon": "fungus",
-        "description": "اشکال دارویی داروهای ضد ویروس و ضد قارچ",
-        "questions": [
+                    "i_dosing_4": "b_macro",
+                    "i_slow_diss": "b_macro", # نکته: ماکروکریستال انحلالش کندتر از میکروکریستال است اما نسبت به مونوهیدرات سریعتر است. طبق اسلایدها، مونوهیدرات ژل تشکیل میدهد.
+                    "i_dosing_2": "b_mono_macro",
+                    "i_gel_form": "b_mono_macro",
+                    "i_less_gi": "b_mono_macro"
+                }
+            },
             {
+                # Q9: Antivirals
                 "id": "q_antiviral_feat",
                 "type": "drag-drop-match",
-                "title": "ویژگی آنتی‌ویروس‌ها",
-                "instruction": "هر ویژگی مربوط به کدام دارو است؟",
-                "items": [
-                    {"id": "av1", "text": "کرم موضعی ۵٪ و پماد چشمی"},
-                    {"id": "av2", "text": "قرص ۵۰۰ و ۱۰۰۰ میلی‌گرم"},
-                    {"id": "av3", "text": "نیاز به دستکش هنگام آماده‌سازی"},
-                    {"id": "av4", "text": "پیش‌داروی خوراکی ضد CMV"}
+                "title": "ویژگی‌های آنتی‌ویروس‌ها",
+                "text": "هر ویژگی را به داروی آنتی‌ویروس مربوطه متصل کنید.",
+                "hint": "داروهایی که با 'Val' شروع می‌شوند، فرم پیش‌دارو (Prodrug) هستند و معمولاً قرص خوراکی‌اند. گانسیکلوویر داروی اصلی تزریقی برای CMV است.",
+                "points_per_correct": 10,
+                "items_left": [
+                    {"id": "acyclovir", "text": "آسیکلوویر"},
+                    {"id": "valacyclovir", "text": "والاسیکلوویر"},
+                    {"id": "ganciclovir", "text": "گانسیکلوویر"},
+                    {"id": "valganciclovir", "text": "والگانسیلوویر"}
                 ],
-                "categories": [
-                    {"id": "c1", "text": "آسیکلوویر"},
-                    {"id": "c2", "text": "والاسیکلوویر"},
-                    {"id": "c3", "text": "گانسیکلوویر"},
-                    {"id": "c4", "text": "والگانسیکلوویر"}
+                "items_right": [
+                    {"id": "feat_topical", "text": "کرم موضعی 5% / پماد چشمی 3%"},
+                    {"id": "feat_tabs", "text": "قرص های 500 و 1000"},
+                    {"id": "feat_inj_glove", "text": "تزریقی (نیاز به دستکش)"},
+                    {"id": "feat_cmv", "text": "پیش‌دارو / درمان CMV"}
                 ],
                 "solution": {
-                    "av1": "c1",
-                    "av2": "c2",
-                    "av3": "c3",
-                    "av4": "c4"
-                },
-                "points_per_correct": 10
+                    "acyclovir": "feat_topical",
+                    "valacyclovir": "feat_tabs",
+                    "ganciclovir": "feat_inj_glove",
+                    "valganciclovir": "feat_cmv"
+                }
             },
             {
-                "id": "q_azole_forms_match",
+                # Q10: Antifungals (Azoles)
+                "id": "q_azole_forms",
                 "type": "drag-drop-match",
-                "title": "اشکال دارویی آزول‌ها",
-                "instruction": "شکل دارویی را به داروی آزول وصل کنید.",
-                "items": [
-                    {"id": "az1", "text": "شامپو ۲٪"},
-                    {"id": "az2", "text": "کپسول ۱۵۰ میلی‌گرم"},
-                    {"id": "az3", "text": "قرص ۵۰ و ۲۰۰ میلی‌گرم"},
-                    {"id": "az4", "text": "آمپول ۳۰۰ میلی‌گرم"},
-                    {"id": "az5", "text": "کپسول ۱۰۰ میلی‌گرم"}
+                "title": "اشکال دارویی ضدقارچ‌ها",
+                "text": "هر داروی آزول را به شکل دارویی رایج آن در بازار ایران وصل کنید.",
+                "hint": "فلوکونازول کپسول‌های ۱۵۰ تایی معروف دارد. کتوکونازول تنها آزولی است که شامپو دارد. وریکونازول برای عفونت‌های چشمی و سیستمیک قرص‌های ۲۰۰ دارد.",
+                "points_per_correct": 10,
+                "items_left": [
+                    {"id": "l_keto", "text": "کتوکونازول"},
+                    {"id": "l_fluco", "text": "فلوکونازول"},
+                    {"id": "l_itra", "text": "ایتراکونازول"},
+                    {"id": "l_vori", "text": "وریکونازول"},
+                    {"id": "l_posa", "text": "پوساکونازول"}
                 ],
-                "categories": [
-                    {"id": "keto", "text": "کتوکونازول"},
-                    {"id": "fluco", "text": "فلوکونازول"},
-                    {"id": "vori", "text": "وریکونازول"},
-                    {"id": "posa", "text": "پوساکونازول"},
-                    {"id": "itra", "text": "ایتراکونازول"}
-                ],
-                "solution": {
-                    "az1": "keto",
-                    "az2": "fluco",
-                    "az3": "vori",
-                    "az4": "posa",
-                    "az5": "itra"
-                },
-                "points_per_correct": 10
-            }
-        ]
-    },
-    
-    # ====================================================================
-    # UNIT 3: Clinical Application - Basics (کاربردهای بالینی ۱)
-    # ====================================================================
-
-    # --- Level 1: طیف اثر و پوشش میکروبی ---
-    "clinical_1_coverage": {
-        "id": "clinical_1_coverage",
-        "title": "پوشش میکروبی",
-        "icon": "microscope",
-        "description": "شناخت پوشش بی‌هوازی و فلوروکینولون‌های تنفسی",
-        "questions": [
-            {
-                "id": "q_anaerobic_cov",
-                "type": "drag-drop-match",
-                "title": "پوشش بی‌هوازی",
-                "instruction": "آنتی‌بیوتیک‌ها را بر اساس داشتن یا نداشتن پوشش روی باکتری‌های بی‌هوازی دسته‌بندی کنید.",
-                "hint": "کلیندامایسین و مترونیدازول پوشش عالی دارند. سفالوسپورین‌ها (مثل سفتازیدیم) معمولاً ندارند.",
-                "items": [
-                    {"id": "a1", "text": "کلیندامایسین"},
-                    {"id": "a2", "text": "مترونیدازول"},
-                    {"id": "a3", "text": "پیپراسیلین-تازوباکتام"},
-                    {"id": "a4", "text": "مروپنم"},
-                    {"id": "a5", "text": "سفتازیدیم"},
-                    {"id": "a6", "text": "سیپروفلوکساسین"},
-                    {"id": "a7", "text": "موکسی فلوکساسین"}
-                ],
-                "categories": [
-                    {"id": "yes", "text": "دارای پوشش بی‌هوازی"},
-                    {"id": "no", "text": "فاقد پوشش بی‌هوازی"}
+                "items_right": [
+                    {"id": "r_shampoo", "text": "شامپو 2% / قرص 200"},
+                    {"id": "r_cap_150", "text": "کپسول 100 و 150"},
+                    {"id": "r_cap_100", "text": "کپسول 100"},
+                    {"id": "r_tab_200", "text": "قرص 50 و 200"},
+                    {"id": "r_amp_300", "text": "آمپول 300 میلی گرم"}
                 ],
                 "solution": {
-                    "a1": "yes", "a2": "yes", "a3": "yes", "a4": "yes", "a7": "yes",
-                    "a5": "no", "a6": "no"
-                },
-                "points_per_correct": 10
-            },
-            {
-                "id": "q_resp_fq_match",
-                "type": "drag-drop-match",
-                "title": "فلوروکینولون‌های تنفسی",
-                "instruction": "کینولون‌های تنفسی (مؤثر بر پنوموکوک) را جدا کنید.",
-                "hint": "سیپروفلوکساسین تنفسی نیست. داروهای جدیدتر (لوو، موکسی، جمی) تنفسی هستند.",
-                "items": [
-                    {"id": "f1", "text": "لووفلوکساسین"},
-                    {"id": "f2", "text": "موکسی فلوکساسین"},
-                    {"id": "f3", "text": "جمی فلوکساسین"},
-                    {"id": "f4", "text": "سیپروفلوکساسین"},
-                    {"id": "f5", "text": "افلوکساسین"},
-                    {"id": "f6", "text": "نالیدیکسیک اسید"}
-                ],
-                "categories": [
-                    {"id": "resp", "text": "تنفسی (Respiratory)"},
-                    {"id": "non", "text": "غیر تنفسی"}
-                ],
-                "solution": {
-                    "f1": "resp", "f2": "resp", "f3": "resp",
-                    "f4": "non", "f5": "non", "f6": "non"
-                },
-                "points_per_correct": 10
-            }
-        ]
-    },
-
-    # --- Level 2: نکات ایمنی در تجویز ---
-    "clinical_2_admin": {
-        "id": "clinical_2_admin",
-        "title": "نکات ایمنی تجویز",
-        "icon": "syringe",
-        "description": "تست پنی‌سیلین، تزریق وریدی/عضلانی و تداخلات کلسیم",
-        "questions": [
-            {
-                "id": "q_pen_skin_test",
-                "type": "drag-drop-match",
-                "title": "قطع دارو قبل از تست پوستی",
-                "instruction": "کدام داروها باید قبل از تست پوستی پنی‌سیلین قطع شوند؟",
-                "hint": "آنتی‌هیستامین‌ها (دیفن‌هیدرامین و...) نتیجه را منفی کاذب می‌کنند. کورتون‌ها و مونتلوکاست تداخلی ندارند.",
-                "items": [
-                    {"id": "d1", "text": "دیفن هیدرامین"},
-                    {"id": "d2", "text": "پرومتازین"},
-                    {"id": "d3", "text": "اسپری آزلاستین"},
-                    {"id": "d4", "text": "مونتلوکاست"},
-                    {"id": "d5", "text": "پردنیزولون"},
-                    {"id": "d6", "text": "فاموتیدین"}
-                ],
-                "categories": [
-                    {"id": "stop", "text": "باید قطع شود"},
-                    {"id": "cont", "text": "نیازی به قطع نیست"}
-                ],
-                "solution": {
-                    "d1": "stop", "d2": "stop", "d3": "stop",
-                    "d4": "cont", "d5": "cont", "d6": "cont"
-                },
-                "points_per_correct": 10
-            },
-            {
-                "id": "q_iv_im_pen",
-                "type": "drag-drop-match",
-                "title": "تزریق وریدی vs عضلانی",
-                "instruction": "پنی‌سیلین‌ها را بر اساس روش تزریق مجاز دسته‌بندی کنید.",
-                "hint": "فرمولاسیون‌های شیری‌رنگ (بنزاتین، پروکائین) هرگز نباید وریدی تزریق شوند (خطر مرگ).",
-                "items": [
-                    {"id": "p1", "text": "پنی‌سیلین G سدیم"},
-                    {"id": "p2", "text": "پنی‌سیلین G پتاسیم"},
-                    {"id": "p3", "text": "پنی‌سیلین G بنزاتین"},
-                    {"id": "p4", "text": "پنی‌سیلین ۶.۳.۳"},
-                    {"id": "p5", "text": "پنی‌سیلین G پروکائین"}
-                ],
-                "categories": [
-                    {"id": "iv", "text": "مجاز به تزریق وریدی (IV)"},
-                    {"id": "im", "text": "فقط عضلانی (IM Only)"}
-                ],
-                "solution": {
-                    "p1": "iv", "p2": "iv",
-                    "p3": "im", "p4": "im", "p5": "im"
-                },
-                "points_per_correct": 10
-            },
-            {
-                "id": "q_ceftriaxone_ca",
-                "type": "drag-drop-match",
-                "title": "سفتریاکسون و کلسیم",
-                "instruction": "قوانین تزریق همزمان سفتریاکسون و کلسیم را برای سنین مختلف مشخص کنید.",
-                "hint": "در نوزادان زیر ۲۸ روز، خطر رسوب در ریه و کلیه وجود دارد و کاملاً ممنوع است.",
-                "items": [
-                    {"id": "age1", "text": "نوزادان زیر ۲۸ روز"},
-                    {"id": "age2", "text": "کودکان و بزرگسالان"},
-                    {"id": "age3", "text": "نوزادان نارس (Premature)"}
-                ],
-                "categories": [
-                    {"id": "ban", "text": "ممنوع (حتی از لاین جدا)"},
-                    {"id": "ok", "text": "مجاز (با شستشوی لاین)"}
-                ],
-                "solution": {
-                    "age1": "ban", "age3": "ban",
-                    "age2": "ok"
-                },
-                "points_per_correct": 20
-            }
-        ]
-    },
-
-    # --- Level 3: ریسک‌ها و هشدارهای مهم ---
-    "clinical_3_risks": {
-        "id": "clinical_3_risks",
-        "title": "هشدارهای مهم (Red Flag)",
-        "icon": "radiation",
-        "description": "عفونت C.difficile، میاستنی گراویس و سندروم مرد قرمز",
-        "questions": [
-            {
-                "id": "q_cdiff_risk",
-                "type": "multiple-select",
-                "title": "ریسک عفونت C.difficile",
-                "instruction": "کدام ۴ دسته دارویی بیشترین ریسک ایجاد کولیت غشای کاذب (C.diff) را دارند؟",
-                "explanation": "کلیندامایسین (کلاسیک)، سفالوسپورین‌های نسل ۳ و ۴، فلوروکینولون‌ها و آمپی‌سیلین/آموکسی‌سیلین پرخطرترین‌ها هستند.",
-                "options": [
-                    "کلیندامایسین",
-                    "سفالوسپورین‌ها",
-                    "فلوروکینولون‌ها",
-                    "آمپی‌سیلین/آموکسی‌سیلین",
-                    "آمینوگلیکوزیدها",
-                    "تتراسیکلین‌ها",
-                    "ونکومایسین"
-                ],
-                "solution": [
-                    "کلیندامایسین",
-                    "سفالوسپورین‌ها",
-                    "فلوروکینولون‌ها",
-                    "آمپی‌سیلین/آموکسی‌سیلین"
-                ],
-                "points_per_correct": 15
-            },
-            {
-                "id": "q_myasthenia",
-                "type": "multiple-select",
-                "title": "منع مصرف در میاستنی گراویس",
-                "instruction": "کدام داروها می‌توانند باعث ضعف عضلانی شدید در بیماران میاستنی گراویس شوند؟",
-                "hint": "داروهایی که اثر بلاک عصبی-عضلانی دارند.",
-                "options": [
-                    "آمیکاسین (آمینوگلیکوزید)",
-                    "سیپروفلوکساسین (کینولون)",
-                    "کلیندامایسین",
-                    "سفتریاکسون",
-                    "نیتروفورانتوئین"
-                ],
-                "solution": [
-                    "آمیکاسین (آمینوگلیکوزید)",
-                    "سیپروفلوکساسین (کینولون)",
-                    "کلیندامایسین"
-                ],
-                "points_per_correct": 15
-            },
-            {
-                "id": "q_redman_syndrome",
-                "type": "drag-drop-fill",
-                "title": "سندروم مرد قرمز",
-                "instruction_template": "بیمار حین تزریق _BLANK1_ دچار برافروختگی سر و گردن شده است. نام این عارضه _BLANK2_ است و اقدام صحیح _BLANK3_ می‌باشد.",
-                "explanation": "این عارضه حساسیت نیست، بلکه ناشی از آزادسازی هیستامین به دلیل سرعت بالای تزریق ونکومایسین است.",
-                "options": [
-                    {"id": "o1", "text": "ونکومایسین"},
-                    {"id": "o2", "text": "سندروم مرد قرمز (Red Man)"},
-                    {"id": "o3", "text": "کاهش سرعت انفوزیون"},
-                    {"id": "o4", "text": "مروپنم"},
-                    {"id": "o5", "text": "آنافیلاکسی"},
-                    {"id": "o6", "text": "قطع کامل دارو و عدم تجویز مجدد"}
-                ],
-                "blanks": [
-                    {"id": "_BLANK1_", "solution_id": "o1"},
-                    {"id": "_BLANK2_", "solution_id": "o2"},
-                    {"id": "_BLANK3_", "solution_id": "o3"}
-                ],
-                "points_per_correct": 15
-            }
-        ]
-    },
-
-    # ====================================================================
-    # UNIT 4: Clinical Application - Advanced (کاربردهای بالینی ۲)
-    # ====================================================================
-
-    # --- Level 1: عوارض جانبی اختصاصی ---
-    "clinical_4_side_effects": {
-        "id": "clinical_4_side_effects",
-        "title": "عوارض اختصاصی",
-        "icon": "biohazard",
-        "description": "عوارض خاص دارویی مثل تندینوپاتی و تداخلات",
-        "questions": [
-            {
-                "id": "q_specific_se",
-                "type": "drag-drop-match",
-                "title": "عوارض اختصاصی",
-                "instruction": "هر عارضه را به داروی مسبب آن وصل کنید.",
-                "items": [
-                    {"id": "se1", "text": "کاهش سطح سرمی والپروات"},
-                    {"id": "se2", "text": "ژنیکوماستی"},
-                    {"id": "se3", "text": "هایپوکالمی و هایپومنیزیمی"},
-                    {"id": "se4", "text": "اتوتوکسیسیتی و نفروتوکسیسیتی"}
-                ],
-                "categories": [
-                    {"id": "c1", "text": "مروپنم"},
-                    {"id": "c2", "text": "کتوکونازول"},
-                    {"id": "c3", "text": "آمفوتریسین B"},
-                    {"id": "c4", "text": "آمیکاسین"}
-                ],
-                "solution": {
-                    "se1": "c1", "se2": "c2", "se3": "c3", "se4": "c4"
-                },
-                "points_per_correct": 10
-            },
-            {
-                "id": "q_tendinopathy",
-                "type": "drag-drop-fill",
-                "title": "تندینوپاتی کینولون‌ها",
-                "instruction_template": "عارضه تندینوپاتی با _BLANK1_ شایع‌تر است و معمولاً در _BLANK2_ رخ می‌دهد. ریسک فاکتورهای آن شامل _BLANK3_ و _BLANK4_ است.",
-                "options": [
-                    {"id": "o1", "text": "سیپروفلوکساسین"},
-                    {"id": "o2", "text": "آشیل"},
-                    {"id": "o3", "text": "سن بالا"},
-                    {"id": "o4", "text": "مصرف کورتون"},
-                    {"id": "o5", "text": "مچ دست"},
-                    {"id": "o6", "text": "آزیترومایسین"}
-                ],
-                "blanks": [
-                    {"id": "_BLANK1_", "solution_id": "o1"},
-                    {"id": "_BLANK2_", "solution_id": "o2"},
-                    {"id": "_BLANK3_", "solution_id": "o3"},
-                    {"id": "_BLANK4_", "solution_id": "o4"}
-                ],
-                "points_per_correct": 15
-            },
-            {
-                "id": "q_cation_interact",
-                "type": "multiple-select",
-                "title": "تداخل با کاتیون‌ها",
-                "instruction": "کدام داروها با مصرف همزمان لبنیات یا مکمل‌های فلزی (کلسیم، آهن) دچار کاهش جذب شدید می‌شوند؟",
-                "options": [
-                    "داکسی‌سیکلین", "تتراسیکلین", "سیپروفلوکساسین", "لووفلوکساسین",
-                    "آزیترومایسین", "سفیکسیم", "آمپی‌سیلین"
-                ],
-                "solution": [
-                    "داکسی‌سیکلین", "تتراسیکلین", "سیپروفلوکساسین", "لووفلوکساسین"
-                ],
-                "points_per_correct": 10
-            }
-        ]
-    },
-
-    # --- Level 2: تتراسیکلین‌ها و ضد سل ---
-    "clinical_5_tb_tetra": {
-        "id": "clinical_5_tb_tetra",
-        "title": "تتراسیکلین و سل",
-        "icon": "lungs",
-        "description": "ویژگی‌های تتراسیکلین‌ها و عوارض داروهای ضد سل",
-        "questions": [
-            {
-                "id": "q_tetra_feat",
-                "type": "drag-drop-match",
-                "title": "ویژگی تتراسیکلین‌ها",
-                "instruction": "ویژگی‌ها را به داروی مربوطه وصل کنید.",
-                "items": [
-                    {"id": "t1", "text": "مجاز در کودکان < ۸ سال (کوتاه مدت)"},
-                    {"id": "t2", "text": "مؤثر بر باکتری‌های مقاوم"},
-                    {"id": "t3", "text": "بیشترین ریسک سرگیجه"},
-                    {"id": "t4", "text": "بیشترین سمیت نوری"}
-                ],
-                "categories": [
-                    {"id": "c1", "text": "داکسی‌سیکلین"},
-                    {"id": "c2", "text": "تیگسیکلین"},
-                    {"id": "c3", "text": "مینوسیکلین"},
-                    {"id": "c4", "text": "دمکلوسیکلین"}
-                ],
-                "solution": {
-                    "t1": "c1", "t2": "c2", "t3": "c3", "t4": "c4"
-                },
-                "points_per_correct": 10
-            },
-            {
-                "id": "q_tb_adverse",
-                "type": "drag-drop-match",
-                "title": "عوارض داروهای سل",
-                "instruction": "هر دارو چه عارضه‌ای دارد؟",
-                "items": [
-                    {"id": "tb1", "text": "ایزونیازید"},
-                    {"id": "tb2", "text": "ریفامپین"},
-                    {"id": "tb3", "text": "اتامبوتول"},
-                    {"id": "tb4", "text": "پیرازینامید"}
-                ],
-                "categories": [
-                    {"id": "e1", "text": "نوروپاتی/کبدی"},
-                    {"id": "e2", "text": "ادرار قرمز"},
-                    {"id": "e3", "text": "کوررنگی"},
-                    {"id": "e4", "text": "نقرس (اسید اوریک)"}
-                ],
-                "solution": {
-                    "tb1": "e1", "tb2": "e2", "tb3": "e3", "tb4": "e4"
-                },
-                "points_per_correct": 10
-            }
-        ]
-    },
-
-    # --- Level 3: شرایط خاص و مقاومت ---
-    "clinical_6_special": {
-        "id": "clinical_6_special",
-        "title": "شرایط خاص",
-        "icon": "baby",
-        "description": "بارداری، فیبروز کیستیک و مقاومت آنتی‌بیوتیکی",
-        "questions": [
-            {
-                "id": "q_pregnancy",
-                "type": "drag-drop-match",
-                "title": "ایمنی در بارداری",
-                "instruction": "داروها را بر اساس ایمنی در بارداری دسته‌بندی کنید.",
-                "items": [
-                    {"id": "p1", "text": "پنی‌سیلین/سفالوسپورین"},
-                    {"id": "p2", "text": "کلیندامایسین (تزریقی)"},
-                    {"id": "p3", "text": "مترونیدازول (۳ ماهه اول)"},
-                    {"id": "p4", "text": "کوتریموکسازول"}
-                ],
-                "categories": [
-                    {"id": "ok", "text": "مجاز"},
-                    {"id": "no", "text": "ممنوع/احتیاط"}
-                ],
-                "solution": {
-                    "p1": "ok", "p2": "ok",
-                    "p3": "no", "p4": "no"
-                },
-                "points_per_correct": 10
-            },
-            {
-                "id": "q_cf_order",
-                "type": "drag-drop-ordering",
-                "title": "ترتیب داروها در CF",
-                "instruction": "ترتیب صحیح مصرف داروهای استنشاقی در بیماران سیستیک فیبروزیس را مشخص کنید.",
-                "items": [
-                    {"id": "s1", "text": "برونکودیلاتور (باز کننده راه هوایی)"},
-                    {"id": "s2", "text": "سالین هایپرتونیک (رقیق کننده)"},
-                    {"id": "s3", "text": "درناز آلفا (شکننده موکوس)"},
-                    {"id": "s4", "text": "توبرامایسین (آنتی‌بیوتیک)"}
-                ],
-                "solution": ["s1", "s2", "s3", "s4"],
-                "points_per_correct": 20
-            },
-            {
-                "id": "q_resistant_bugs",
-                "type": "drag-drop-match",
-                "title": "درمان باکتری‌های مقاوم",
-                "instruction": "داروی مناسب برای هر پاتوژن مقاوم را انتخاب کنید.",
-                "items": [
-                    {"id": "r1", "text": "استافیلوکوک مقاوم (MRSA)"},
-                    {"id": "r2", "text": "سودوموناس مقاوم"}
-                ],
-                "categories": [
-                    {"id": "c1", "text": "ونکومایسین / لینزولید"},
-                    {"id": "c2", "text": "کلیستین"}
-                ],
-                "solution": {
-                    "r1": "c1", "r2": "c2"
-                },
-                "points_per_correct": 10
-            }
-        ]
-    },
-
-    # ====================================================================
-    # UNIT 5: Pharmacodynamics (فارماکودینامیک)
-    # ====================================================================
-
-    # --- Level 1: مفاهیم PK/PD ---
-    "pd_1_concepts": {
-        "id": "pd_1_concepts",
-        "title": "مفاهیم فارماکودینامیک",
-        "icon": "chart-line",
-        "description": "شناخت رفتارهای وابسته به غلظت و وابسته به زمان",
-        "questions": [
-            {
-                "id": "q_pd_chart_label",
-                "type": "image-labeling",
-                "title": "نمودار PK/PD",
-                "instruction": "پارامترهای فارماکودینامیک را در جای صحیح روی نمودار قرار دهید.",
-                "question_image": "/images/questions/pkpd_chart.png", # عکس باید در پوشه public باشد
-                # مختصات حدودی بر اساس نمودار پاورپوینت
-                "drop_zones": [
-                    {"id": "z_conc", "top": "10%", "left": "60%", "width": "35%", "height": "15%"}, # بالا: Concentration
-                    {"id": "z_auc", "top": "40%", "left": "60%", "width": "35%", "height": "15%"},  # وسط: AUC
-                    {"id": "z_time", "top": "75%", "left": "60%", "width": "35%", "height": "15%"}  # پایین: Time
-                ],
-                "options": [
-                    {"id": "o1", "text": "وابسته به غلظت (آمینوگلیکوزید)"},
-                    {"id": "o2", "text": "وابسته به AUC (ونکومایسین)"},
-                    {"id": "o3", "text": "وابسته به زمان (بتا-لاکتام)"}
-                ],
-                "solution": {
-                    "z_conc": "o1",
-                    "z_auc": "o2",
-                    "z_time": "o3"
-                },
-                "points_per_correct": 20
-            },
-            {
-                "id": "q_pd_definitions",
-                "type": "drag-drop-fill",
-                "title": "تعاریف PD",
-                "instruction_template": "داروهای Concentration dependent مثل _BLANK1_ وابسته به _BLANK2_ هستند. داروهای Time dependent مثل _BLANK3_ باید _BLANK4_ مصرف شوند.",
-                "options": [
-                    {"id": "op1", "text": "آمیکاسین"},
-                    {"id": "op2", "text": "Cmax / MIC"},
-                    {"id": "op3", "text": "مروپنم"},
-                    {"id": "op4", "text": "با انفوزیون طولانی"},
-                    {"id": "op5", "text": "ونکومایسین"}
-                ],
-                "blanks": [
-                    {"id": "_BLANK1_", "solution_id": "op1"},
-                    {"id": "_BLANK2_", "solution_id": "op2"},
-                    {"id": "_BLANK3_", "solution_id": "op3"},
-                    {"id": "_BLANK4_", "solution_id": "op4"}
-                ],
-                "points_per_correct": 10
+                    "l_keto": "r_shampoo",
+                    "l_fluco": "r_cap_150",
+                    "l_itra": "r_cap_100",
+                    "l_vori": "r_tab_200",
+                    "l_posa": "r_amp_300"
+                }
             }
         ]
     }
 }
 
-# آپدیت کردن مسیر یادگیری (Learning Path) برای نمایش در داشبورد
+# -------------------------------------------------------------------------
+# مسیر یادگیری (Learning Path)
+# -------------------------------------------------------------------------
 LEARNING_PATH = [
     {
         "id": "unit_1",
-        "title": "بخش ۱: دسته‌بندی و ساختار",
-        "description": "شناخت خانواده‌های اصلی آنتی‌بیوتیک‌ها",
-        "color": "#58cc02", # سبز
-        "levels": [
-            "class_1_penicillins",
-            "class_2_ceph_basic",
-            "class_3_ceph_adv",
-            "class_4_cellwall_others",
-            "class_5_protein",
-            "class_6_dna"
-        ]
+        "title": "Classification & Structure",
+        "description": "شناخت خانواده‌های آنتی‌بیوتیک و ساختار آن‌ها",
+        "color": "#4caf50", 
+        "levels": ["q_class_stage_1", "q_class_stage_2"]
     },
     {
         "id": "unit_2",
-        "title": "بخش ۲: اشکال دارویی",
-        "description": "دوزها، نسبت‌ها و فرمولاسیون‌ها",
-        "color": "#ce82ff", # بنفش
-        "levels": [
-            "dosage_1_betalactams",
-            "dosage_2_dosing",
-            "dosage_3_abx_forms",
-            "dosage_4_av_af"
-        ]
+        "title": "Dosage Forms",
+        "description": "اشکال دارویی، نسبت‌ها و دوزینگ",
+        "color": "#ff9800",
+        "levels": ["q_dosage_stage_1", "q_dosage_stage_2"]
     },
     {
         "id": "unit_3",
-        "title": "بخش ۳: کاربرد بالینی (پایه)",
-        "description": "پوشش میکروبی و نکات ایمنی",
-        "color": "#ff9600", # نارنجی
-        "levels": [
-            "clinical_1_coverage",
-            "clinical_2_admin",
-            "clinical_3_risks"
-        ]
-    },
-    {
-        "id": "unit_4",
-        "title": "بخش ۴: کاربرد بالینی (پیشرفته)",
-        "description": "عوارض جانبی، تداخلات و مقاومت",
-        "color": "#ff4b4b", # قرمز
-        "levels": [
-            "clinical_4_side_effects",
-            "clinical_5_tb_tetra",
-            "clinical_6_special"
-        ]
-    },
-    {
-        "id": "unit_5",
-        "title": "بخش ۵: فارماکودینامیک",
-        "description": "مفاهیم تخصصی PK/PD",
-        "color": "#1cb0f6", # آبی
-        "levels": [
-            "pd_1_concepts"
-        ]
+        "title": "Clinical Application",
+        "description": "کاربردهای بالینی",
+        "color": "#2196f3",
+        "levels": [] 
     }
 ]

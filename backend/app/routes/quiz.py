@@ -18,9 +18,6 @@ class QuizList(Resource):
             return {'message': 'User not found'}, 404
             
         completed_quizzes = user.get('completed_quizzes', [])
-        
-        # این متغیر تعیین می‌کند که آیا مرحله فعلی باید باز باشد یا خیر.
-        # مرحله اول همیشه باز است، پس با True شروع می‌کنیم.
         unlock_next = True 
 
         path_data = []
@@ -38,8 +35,6 @@ class QuizList(Resource):
                 quiz_info = QUIZZES.get(quiz_id)
                 if quiz_info:
                     is_completed = quiz_id in completed_quizzes
-                    
-                    # وضعیت قفل بودن: اگر اجازه باز کردن (unlock_next) نداریم، پس قفل است.
                     is_locked = not unlock_next
                     
                     unit_data["levels"].append({
@@ -47,13 +42,10 @@ class QuizList(Resource):
                         "title": quiz_info["title"],
                         "icon": quiz_info.get("icon", "star"),
                         "is_completed": is_completed,
-                        "is_locked": is_locked, # <--- فیلد جدید
+                        "is_locked": is_locked,
                         "total_questions": len(quiz_info["questions"])
                     })
                     
-                    # منطق برای مرحله بعد:
-                    # اگر مرحله فعلی تکمیل شده باشد، مرحله بعدی باز می‌شود.
-                    # اگر تکمیل نشده باشد، مرحله بعدی قفل خواهد ماند.
                     if is_completed:
                         unlock_next = True
                     else:
@@ -77,11 +69,10 @@ class QuizDetail(Resource):
 
 class QuizSubmit(Resource):
     
-    # --- متد کمکی: محاسبه امتیاز ---
     def _calculate_score(self, question, user_answer):
         question_type = question.get('type')
         solution = question.get('solution')
-        points_per_correct = question.get('points_per_correct', 10)
+        points_total = question.get('points_per_correct', 10) 
         
         score_earned = 0
         is_correct = False
@@ -89,132 +80,132 @@ class QuizSubmit(Resource):
         
         try:
             if question_type in ["drag-drop-match", "drag-drop-ordering"]:
-                all_correct = True
-                for item_id, correct_category_id in solution.items():
-                    found_in_correct_category = False
-                    if isinstance(user_answer, dict) and correct_category_id in user_answer:
-                         if isinstance(user_answer[correct_category_id], list):
-                             found_in_correct_category = any(isinstance(item, dict) and item.get('id') == item_id for item in user_answer[correct_category_id])
+                total_items = len(solution)
+                points_per_item = points_total / total_items if total_items > 0 else 0
+                
+                correct_count = 0
+                for item_id, correct_val in solution.items():
+                    user_category_list = user_answer.get(correct_val, []) if isinstance(user_answer, dict) else []
                     
-                    if found_in_correct_category:
+                    found = False
+                    if isinstance(user_category_list, list):
+                        found = any(item.get('id') == item_id for item in user_category_list if isinstance(item, dict))
+                    
+                    if found:
                         feedback[item_id] = 'correct'
-                        score_earned += points_per_correct
+                        score_earned += points_per_item
+                        correct_count += 1
                     else:
                         feedback[item_id] = 'incorrect'
-                        all_correct = False
-                is_correct = all_correct
+                
+                is_correct = (correct_count == total_items)
 
             elif question_type == "multiple-select":
-                 if isinstance(user_answer, list):
+                if isinstance(user_answer, list):
                     user_selections = set(user_answer)
                     correct_selections = set(solution)
                     
-                    correct_choices = user_selections.intersection(correct_selections)
-                    incorrect_choices = user_selections.difference(correct_selections)
+                    correct_hits = user_selections.intersection(correct_selections)
+                    wrong_hits = user_selections.difference(correct_selections)
                     
-                    # نمره منفی برای انتخاب غلط
-                    score_earned = (len(correct_choices) * points_per_correct) - (len(incorrect_choices) * points_per_correct)
-                    if score_earned < 0: score_earned = 0
+                    points_per_option = points_total / len(correct_selections) if len(correct_selections) > 0 else 0
                     
-                    is_correct = (user_selections == correct_selections and len(incorrect_choices)==0)
-                    feedback = {opt: ('correct' if opt in correct_selections else 'incorrect') for opt in question.get('options',[]) if opt in user_selections}
-                 else:
+                    current_score = (len(correct_hits) * points_per_option) - (len(wrong_hits) * points_per_option)
+                    score_earned = max(0, current_score)
+                    
+                    is_correct = (user_selections == correct_selections)
+                    
+                    all_options = [opt['id'] for opt in question.get('options', [])]
+                    for opt_id in all_options:
+                        if opt_id in correct_selections:
+                             feedback[opt_id] = 'correct'
+                        else:
+                             feedback[opt_id] = 'incorrect'
+
+                else:
                     is_correct = False
-                    feedback = {}
-                    score_earned = 0
 
             elif question_type == "true-false":
-                all_correct = True
+                statements = question.get('statements', [])
+                total_stmts = len(statements)
+                points_per_stmt = points_total / total_stmts if total_stmts > 0 else 0
+                
+                correct_count = 0
                 if isinstance(user_answer, dict):
-                    for statement in question.get('statements', []):
-                        statement_id = statement['id']
-                        correct_answer = statement['solution']
-                        user_ans = user_answer.get(statement_id)
+                    for stmt in statements:
+                        stmt_id = stmt['id']
+                        expected = stmt['solution']
+                        actual = user_answer.get(stmt_id)
                         
-                        if user_ans == correct_answer:
-                            feedback[statement_id] = 'correct'
-                            score_earned += points_per_correct
+                        if actual == expected:
+                            feedback[stmt_id] = 'correct'
+                            score_earned += points_per_stmt
+                            correct_count += 1
                         else:
-                            feedback[statement_id] = 'incorrect'
-                            all_correct = False
-                else:
-                    all_correct = False
-                    feedback = {}
-                    score_earned = 0
-                is_correct = all_correct
+                            feedback[stmt_id] = 'incorrect'
+                
+                is_correct = (correct_count == total_stmts)
 
             elif question_type == "drag-drop-fill":
-                all_correct = True
+                blanks = question.get('blanks', [])
+                total_blanks = len(blanks)
+                points_per_blank = points_total / total_blanks if total_blanks > 0 else 0
+                
+                correct_count = 0
                 if isinstance(user_answer, dict):
-                    for blank in question.get('blanks', []):
-                        blank_id = blank['id']
-                        correct_option_id = blank['solution_id']
-                        user_option_id = user_answer.get(blank_id)
+                    for blank in blanks:
+                        b_id = blank['id']
+                        expected = blank['solution_id']
+                        actual = user_answer.get(b_id)
                         
-                        if user_option_id == correct_option_id:
-                            feedback[blank_id] = 'correct'
-                            score_earned += points_per_correct
+                        if actual == expected:
+                            feedback[b_id] = 'correct'
+                            score_earned += points_per_blank
+                            correct_count += 1
                         else:
-                            feedback[blank_id] = 'incorrect'
-                            all_correct = False
-                else:
-                    all_correct = False
-                    feedback = {}
-                    score_earned = 0
-                is_correct = all_correct
+                            feedback[b_id] = 'incorrect'
+                
+                is_correct = (correct_count == total_blanks)
 
             elif question_type == "image-labeling":
-                all_correct = True
                 total_zones = len(solution.keys())
-                correct_zones = 0
+                points_per_zone = points_total / total_zones if total_zones > 0 else 0
+                correct_zones_count = 0
                 
                 if isinstance(user_answer, dict):
-                    for zone_id, correct_values in solution.items():
-                        # جواب کاربر برای این ناحیه (لیست)
-                        user_selected_list = user_answer.get(zone_id, [])
+                    for zone_id, correct_vals in solution.items():
+                        if not isinstance(correct_vals, list):
+                            correct_vals = [correct_vals]
                         
-                        # تبدیل به set برای مقایسه بدون در نظر گرفتن ترتیب
-                        # correct_values در دیتابیس باید به صورت لیست باشد ['drug1', 'drug2']
-                        # اگر در دیتابیس تکی است، آن را به لیست تبدیل می‌کنیم
-                        if not isinstance(correct_values, list):
-                            correct_values = [correct_values]
-                        
-                        # مقایسه محتوا
-                        if set(user_selected_list) == set(correct_values):
+                        user_vals = user_answer.get(zone_id, [])
+                        if not isinstance(user_vals, list):
+                            user_vals = []
+                            
+                        if set(user_vals) == set(correct_vals):
                             feedback[zone_id] = 'correct'
-                            correct_zones += 1
-                            score_earned += points_per_correct # یا تقسیم بر تعداد گزینه‌ها
+                            score_earned += points_per_zone
+                            correct_zones_count += 1
                         else:
                             feedback[zone_id] = 'incorrect'
-                            all_correct = False
-                else:
-                    all_correct = False
-
-                # اگر همه زون‌ها درست بود
-                if correct_zones == total_zones:
-                    is_correct = True
-                else:
-                    is_correct = False
                 
-            # منطق خاص برای سوال ceftriaxone
+                is_correct = (correct_zones_count == total_zones)
+
             if question.get('id') == 'ceftriaxone_calcium_admin' and 'solution_reversed' in question:
-                 solution_reversed = question.get('solution_reversed')
-                 all_correct = True
-                 feedback = {}
+                 sol_rev = question.get('solution_reversed')
                  score_earned = 0
+                 points_per_cat = points_total / len(sol_rev) if len(sol_rev) > 0 else 0
+                 correct_cnt = 0
                  
                  if isinstance(user_answer, dict):
-                    for category_id, correct_item_id in solution_reversed.items():
-                        user_item_id = user_answer.get(category_id)
-                        if user_item_id == correct_item_id:
-                            feedback[category_id] = 'correct'
-                            score_earned += points_per_correct
+                    for cat_id, correct_item in sol_rev.items():
+                        user_item = user_answer.get(cat_id)
+                        if user_item == correct_item:
+                            feedback[cat_id] = 'correct'
+                            score_earned += points_per_cat
+                            correct_cnt += 1
                         else:
-                            feedback[category_id] = 'incorrect'
-                            all_correct = False
-                 else:
-                     all_correct = False
-                 is_correct = all_correct
+                            feedback[cat_id] = 'incorrect'
+                    is_correct = (correct_cnt == len(sol_rev))
 
         except Exception as e:
             print(f"Error calculating score: {e}")
@@ -223,46 +214,33 @@ class QuizSubmit(Resource):
         score_earned = math.ceil(score_earned) if score_earned > 0 else 0
         return score_earned, is_correct, feedback
 
-    # --- متد کمکی: محاسبه سطح ---
     def _calculate_level(self, score):
-        # هر 200 امتیاز یک سطح (با توجه به سیستم جدید امتیازدهی)
         return math.floor(int(score) / 200) + 1
 
-    # --- متد کمکی: بررسی نشان‌ها ---
     def _check_and_award_badges(self, user):
         newly_earned_badges = []
         user_badge_ids = user.get('badges_earned', [])
-        
-        # دریافت همه نشان‌ها (بدون _id که باعث خطای 500 می‌شود)
         all_badges = list(mongo.db.badges.find({}, {"_id": 0}))
         
         for badge in all_badges:
             badge_id = badge['id']
-            if badge_id in user_badge_ids:
-                continue
+            if badge_id in user_badge_ids: continue
             
             criteria = badge.get('criteria', {})
-            criteria_type = criteria.get('type')
+            ctype = criteria.get('type')
             earned = False
             
-            if criteria_type == 'reach_score':
-                 if int(user.get('score', 0)) >= criteria.get('score', 0): earned = True
-            elif criteria_type == 'reach_level':
-                 if int(user.get('level', 1)) >= criteria.get('level', 1): earned = True
-            elif criteria_type == 'complete_quiz':
-                 if int(user.get('quizzes_completed', 0)) >= criteria.get('count', 0): earned = True
-            elif criteria_type == 'correct_streak':
-                 if int(user.get('correct_streak', 0)) >= criteria.get('count', 0): earned = True
+            if ctype == 'reach_score' and int(user.get('score', 0)) >= criteria.get('score', 0): earned = True
+            elif ctype == 'reach_level' and int(user.get('level', 1)) >= criteria.get('level', 1): earned = True
+            elif ctype == 'complete_quiz' and int(user.get('quizzes_completed', 0)) >= criteria.get('count', 0): earned = True
+            elif ctype == 'correct_streak' and int(user.get('correct_streak', 0)) >= criteria.get('count', 0): earned = True
 
             if earned:
                 user_badge_ids.append(badge_id)
                 newly_earned_badges.append(badge)
         
         if newly_earned_badges:
-            mongo.db.users.update_one(
-                {'_id': user['_id']},
-                {'$set': {'badges_earned': user_badge_ids}}
-            )
+            mongo.db.users.update_one({'_id': user['_id']}, {'$set': {'badges_earned': user_badge_ids}})
             
         return newly_earned_badges
 
@@ -278,16 +256,17 @@ class QuizSubmit(Resource):
         if not question_id or user_answer is None or not quiz_id:
             return {"message": "اطلاعات ناقص است"}, 400
 
-        # ۱. پیدا کردن سوال
         quiz = mongo.db.quizzes.find_one({"id": quiz_id})
         if not quiz: return {"message": "آزمون یافت نشد"}, 404
-        question = next((q for q in quiz['questions'] if q['id'] == question_id), None)
+        
+        questions_list = quiz['questions']
+        question = next((q for q in questions_list if q['id'] == question_id), None)
         if not question: return {"message": "سوال یافت نشد"}, 404
+        
+        question_index = next((i for i, q in enumerate(questions_list) if q['id'] == question_id), -1)
 
-        # ۲. محاسبه امتیاز پایه
         base_score, is_correct, feedback = self._calculate_score(question, user_answer)
         
-        # ۳. محاسبه پاداش‌ها
         speed_bonus = 0
         streak_bonus = 0
         
@@ -298,29 +277,31 @@ class QuizSubmit(Resource):
         new_streak = current_streak + 1 if is_correct else 0
 
         if is_correct:
-            # الف) پاداش سرعت
             if time_taken < 5: speed_bonus = 5
             elif time_taken < 10: speed_bonus = 4
             elif time_taken < 15: speed_bonus = 3
             elif time_taken < 20: speed_bonus = 2
             
-            # ب) پاداش استریک (هر ۵ تا یکی)
             if new_streak > 0 and new_streak % 5 == 0:
                 streak_bonus = 20
 
         total_question_score = base_score + speed_bonus + streak_bonus
 
-        # ۴. آپدیت سوابق و پروفایل
         quiz_progress = user.get('quiz_progress', {})
         if quiz_id not in quiz_progress:
             quiz_progress[quiz_id] = {'best_score': 0, 'current_session_score': 0, 'attempts': 0, 'current_session_correct_count': 0}
         
         user_quiz_data = quiz_progress[quiz_id]
+        
+        if question_index == 0:
+            user_quiz_data['current_session_score'] = 0
+            user_quiz_data['current_session_correct_count'] = 0
+            user_quiz_data['attempts'] = user_quiz_data.get('attempts', 0) + 1
+
         user_quiz_data['current_session_score'] = user_quiz_data.get('current_session_score', 0) + total_question_score
-        current_correct_count = user_quiz_data.get('current_session_correct_count', 0)
+        
         if is_correct:
-            current_correct_count += 1
-        user_quiz_data['current_session_correct_count'] = current_correct_count
+            user_quiz_data['current_session_correct_count'] = user_quiz_data.get('current_session_correct_count', 0) + 1
 
         current_total_score = int(user.get('score', 0))
         xp_gained_this_step = 0
@@ -328,34 +309,29 @@ class QuizSubmit(Resource):
         
         if is_last_question:
             previous_best = user_quiz_data.get('best_score', 0)
-            new_session_score = user_quiz_data['current_session_score']
+            final_session_score = user_quiz_data['current_session_score']
             
-            if new_session_score > previous_best:
-                xp_gained_this_step = new_session_score - previous_best
-                user_quiz_data['best_score'] = new_session_score
+            if final_session_score > previous_best:
+                xp_gained_this_step = final_session_score - previous_best
+                user_quiz_data['best_score'] = final_session_score
             
-            user_quiz_data['attempts'] = user_quiz_data.get('attempts', 0) + 1
-            total_questions_in_quiz = len(quiz['questions'])
-            if current_correct_count == total_questions_in_quiz:
+            total_qs = len(questions_list)
+            correct_cnt = user_quiz_data.get('current_session_correct_count', 0)
+            
+            if correct_cnt == total_qs:
                 stage_completed_perfectly = True
-                mongo.db.users.update_one(
-                    {'_id': user['_id']}, 
-                    {
-                        '$inc': {'quizzes_completed': 1},
-                        '$addToSet': {'completed_quizzes': quiz_id} # فقط در صورت کامل بودن اضافه می‌شود
-                    }
-                )
             
+            if final_session_score > 0:
+                 mongo.db.users.update_one({'_id': user['_id']}, {'$addToSet': {'completed_quizzes': quiz_id}, '$inc': {'quizzes_completed': 1}})
+
+            user_quiz_data['current_session_score'] = 0
             user_quiz_data['current_session_correct_count'] = 0
-            user_quiz_data['current_session_score'] = 0 # ریست
-            
-            mongo.db.users.update_one({'_id': user['_id']}, {'$inc': {'quizzes_completed': 1}, '$addToSet': {'completed_quizzes': quiz_id}})
 
         quiz_progress[quiz_id] = user_quiz_data
         
         new_total_score = current_total_score + xp_gained_this_step
         new_level = self._calculate_level(new_total_score)
-        level_up_occurred = new_level > user.get('level', 1)
+        level_up = new_level > user.get('level', 1)
 
         mongo.db.users.update_one(
             {'_id': user['_id']},
@@ -372,9 +348,6 @@ class QuizSubmit(Resource):
         updated_user = mongo.db.users.find_one({'_id': user['_id']})
         newly_earned_badges = self._check_and_award_badges(updated_user)
         
-        # استخراج متن توضیحات
-        explanation_text = question.get('explanation', '')
-
         return {
             "message": "جواب ثبت شد",
             "isCorrect": is_correct,
@@ -385,8 +358,8 @@ class QuizSubmit(Resource):
             "streakBonus": streak_bonus,
             "newTotalScore": new_total_score,
             "newLevel": new_level,
-            "levelUp": level_up_occurred,
+            "levelUp": level_up,
             "newlyEarnedBadges": newly_earned_badges,
-            "explanation": explanation_text,
+            "explanation": question.get('explanation', ''),
             "stageCompleted": stage_completed_perfectly
         }, 200
