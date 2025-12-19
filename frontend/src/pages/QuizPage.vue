@@ -246,14 +246,19 @@ const isAnswerComplete = computed(() => {
     if (type === 'true-false') return currentQuestion.value.statements.length === Object.keys(answer).length;
     if (type === 'drag-drop-fill') return currentQuestion.value.blanks.length === Object.values(answer).filter(Boolean).length;
     if (type === 'image-labeling') {
-        // ۱. استفاده از zones به جای drop_zones
-        const totalZones = currentQuestion.value.zones ? currentQuestion.value.zones.length : 0;
+        if (!answer || typeof answer !== 'object') return false;
         
-        // ۲. شمارش تعداد زون‌هایی که واقعاً پر شده‌اند (آرایه‌شان خالی نیست)
-        const filledZones = Object.values(answer).filter(items => Array.isArray(items) && items.length > 0).length;
-        
-        // ۳. دکمه فعال شود اگر تعداد زون‌های پر شده برابر با کل زون‌ها باشد
-        return totalZones > 0 && filledZones === totalZones;
+        // ۱. تعداد کل گزینه‌هایی که کاربر تا الان در تمام باکس‌ها قرار داده
+        const placedItemsCount = Object.values(answer).reduce((count, items) => {
+            return count + (Array.isArray(items) ? items.length : 0);
+        }, 0);
+
+        // ۲. تعداد کل گزینه‌های موجود در سوال
+        const totalOptions = currentQuestion.value.options ? currentQuestion.value.options.length : 0;
+
+        // ۳. شرط: اگر کاربر تمام گزینه‌ها را استفاده کرده باشد، دکمه فعال شود
+        // (اگر تعداد گزینه‌ها مشخص نبود، حداقل ۱ مورد کافیست)
+        return totalOptions > 0 ? placedItemsCount === totalOptions : placedItemsCount > 0;
     }
     return true;
 });
