@@ -21,9 +21,9 @@ QUIZZES = {
                 "image": "/images/questions/cws_classification_pen.png",
                 "points_per_correct": 10,
                 "zones": [
-                    {"id": "z_natural_penicillins", "label": "Natural Penicillins", "x": 5, "y": 5, "width": 30, "height": 5},
-                    {"id": "z_amino_penicillins", "label": "Amino Penicillins", "x": 5, "y": 12.5, "width": 30, "height": 5},
-                    {"id": "z_penicillinase_resistant", "label": "Penicillinase Resistant", "x": 5, "y": 21, "width": 50, "height": 5}
+                    {"id": "z_natural_penicillins", "label": "Natural Penicillins", "x": 5, "y": 10, "width": 50, "height": 25},
+                    {"id": "z_amino_penicillins", "label": "Amino Penicillins", "x": 5, "y": 37.5, "width": 50, "height": 25},
+                    {"id": "z_penicillinase_resistant", "label": "Penicillinase Resistant", "x": 5, "y": 72.5, "width": 72.5, "height": 25}
                 ],
                 "options": [
                     {"id": "ampicillin", "text": "آمپی سیلین"},
@@ -47,11 +47,11 @@ QUIZZES = {
                 "image": "/images/questions/cws_classification_cep.png",
                 "points_per_correct": 10,
                 "zones": [
-                    {"id": "z_cephalosporins1", "label": "Cephalosporins 1", "x": 5, "y": 27.5, "width": 35, "height": 7.5},
-                    {"id": "z_cephalosporins2", "label": "Cephalosporins 2", "x": 5, "y": 37.5, "width": 35, "height": 7.5},
-                    {"id": "z_cephalosporins3", "label": "Cephalosporins 3", "x": 5, "y": 47.5, "width": 35, "height": 20},
-                    {"id": "z_cephalosporins4", "label": "Cephalosporins 4", "x": 5, "y": 67.5, "width": 35, "height": 4},
-                    {"id": "z_cephalosporins5", "label": "Cephalosporins 5", "x": 5, "y": 72.5, "width": 35, "height": 4}
+                    {"id": "z_cephalosporins1", "label": "Cephalosporins 1", "x": 5, "y": 3, "width": 62.5, "height": 15},
+                    {"id": "z_cephalosporins2", "label": "Cephalosporins 2", "x": 5, "y": 22.5, "width": 62.5, "height": 15},
+                    {"id": "z_cephalosporins3", "label": "Cephalosporins 3", "x": 5, "y": 42.5, "width": 62.5, "height": 15},
+                    {"id": "z_cephalosporins4", "label": "Cephalosporins 4", "x": 5, "y": 62.5, "width": 62.5, "height": 15},
+                    {"id": "z_cephalosporins5", "label": "Cephalosporins 5", "x": 5, "y": 82.5, "width": 62.5, "height": 15}
                 ],
                 "options": [
                     {"id": "ceftaroline", "text": "سفتارولین"},
@@ -82,14 +82,13 @@ QUIZZES = {
                 "image": "/images/questions/cws_classification_oth.png",
                 "points_per_correct": 10,
                 "zones": [
-                    {"id": "z_carbapenems", "label": "Carbapenems", "x": 5, "y": 77.5, "width": 50, "height": 4},
-                    {"id": "z_monobactams", "label": "Monobactams", "x": 5, "y": 82, "width": 50, "height": 4},
-                    {"id": "z_beta_lactamsase_inhibitors", "label": "Beta Lactamsase Inhibitors", "x": 5, "y": 86.5, "width": 50, "height": 4},
-                    {"id": "z_glycopeptides", "label": "Glycopeptides", "x": 5, "y": 92, "width": 50, "height": 6}
+                    {"id": "z_carbapenems", "label": "Carbapenems", "x": 5, "y": 5, "width": 60, "height": 17.5},
+                    {"id": "z_monobactams", "label": "Monobactams", "x": 5, "y": 27.5, "width": 60, "height": 17.5},
+                    {"id": "z_beta_lactamsase_inhibitors", "label": "Beta Lactamsase Inhibitors", "x": 5, "y": 52.5, "width": 60, "height": 17.5},
+                    {"id": "z_glycopeptides", "label": "Glycopeptides", "x": 5, "y": 77.5, "width": 60, "height": 17.5}
                 ],
                 "options": [
                     {"id": "aztreonam", "text": "آزترونام"},
-                    {"id": "meropenem", "text": "مروپنم"},
                     {"id": "meropenem", "text": "مروپنم"},
                     {"id": "vancomycin", "text": "ونکومایسین"},
                     {"id": "ertapenem", "text": "ارتاپنم"},
