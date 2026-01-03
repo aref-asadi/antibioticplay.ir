@@ -18,56 +18,88 @@ QUIZZES = {
                 "title": "دیواره سلولی",
                 "text": "آنتی بیوتیک های زیر همگی بر ساختار دیواره سلولی باکتری موثرند. هر آنتی بیوتیک را در جایگاه درست از نطر طبقه بندی قرار دهید.",
                 "hint": "/images/questions/cws_classification_hint.jpg",
-                "image": "/images/questions/cws_classification.png",
+                "image": "/images/questions/cws_classification_pen.jpg",
                 "points_per_correct": 10,
                 "zones": [
                     {"id": "z_natural_penicillins", "label": "Natural Penicillins", "x": 5, "y": 5, "width": 30, "height": 5},
                     {"id": "z_amino_penicillins", "label": "Amino Penicillins", "x": 5, "y": 12.5, "width": 30, "height": 5},
-                    {"id": "z_penicillinase_resistant", "label": "Penicillinase Resistant", "x": 5, "y": 21, "width": 50, "height": 5},
-                    {"id": "z_cephalosporins1", "label": "Cephalosporins 1", "x": 5, "y": 27.5, "width": 35, "height": 7.5},
-                    {"id": "z_cephalosporins2", "label": "Cephalosporins 2", "x": 5, "y": 37.5, "width": 35, "height": 7.5},
-                    {"id": "z_cephalosporins3", "label": "Cephalosporins 3", "x": 5, "y": 47.5, "width": 35, "height": 20},
-                    {"id": "z_cephalosporins4", "label": "Cephalosporins 4", "x": 5, "y": 67.5, "width": 35, "height": 4},
-                    {"id": "z_cephalosporins5", "label": "Cephalosporins 5", "x": 5, "y": 72.5, "width": 35, "height": 4},
-                    {"id": "z_carbapenems", "label": "Carbapenems", "x": 5, "y": 77.5, "width": 50, "height": 4},
-                    {"id": "z_monobactams", "label": "Monobactams", "x": 5, "y": 82, "width": 50, "height": 4},
-                    {"id": "z_beta_lactamsase_inhibitors", "label": "Beta Lactamsase Inhibitors", "x": 5, "y": 86.5, "width": 50, "height": 4},
-                    {"id": "z_glycopeptides", "label": "Glycopeptides", "x": 5, "y": 92, "width": 50, "height": 6}
+                    {"id": "z_penicillinase_resistant", "label": "Penicillinase Resistant", "x": 5, "y": 21, "width": 50, "height": 5}
                 ],
                 "options": [
                     {"id": "ampicillin", "text": "آمپی سیلین"},
                     {"id": "oxacillin", "text": "اگزاسیلین"},
                     {"id": "pen_v", "text": "پنی سیلین V"},
                     {"id": "pen_benz", "text": "پنی سیلین بنزاتین"},
-                    {"id": "nafcillin", "text": "نفی سیلین"},
-                    {"id": "cefazolin", "text": "سفازولین"},
-                    {"id": "cephalexin", "text": "سفالکسین"},
-                    {"id": "cefuroxime", "text": "سفوروکسیم"},
-                    {"id": "cephalothin", "text": "سفالوتین"},
-                    {"id": "ceftazidime", "text": "سفتازیدیم"},
-                    {"id": "cefotaxime", "text": "سفوتاکسیم"},
-                    {"id": "ceftriaxone", "text": "سفتریاکسون"},
-                    {"id": "cefixime", "text": "سفکسیم"},
-                    {"id": "cefepime", "text": "سفپیم"},
-                    {"id": "ceftaroline", "text": "سفتارولین"},
-                    {"id": "azobactam", "text": "آزوباکتام"}, 
-                    {"id": "meropenem", "text": "مروپنم"},
-                    {"id": "ertapenem", "text": "ارتاپنم"},
-                    {"id": "vancomycin", "text": "ونکومایسین"},
-                    {"id": "teicoplanin", "text": "تیکوپلانین"}
+                    {"id": "nafcillin", "text": "نفی سیلین"}
                 ],
                 "solution": {
                     "z_natural_penicillins": ["pen_v", "pen_benz"],
                     "z_amino_penicillins": ["ampicillin"],
-                    "z_penicillinase_resistant": ["oxacillin", "nafcillin"],
+                    "z_penicillinase_resistant": ["oxacillin", "nafcillin"]
+                }
+            },
+            {
+                "id": "q_cws_2",
+                "type": "image-labeling",
+                "title": "دیواره سلولی",
+                "text": "آنتی بیوتیک های زیر همگی بر ساختار دیواره سلولی باکتری موثرند. هر آنتی بیوتیک را در جایگاه درست از نطر طبقه بندی قرار دهید.",
+                "hint": "/images/questions/cws_classification_hint.jpg",
+                "image": "/images/questions/cws_classification_cep.jpg",
+                "points_per_correct": 10,
+                "zones": [
+                    {"id": "z_cephalosporins1", "label": "Cephalosporins 1", "x": 5, "y": 27.5, "width": 35, "height": 7.5},
+                    {"id": "z_cephalosporins2", "label": "Cephalosporins 2", "x": 5, "y": 37.5, "width": 35, "height": 7.5},
+                    {"id": "z_cephalosporins3", "label": "Cephalosporins 3", "x": 5, "y": 47.5, "width": 35, "height": 20},
+                    {"id": "z_cephalosporins4", "label": "Cephalosporins 4", "x": 5, "y": 67.5, "width": 35, "height": 4},
+                    {"id": "z_cephalosporins5", "label": "Cephalosporins 5", "x": 5, "y": 72.5, "width": 35, "height": 4}
+                ],
+                "options": [
+                    {"id": "ceftaroline", "text": "سفتارولین"},
+                    {"id": "cephalothin", "text": "سفالوتین"},
+                    {"id": "cefazolin", "text": "سفازولین"},
+                    {"id": "cephalexin", "text": "سفالکسین"},
+                    {"id": "cefotaxime", "text": "سفوتاکسیم"},
+                    {"id": "cefixime", "text": "سفکسیم"},
+                    {"id": "ceftazidime", "text": "سفتازیدیم"},
+                    {"id": "ceftriaxone", "text": "سفتریاکسون"},
+                    {"id": "cefuroxime", "text": "سفوروکسیم"},
+                    {"id": "cefepime", "text": "سفپیم"}
+                ],
+                "solution": {
                     "z_cephalosporins1": ["cefazolin", "cephalexin", "cephalothin"],
                     "z_cephalosporins2": ["cefuroxime"],
                     "z_cephalosporins3": ["cefixime", "ceftazidime", "cefotaxime", "ceftriaxone"],
                     "z_cephalosporins4": ["cefepime"],
-                    "z_cephalosporins5": ["ceftaroline"],
-                    "z_monobactams": ["azobactam"],
+                    "z_cephalosporins5": ["ceftaroline"]
+                }
+            },
+            {
+                "id": "q_cws_3",
+                "type": "image-labeling",
+                "title": "دیواره سلولی",
+                "text": "آنتی بیوتیک های زیر همگی بر ساختار دیواره سلولی باکتری موثرند. هر آنتی بیوتیک را در جایگاه درست از نطر طبقه بندی قرار دهید.",
+                "hint": "/images/questions/cws_classification_hint.jpg",
+                "image": "/images/questions/cws_classification_oth.jpg",
+                "points_per_correct": 10,
+                "zones": [
+                    {"id": "z_carbapenems", "label": "Carbapenems", "x": 5, "y": 77.5, "width": 50, "height": 4},
+                    {"id": "z_monobactams", "label": "Monobactams", "x": 5, "y": 82, "width": 50, "height": 4},
+                    {"id": "z_beta_lactamsase_inhibitors", "label": "Beta Lactamsase Inhibitors", "x": 5, "y": 86.5, "width": 50, "height": 4},
+                    {"id": "z_glycopeptides", "label": "Glycopeptides", "x": 5, "y": 92, "width": 50, "height": 6}
+                ],
+                "options": [
+                    {"id": "aztreonam", "text": "آزترونام"},
+                    {"id": "meropenem", "text": "مروپنم"},
+                    {"id": "meropenem", "text": "مروپنم"},
+                    {"id": "vancomycin", "text": "ونکومایسین"},
+                    {"id": "ertapenem", "text": "ارتاپنم"},
+                    {"id": "tazobactam", "text": "تازوباکتام"}, 
+                    {"id": "teicoplanin", "text": "تیکوپلانین"}
+                ],
+                "solution": {
+                    "z_monobactams": ["aztreonam"],
                     "z_carbapenems": ["meropenem", "ertapenem"],
-                    "z_beta_lactamsase_inhibitors": [],
+                    "z_beta_lactamsase_inhibitors": ["tazobactam"],
                     "z_glycopeptides": ["vancomycin", "teicoplanin"]
                 }
             }
@@ -87,7 +119,7 @@ QUIZZES = {
                 "title": "سایر طبقه بندی ها",
                 "text": "آنتی بیوتیک های زیر را به طبقه بندی درست از جدول انتقال دهید.",
                 "hint": "/images/questions/o_classification_hint.jpg",
-                "image": "/images/questions/o_classification.png",
+                "image": "/images/questions/o_classification_ps.png",
                 "points_per_correct": 10,
                 "zones": [
                     {"id": "z_aminoglycosides", "label": "Aminoglycosides", "x": 2.5, "y": 2.5, "width": 57.5, "height": 7.5},
@@ -96,34 +128,19 @@ QUIZZES = {
                     {"id": "z_streptogramins", "label": "Streptogramins", "x": 2.5, "y": 32, "width": 57.5, "height": 5},
                     {"id": "z_chloramphenicol", "label": "Chloramphenicol", "x": 2.5, "y": 39, "width": 70, "height": 5},
                     {"id": "z_macrolides", "label": "Macrolides", "x": 2.5, "y": 45, "width": 57.5, "height": 5},
-                    {"id": "z_lincosamides", "label": "Lincosamides", "x": 2.5, "y": 50, "width": 57.5, "height": 5},
-                    {"id": "z_fluoroquinolones", "label": "Fluoroquinolones", "x": 2.5, "y": 57.5, "width": 57.5, "height": 10},
-                    {"id": "z_quinolones", "label": "Quinolones", "x": 2.5, "y": 70, "width": 57.5, "height": 5},
-                    {"id": "z_sulfonamides", "label": "Sulfonamides", "x": 2.5, "y": 76, "width": 57.5, "height": 5},
-                    {"id": "z_dhfr_inhibitors", "label": "DHFR Inhibitors", "x": 2.5, "y": 82, "width": 57.5, "height": 5},
-                    {"id": "z_dna_damage", "label": "DNA Damage", "x": 2.5, "y": 88, "width": 80, "height": 5},
-                    {"id": "z_mrna_synthesis", "label": "mRNA Synthesis", "x": 2.5, "y": 94, "width": 80, "height": 5}
+                    {"id": "z_lincosamides", "label": "Lincosamides", "x": 2.5, "y": 50, "width": 57.5, "height": 5}
                 ],
                 "options": [
-                    {"id": "neomycin", "text": "نئومایسین"},
                     {"id": "tobramycin", "text": "توبرامایسین"},
-                    {"id": "amikacin", "text": "آمیکاسین"},
                     {"id": "minocycline", "text": "مینوسیکلین"},
-                    {"id": "tigecycline", "text": "تیگسیکلین"},
+                    {"id": "neomycin", "text": "نئومایسین"},
                     {"id": "linezolid", "text": "لینزولید"},
                     {"id": "azithromycin", "text": "آزیترومایسین"},
+                    {"id": "amikacin", "text": "آمیکاسین"},
                     {"id": "quinopristin/dalfopristin", "text": "کیناپریستین/دالفاپریستین"},
+                    {"id": "tigecycline", "text": "تیگسیکلین"},
                     {"id": "clindamycin", "text": "کلیندامایسین"},
-                    {"id": "levofloxacin", "text": "لووفلوکساین"},
-                    {"id": "chloramphenicol", "text":"کلرامفنیکل"},
-                    {"id": "ofloxacin", "text": "افلوکساسین"},
-                    {"id": "moxifloxacin", "text": "موکسی فلوکساین"},
-                    {"id": "trimethoprim", "text": "تریمتوپریم"},
-                    {"id": "nalidixic_acid", "text": "نالیدیکسیک اسید"},
-                    {"id": "sulfasalazine", "text": "سولفاسالازین"},
-                    {"id": "rifampin", "text": "ریفامپین"},
-                    {"id": "sulfadiazine", "text": "سولفادیازین"},
-                    {"id": "metronidazole", "text": "مترونیدازول"}
+                    {"id": "chloramphenicol", "text":"کلرامفنیکل"}
                 ],
                 "solution": {
                     "z_aminoglycosides": ["neomycin", "tobramycin", "amikacin"],
@@ -132,7 +149,37 @@ QUIZZES = {
                     "z_streptogramins": ["quinopristin/dalfopristin"],
                     "z_chloramphenicol": ["chloramphenicol"],
                     "z_macrolides": ["azithromycin"],
-                    "z_lincosamides": ["clindamycin"],
+                    "z_lincosamides": ["clindamycin"]
+                }
+            },
+            {
+                "id": "q_others_2",
+                "type": "image-labeling",
+                "title": "سایر طبقه بندی ها",
+                "text": "آنتی بیوتیک های زیر را به طبقه بندی درست از جدول انتقال دهید.",
+                "hint": "/images/questions/o_classification_hint.jpg",
+                "image": "/images/questions/o_classification_oth.png",
+                "points_per_correct": 10,
+                "zones": [
+                    {"id": "z_fluoroquinolones", "label": "Fluoroquinolones", "x": 2.5, "y": 57.5, "width": 57.5, "height": 10},
+                    {"id": "z_quinolones", "label": "Quinolones", "x": 2.5, "y": 70, "width": 57.5, "height": 5},
+                    {"id": "z_sulfonamides", "label": "Sulfonamides", "x": 2.5, "y": 76, "width": 57.5, "height": 5},
+                    {"id": "z_dhfr_inhibitors", "label": "DHFR Inhibitors", "x": 2.5, "y": 82, "width": 57.5, "height": 5},
+                    {"id": "z_dna_damage", "label": "DNA Damage", "x": 2.5, "y": 88, "width": 80, "height": 5},
+                    {"id": "z_mrna_synthesis", "label": "mRNA Synthesis", "x": 2.5, "y": 94, "width": 80, "height": 5}
+                ],
+                "options": [
+                    {"id": "moxifloxacin", "text": "موکسی فلوکساین"},
+                    {"id": "trimethoprim", "text": "تریمتوپریم"},
+                    {"id": "nalidixic_acid", "text": "نالیدیکسیک اسید"},
+                    {"id": "sulfasalazine", "text": "سولفاسالازین"},
+                    {"id": "ofloxacin", "text": "افلوکساسین"},
+                    {"id": "rifampin", "text": "ریفامپین"},
+                    {"id": "levofloxacin", "text": "لووفلوکساین"},
+                    {"id": "sulfadiazine", "text": "سولفادیازین"},
+                    {"id": "metronidazole", "text": "مترونیدازول"}
+                ],
+                "solution": {
                     "z_fluoroquinolones": ["levofloxacin", "ofloxacin", "moxifloxacin"],
                     "z_quinolones": ["nalidixic_acid"],
                     "z_sulfonamides": ["sulfasalazine", "sulfadiazine"],
