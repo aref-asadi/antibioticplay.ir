@@ -18,7 +18,7 @@ QUIZZES = {
                 "title": "دیواره سلولی",
                 "text": "آنتی بیوتیک های زیر همگی بر ساختار دیواره سلولی باکتری موثرند. هر آنتی بیوتیک را در جایگاه درست از نطر طبقه بندی قرار دهید.",
                 "hint": "/images/questions/cws_classification_hint.jpg",
-                "image": "/images/questions/cws_classification_pen.jpg",
+                "image": "/images/questions/cws_classification_pen.png",
                 "points_per_correct": 10,
                 "zones": [
                     {"id": "z_natural_penicillins", "label": "Natural Penicillins", "x": 5, "y": 5, "width": 30, "height": 5},
@@ -44,7 +44,7 @@ QUIZZES = {
                 "title": "دیواره سلولی",
                 "text": "آنتی بیوتیک های زیر همگی بر ساختار دیواره سلولی باکتری موثرند. هر آنتی بیوتیک را در جایگاه درست از نطر طبقه بندی قرار دهید.",
                 "hint": "/images/questions/cws_classification_hint.jpg",
-                "image": "/images/questions/cws_classification_cep.jpg",
+                "image": "/images/questions/cws_classification_cep.png",
                 "points_per_correct": 10,
                 "zones": [
                     {"id": "z_cephalosporins1", "label": "Cephalosporins 1", "x": 5, "y": 27.5, "width": 35, "height": 7.5},
@@ -79,7 +79,7 @@ QUIZZES = {
                 "title": "دیواره سلولی",
                 "text": "آنتی بیوتیک های زیر همگی بر ساختار دیواره سلولی باکتری موثرند. هر آنتی بیوتیک را در جایگاه درست از نطر طبقه بندی قرار دهید.",
                 "hint": "/images/questions/cws_classification_hint.jpg",
-                "image": "/images/questions/cws_classification_oth.jpg",
+                "image": "/images/questions/cws_classification_oth.png",
                 "points_per_correct": 10,
                 "zones": [
                     {"id": "z_carbapenems", "label": "Carbapenems", "x": 5, "y": 77.5, "width": 50, "height": 4},
