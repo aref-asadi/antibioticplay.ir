@@ -494,7 +494,33 @@ const confirmExit = () => {
 .modal-header { margin-bottom: 1rem; color: #fbc02d; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
 .modal-icon-hint { font-size: 3rem; }
 .modal-header h3 { font-size: 1.5rem; font-weight: 800; color: #333; margin: 0; }
-.modal-body { font-size: 1.1rem; line-height: 1.6; color: #555; }
+.modal-body {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #555;
+  
+  /* --- اضافه شده برای حل مشکل اسکرول --- */
+  max-height: 50vh;       /* حداکثر ارتفاع: 50 درصد ارتفاع صفحه */
+  overflow-y: auto;       /* اگر متن بیشتر بود، اسکرول عمودی فعال شود */
+  padding: 0 0.5rem;      /* کمی فاصله از بغل برای زیبایی اسکرول‌بار */
+  width: 100%;            /* اطمینان از عرض کامل */
+  
+  /* استایل برای اسکرول‌بار (اختیاری ولی زیباتر) */
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+
+/* استایل اسکرول‌بار برای کروم و سافاری */
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.modal-body::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 20px;
+}
 
 /* Feedback Modal */
 .feedback-card { overflow: hidden; padding-bottom: 1.5rem; text-align: center; }
