@@ -427,21 +427,21 @@ LEARNING_PATH = [
         "id": "unit_1",
         "title": "Classification & Structure",
         "description": "شناخت خانواده‌های آنتی‌بیوتیک و ساختار آن‌ها",
-        "color": "#4caf50", 
+        "color": "#0288d1", 
         "levels": ["q_class_stage_1", "q_class_stage_2"]
     },
     {
         "id": "unit_2",
         "title": "Dosage Forms & Formulations",
         "description": "آشنایی با اشکال دارویی، دوزینگ و نکات فرمولاسیون آنتی‌بیوتیک‌ها در ایران",
-        "color": "#ff9800",
+        "color": "#009688",
         "levels": ["q_dosage_stage_1", "q_dosage_stage_2"]
     },
     {
         "id": "unit_3",
         "title": "Clinical Application",
         "description": "کاربردهای بالینی",
-        "color": "#2196f3",
+        "color": "#5e35b1",
         "levels": [] 
     }
 ]

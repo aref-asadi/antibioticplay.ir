@@ -21,19 +21,13 @@
         <button 
           class="hint-btn icon-btn" 
           @click="toggleHint" 
-          :disabled="hintsRemaining <= 0 && !showHint"
+          :disabled="hintsRemaining <= 0"
           title="راهنمایی"
           :style="hintButtonStyle"
         >
-          <font-awesome-icon icon="fas fa-lightbulb" :class="{ 'bulb-on': showHint }" />
+          <font-awesome-icon icon="fas fa-lightbulb" />
           <span class="hint-count" :style="{ backgroundColor: themeColor }">{{ hintsRemaining }}</span>
         </button>
-        
-        <transition name="fade">
-          <div v-if="showHint" class="hint-bubble-top">
-            {{ currentQuestion?.hint || 'راهنمایی برای این سوال موجود نیست.' }}
-          </div>
-        </transition>
       </div>
 
       <div class="progress-container">
@@ -71,71 +65,81 @@
       </div>
     </main>
 
-    <transition name="slide-up">
-      <div v-if="quizState === 'correct' || quizState === 'incorrect'" class="character-popup">
-        <img 
-          :src="quizState === 'correct' ? correctImg : incorrectImg" 
-          class="character-img" 
-          alt="Character"
-        />
-        <div class="speech-bubble" :class="{ 'correct-bubble': quizState === 'correct' }">
-          {{ quizState === 'correct' ? 'آفرین!' : 'اوه! اشتباه بود.' }}
-        </div>
-      </div>
-    </transition>
-
-    <Confetti v-if="quizState === 'correct'" />
-
-    <footer 
-      class="quiz-footer" 
-      :class="{ 
-        'footer-correct': quizState === 'correct', 
-        'footer-incorrect': quizState === 'incorrect' 
-      }"
-    >
+    <footer class="quiz-footer" v-if="quizState === 'answering'">
       <div class="footer-content">
-        
-        <div v-if="quizState !== 'answering'" class="feedback-message">
-          <div class="feedback-icon-circle">
-            <font-awesome-icon :icon="quizState === 'correct' ? 'fas fa-check' : 'fas fa-times'" />
-          </div>
-          <div class="feedback-text">
-            <h3 v-if="quizState === 'correct'">عالی بود!</h3>
-            <h3 v-else>اشتباه بود!</h3>
-            
-            <p v-if="explanationText" class="explanation-text">{{ explanationText }}</p>
-          </div>
-        </div>
-
-        <div class="action-button-wrapper">
-          <button
-            v-if="quizState === 'answering'"
-            @click="checkAnswer"
-            class="btn check-btn"
-            :style="checkButtonStyle"
-            :disabled="!isAnswerComplete"
-          >
-            بررسی
-          </button>
-
-          <button
-            v-else
-            @click="handleContinue"
-            class="btn continue-btn"
-            :class="quizState === 'correct' ? 'btn-primary' : 'btn-danger'"
-          >
-            ادامه
-          </button>
-        </div>
-
+        <button
+          @click="checkAnswer"
+          class="btn check-btn"
+          :style="checkButtonStyle"
+          :disabled="!isAnswerComplete"
+        >
+          بررسی
+        </button>
       </div>
     </footer>
+
+    <Transition name="fade">
+      <div v-if="showHintModal" class="modal-overlay" @click.self="showHintModal = false">
+        <div class="modal-card hint-card">
+          <button class="modal-close-icon" @click="showHintModal = false">
+            <font-awesome-icon icon="fas fa-times" />
+          </button>
+          
+          <div class="modal-header">
+            <font-awesome-icon icon="fas fa-lightbulb" class="modal-icon-hint" />
+            <h3>راهنمایی</h3>
+          </div>
+          
+          <div class="modal-body">
+            <p>{{ currentQuestion?.hint || 'راهنمایی برای این سوال موجود نیست.' }}</p>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <Transition name="pop-up">
+      <div v-if="quizState !== 'answering'" class="modal-overlay">
+        <div class="modal-card feedback-card" :class="quizState === 'correct' ? 'card-correct' : 'card-incorrect'">
+          
+          <div class="feedback-image-wrapper">
+             <img 
+              :src="quizState === 'correct' ? correctImg : incorrectImg" 
+              class="feedback-character-img" 
+              alt="Character"
+            />
+          </div>
+
+          <div class="feedback-content">
+            <h2 class="feedback-title">
+              {{ quizState === 'correct' ? 'عالی بود!' : 'اشتباه بود!' }}
+            </h2>
+            
+            <div class="feedback-text-scroll">
+               <p v-if="explanationText" class="explanation-text">{{ explanationText }}</p>
+            </div>
+          </div>
+
+          <div class="feedback-actions">
+            <button
+              @click="handleContinue"
+              class="btn continue-btn"
+              :class="quizState === 'correct' ? 'btn-primary' : 'btn-danger'"
+            >
+              ادامه
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </Transition>
+
+    <Confetti v-if="quizState === 'correct'" />
 
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuizStore } from '../stores/quiz';
 import { useAuthStore } from '../stores/auth';
@@ -160,7 +164,6 @@ import ImageLabeling from '../components/ImageLabeling.vue';
 
 import Confetti from '../components/Confetti.vue';
 
-// Register Icons
 library.add(faTimes, faCheck, faFire, faLightbulb, fasBookmark, farBookmark);
 
 const route = useRoute();
@@ -180,7 +183,7 @@ const applyShake = ref(false);
 const explanationText = ref('');
 const questionStartTime = ref(Date.now());
 const hintsRemaining = ref(3);
-const showHint = ref(false);
+const showHintModal = ref(false); // تغییر نام متغیر برای وضوح بیشتر
 
 // --- Theme & Style Logic ---
 const themeColor = computed(() => route.query.theme || '#58cc02');
@@ -209,7 +212,6 @@ const bookmarkButtonStyle = computed(() => ({
   borderColor: isBookmarked.value ? themeColor.value : '#e5e5e5'
 }));
 
-// Helper to darken color
 function adjustColor(color, amount) {
     return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
 }
@@ -247,17 +249,8 @@ const isAnswerComplete = computed(() => {
     if (type === 'drag-drop-fill') return currentQuestion.value.blanks.length === Object.values(answer).filter(Boolean).length;
     if (type === 'image-labeling') {
         if (!answer || typeof answer !== 'object') return false;
-        
-        // ۱. تعداد کل گزینه‌هایی که کاربر تا الان در تمام باکس‌ها قرار داده
-        const placedItemsCount = Object.values(answer).reduce((count, items) => {
-            return count + (Array.isArray(items) ? items.length : 0);
-        }, 0);
-
-        // ۲. تعداد کل گزینه‌های موجود در سوال
+        const placedItemsCount = Object.values(answer).reduce((count, items) => count + (Array.isArray(items) ? items.length : 0), 0);
         const totalOptions = currentQuestion.value.options ? currentQuestion.value.options.length : 0;
-
-        // ۳. شرط: اگر کاربر تمام گزینه‌ها را استفاده کرده باشد، دکمه فعال شود
-        // (اگر تعداد گزینه‌ها مشخص نبود، حداقل ۱ مورد کافیست)
         return totalOptions > 0 ? placedItemsCount === totalOptions : placedItemsCount > 0;
     }
     return true;
@@ -277,8 +270,8 @@ const handleBookmark = async () => {
 // --- Watchers ---
 watch(currentQuestion, () => {
   questionStartTime.value = Date.now();
-  showHint.value = false;
-  userAnswer.value = null; // Reset answer
+  showHintModal.value = false;
+  userAnswer.value = null;
 });
 
 // --- Lifecycle ---
@@ -291,11 +284,9 @@ onMounted(() => {
 
 // --- Interaction Methods ---
 const toggleHint = () => {
-  if (showHint.value) {
-    showHint.value = false;
-  } else if (hintsRemaining.value > 0) {
+  if (hintsRemaining.value > 0) {
     hintsRemaining.value--;
-    showHint.value = true;
+    showHintModal.value = true;
   }
 };
 
@@ -306,18 +297,6 @@ const playSound = (soundFile) => {
   } catch (error) {
     console.error("Error playing sound:", error);
   }
-};
-
-const scrollToBottom = () => {
-  nextTick(() => {
-    if (quizBody.value) {
-      // اسکرول نرم به پایین‌ترین نقطه
-      quizBody.value.scrollTo({
-        top: quizBody.value.scrollHeight,
-        behavior: 'smooth'
-      });
-    }
-  });
 };
 
 const checkAnswer = async () => {
@@ -358,8 +337,6 @@ const checkAnswer = async () => {
       applyShake.value = true;
       setTimeout(() => { applyShake.value = false; }, 500);
     }
-    
-    scrollToBottom();
 
   } catch (err) {
     console.error("Error checking answer:", err);
@@ -388,7 +365,7 @@ const confirmExit = () => {
 /* Layout */
 .quiz-layout {
   display: flex; flex-direction: column; 
-  height: 100vh; height: 100dvh; /* Mobile viewport fix */
+  height: 100vh; height: 100dvh; 
   background-color: white; 
   overflow: hidden;
   position: relative;
@@ -406,7 +383,6 @@ const confirmExit = () => {
 .close-btn { background: none; border: none; color: rgba(0,0,0,0.3); font-size: 1.5rem; cursor: pointer; padding: 0; min-width: auto; border-bottom: none; }
 .close-btn:hover { color: rgba(0,0,0,0.6); }
 
-/* Buttons in Header (Hint & Bookmark) */
 .icon-btn {
   background: white; border: 2px solid; border-radius: 50%; width: 45px; height: 45px;
   display: flex; justify-content: center; align-items: center; cursor: pointer;
@@ -418,108 +394,117 @@ const confirmExit = () => {
 .icon-btn.active { background-color: #fffdf0; }
 
 .hint-wrapper { position: relative; }
-.bulb-on { filter: drop-shadow(0 0 5px currentColor); }
 .hint-count {
   position: absolute; top: -5px; right: -5px; color: white;
   font-size: 0.75rem; width: 20px; height: 20px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold;
-}
-.hint-bubble-top {
-  position: absolute; top: 130%; right: -10px; width: 260px; background: #3c3c3c; color: white;
-  padding: 1rem; border-radius: 12px; font-size: 0.95rem; z-index: 30; text-align: right; box-shadow: 0 4px 15px rgba(0,0,0,0.2); line-height: 1.5;
-}
-.hint-bubble-top::after {
-  content: ''; position: absolute; top: -6px; right: 25px; width: 12px; height: 12px; background: #3c3c3c; transform: rotate(45deg);
 }
 
 /* Progress Bar */
 .progress-container { flex-grow: 1; height: 16px; background-color: rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; margin-left: 1rem; margin-right: 1rem; }
 .progress-bar { height: 100%; border-radius: 10px; position: relative; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 .progress-highlight { position: absolute; top: 20%; left: 5%; right: 5%; height: 30%; background-color: rgba(255,255,255,0.3); border-radius: 10px; }
-
 .quiz-stats { display: flex; align-items: center; gap: 0.5rem; color: #ff9600; font-weight: bold; font-size: 1.2rem; }
 
 /* Main Body */
 .quiz-body {
-  flex: 1 1 auto; /* Fill space */
-  overflow-y: auto; /* Scrollable */
+  flex: 1 1 auto; 
+  overflow-y: auto; 
   padding: 1rem 2rem;
-  padding-bottom: 2rem; /* Normal padding */
+  padding-bottom: 2rem; 
   display: flex; justify-content: center; position: relative; scroll-behavior: smooth; z-index: 10;
 }
 .question-container { width: 100%; max-width: 800px; text-align: center; margin-top: 1rem; }
 .question-title { font-size: 1.8rem; color: var(--color-text); margin-bottom: 2rem; text-align: right; font-weight: 800; }
-.question-image-container {
-  margin-bottom: 2rem;
-  text-align: center;
-}
-.question-image-container img {
-  max-width: 100%;
-  max-height: 300px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-/* Character Animation */
-.character-popup { position: fixed; bottom: 160px; right: 20px; z-index: 90; display: flex; align-items: flex-end; gap: 10px; pointer-events: none; }
-.character-img { width: 130px; height: auto; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.15)); }
-.speech-bubble { background: white; border: 2px solid #e5e5e5; padding: 1rem 1.5rem; border-radius: 20px 20px 0 20px; font-weight: 800; color: var(--color-danger); margin-bottom: 30px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-size: 1.1rem; }
-.correct-bubble { color: var(--color-primary); border-color: var(--color-primary-light); background-color: #fafff5; }
+.question-image-container { margin-bottom: 2rem; text-align: center; }
+.question-image-container img { max-width: 100%; max-height: 300px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
 /* Footer */
 .quiz-footer {
-  flex: 0 0 auto; /* Fixed height based on content */
-  width: 100%; padding: 2rem; border-top: 2px solid rgba(0,0,0,0.05); background-color: white; 
-  transition: background-color 0.2s, border-color 0.2s; z-index: 100; position: relative;
+  flex: 0 0 auto; 
+  width: 100%; padding: 1.5rem 2rem; border-top: 2px solid rgba(0,0,0,0.05); background-color: white; 
+  z-index: 100;
 }
-.footer-content { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.footer-content { max-width: 1000px; margin: 0 auto; display: flex; justify-content: flex-end; }
+.check-btn { min-width: 180px; padding: 1rem 2rem; font-size: 1.2rem; width: auto; transition: filter 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); border-radius: 16px; color: white; border: none; cursor: pointer; border-bottom: 4px solid rgba(0,0,0,0.2); }
+.check-btn:disabled { background-color: #e5e5e5 !important; border-bottom-color: #d4d4d4 !important; color: #afafaf !important; cursor: not-allowed; box-shadow: none; }
+.check-btn:hover:not(:disabled) { filter: brightness(1.1); }
+.check-btn:active:not(:disabled) { transform: translateY(2px); border-bottom-width: 2px; }
 
-/* Feedback */
-.feedback-message { display: flex; align-items: flex-start; gap: 1rem; animation: slideRight 0.3s ease-out; flex: 1; }
-@keyframes slideRight { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+/* --- MODAL STYLES --- */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex; justify-content: center; align-items: center;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+}
 
-.feedback-icon-circle { width: 70px; height: 70px; border-radius: 50%; background-color: white; display: flex; justify-content: center; align-items: center; font-size: 2rem; flex-shrink: 0; }
-.footer-correct .feedback-icon-circle { color: var(--color-primary); }
-.footer-incorrect .feedback-icon-circle { color: var(--color-danger); }
+.modal-card {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 
-.feedback-text { display: flex; flex-direction: column; align-items: flex-start; text-align: right; }
-.feedback-text h3 { margin: 0; font-size: 1.6rem; font-weight: 900; margin-bottom: 0.5rem; }
-.footer-correct .feedback-text h3 { color: var(--color-primary-dark); }
-.footer-incorrect .feedback-text h3 { color: var(--color-danger-dark); }
+.modal-close-icon {
+  position: absolute; top: 10px; left: 10px;
+  background: #f0f0f0; border: none; width: 32px; height: 32px; border-radius: 50%;
+  cursor: pointer; color: #666; display: flex; justify-content: center; align-items: center;
+  font-size: 1rem; transition: background 0.2s; z-index: 10;
+}
+.modal-close-icon:hover { background: #e0e0e0; }
 
-.explanation-text { font-size: 1rem; color: #4b4b4b; margin: 0; line-height: 1.6; max-width: 650px; }
+/* Hint Modal */
+.hint-card { padding: 2rem; text-align: center; border-bottom: 4px solid #e5e5e5; }
+.modal-header { margin-bottom: 1rem; color: #fbc02d; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+.modal-icon-hint { font-size: 3rem; }
+.modal-header h3 { font-size: 1.5rem; font-weight: 800; color: #333; margin: 0; }
+.modal-body { font-size: 1.1rem; line-height: 1.6; color: #555; }
 
-/* Actions */
-.action-button-wrapper { margin-right: 2rem; }
-.check-btn, .continue-btn { min-width: 180px; padding: 1rem 2rem; font-size: 1.2rem; width: auto; transition: filter 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
-.check-btn:hover { filter: brightness(1.1); }
+/* Feedback Modal */
+.feedback-card { overflow: hidden; padding-bottom: 1.5rem; text-align: center; }
+.card-correct { border: 2px solid #84d8ff; background: #f0faff; }
+.card-incorrect { border: 2px solid #ffb8b8; background: #fff5f5; }
+
+.feedback-image-wrapper { width: 100%; height: 180px; overflow: hidden; background: white; display: flex; justify-content: center; align-items: flex-end; }
+.feedback-character-img { width: 140px; height: auto; }
+
+.feedback-content { padding: 1rem 1.5rem; }
+.feedback-title { font-size: 2rem; margin: 0.5rem 0; font-weight: 900; }
+.card-correct .feedback-title { color: #1cb0f6; }
+.card-incorrect .feedback-title { color: #ea2b2b; }
+
+.feedback-text-scroll { max-height: 150px; overflow-y: auto; margin-bottom: 1.5rem; padding: 0 0.5rem; }
+.explanation-text { font-size: 1rem; color: #555; line-height: 1.6; margin: 0; }
+
+.feedback-actions { padding: 0 1.5rem; }
+.continue-btn { width: 100%; padding: 0.8rem; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer; border: none; border-bottom: 4px solid transparent; color: white; transition: all 0.2s; }
+.continue-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+.btn-primary { background-color: #1cb0f6; border-bottom-color: #1899d6; }
+.btn-primary:hover { background-color: #1899d6; }
+.btn-danger { background-color: #ff4b4b; border-bottom-color: #d40000; }
+.btn-danger:hover { background-color: #d40000; }
+
+/* Transitions */
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+.pop-up-enter-active { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.pop-up-leave-active { transition: opacity 0.2s; }
+.pop-up-leave-to { opacity: 0; }
+@keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+.shake-animation { animation: shake 0.5s ease-in-out; }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
 /* Mobile Adjustments */
 @media (max-width: 600px) {
-  .footer-content { flex-direction: column; gap: 1.5rem; align-items: stretch; }
-  .action-button-wrapper { width: 100%; margin: 0; }
-  .check-btn, .continue-btn { width: 100%; }
-  
-  .feedback-message { margin-bottom: 0.5rem; flex-direction: row; align-items: center; }
-  .feedback-text h3 { font-size: 1.4rem; }
-  .feedback-text { width: 100%; }
-  .explanation-text { font-size: 0.9rem; }
-  
-  .character-popup { bottom: 180px; right: 50%; transform: translateX(50%); }
-  .character-img { width: 110px; }
-  
   .quiz-header { padding: 0.8rem 1rem; gap: 0.8rem; }
   .icon-btn { width: 40px; height: 40px; }
+  .check-btn { width: 100%; }
 }
-
-/* Colors & Transitions */
-.footer-correct { background-color: #d7ffb8; border-color: #d7ffb8; }
-.footer-incorrect { background-color: #ffdfe0; border-color: #ffdfe0; }
-
-.slide-up-enter-active, .slide-up-leave-active { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.slide-up-enter-from, .slide-up-leave-to { opacity: 0; transform: translateY(100px); }
-.fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
-@keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
-.shake-animation { animation: shake 0.5s ease-in-out; }
-@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 </style>

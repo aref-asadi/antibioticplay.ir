@@ -45,7 +45,10 @@
              <font-awesome-icon icon="fas fa-question-circle" />
              <span class="btn-label">راهنما</span>
           </router-link>
-          <button @click="handleLogout" class="btn-ghost">خروج</button>
+          <button @click="handleLogout" class="btn-ghost header-btn logout-btn" title="خروج از حساب">
+            <font-awesome-icon icon="fas fa-sign-out-alt" />
+            <span class="btn-label">خروج</span>
+          </button>
         </div>
       </div>
     </header>
@@ -181,9 +184,9 @@ import { useQuizStore } from '../stores/quiz';
 import badgeService from '../services/badgeService';
 import leaderboardService from '../services/leaderboardService'; // ایمپورت سرویس لیدربورد
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faQuestionCircle, faUserPen, faLock, faMicroscope, faClipboardList } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle, faUserPen, faLock, faMicroscope, faClipboardList, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faQuestionCircle, faUserPen, faLock, faMicroscope, faClipboardList);
+library.add(faQuestionCircle, faUserPen, faLock, faMicroscope, faClipboardList, faSignOutAlt);
 
 const authStore = useAuthStore();
 const quizStore = useQuizStore();
@@ -358,8 +361,8 @@ const startQuiz = (level, unitIndex = 0) => {
   color: var(--color-danger);
 }
 .logout-btn:hover {
-  background-color: var(--color-danger-light);
-  color: var(--color-danger);
+  background-color: #fee2e2; 
+  color: #e53935;
 }
 
 .stats-bar { display: flex; gap: 1.5rem; }
