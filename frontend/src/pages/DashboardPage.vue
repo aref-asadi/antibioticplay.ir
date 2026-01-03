@@ -36,8 +36,14 @@
         </div>
 
         <div class="left-section" style="display: flex; gap: 0.5rem;">
-          <router-link to="/rules" class="btn-ghost" title="راهنما">
+          <a href="https://survey.porsline.ir/s/JLf6Akmc" target="_blank" class="btn-ghost header-btn" title="تکمیل پرسشنامه">
+             <font-awesome-icon icon="fas fa-clipboard-list" />
+             <span class="btn-label">پرسشنامه</span>
+          </a>
+
+          <router-link to="/rules" class="btn-ghost header-btn" title="راهنما">
              <font-awesome-icon icon="fas fa-question-circle" />
+             <span class="btn-label">راهنما</span>
           </router-link>
           <button @click="handleLogout" class="btn-ghost">خروج</button>
         </div>
@@ -93,7 +99,7 @@
             <img :src="userAvatar" alt="Avatar" class="sidebar-avatar" />
           </div>
           <div class="user-info">
-            <h3>{{ user?.username }}</h3>
+            <h3>{{ authStore.fullName }}</h3>
             <p class="user-email">{{ user?.email }}</p>
             
             <router-link to="/profile" class="profile-link-btn">
@@ -175,9 +181,9 @@ import { useQuizStore } from '../stores/quiz';
 import badgeService from '../services/badgeService';
 import leaderboardService from '../services/leaderboardService'; // ایمپورت سرویس لیدربورد
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faQuestionCircle, faUserPen, faLock, faMicroscope } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle, faUserPen, faLock, faMicroscope, faClipboardList } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faQuestionCircle, faUserPen, faLock, faMicroscope);
+library.add(faQuestionCircle, faUserPen, faLock, faMicroscope, faClipboardList);
 
 const authStore = useAuthStore();
 const quizStore = useQuizStore();
@@ -189,7 +195,7 @@ const earnedBadges = ref([]);
 const scoreJustUpdated = ref(false);
 const userRank = ref(null); // متغیر برای ذخیره رتبه
 
-const moduleColors = ['#009688', '#03a9f4', '#5c6bc0', '#ffa726', '#ef5350'];
+const moduleColors = ['#0288d1', '#009688', '#5e35b1', '#43a047', '#e53935'];
 const getModuleColor = (index) => moduleColors[index % moduleColors.length];
 
 const userAvatar = computed(() => {
@@ -324,6 +330,36 @@ const startQuiz = (level, unitIndex = 0) => {
   gap: 0.5rem; 
   /* --- FIX: وسط‌چین کردن عمودی آیتم‌ها (دکمه خروج و راهنما) --- */
   align-items: center; 
+}
+
+/* استایل دکمه‌های هدر */
+.header-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+  color: var(--color-text-light);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.header-btn:hover {
+  background-color: #f0f0f0;
+  color: var(--color-text);
+}
+
+.btn-label {
+  font-size: 0.9rem;
+}
+
+.logout-btn {
+  color: var(--color-danger);
+}
+.logout-btn:hover {
+  background-color: var(--color-danger-light);
+  color: var(--color-danger);
 }
 
 .stats-bar { display: flex; gap: 1.5rem; }
@@ -466,10 +502,8 @@ const startQuiz = (level, unitIndex = 0) => {
   .dashboard-main { flex-direction: column-reverse; padding-bottom: 100px; }
   .sidebar-column { width: 100%; }
   .desktop-only { display: none; }
-  
-  /* --- FIX: مخفی کردن لوگو در هدر موبایل --- */
+  .btn-label { display: none; }
   .logo-container { display: none; }
-  /* تنظیم فاصله هدر در موبایل */
   .dashboard-topbar { padding: 0.8rem 1rem; }
 }
 </style>

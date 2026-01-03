@@ -15,6 +15,8 @@ class UserRegistration(Resource):
         username = data.get('username')
         email = data.get('email')
         password = data.get('password')
+        first_name = data.get('first_name')
+        last_name = data.get('last_name')
 
         if not username or not email or not password:
             return {'message': 'فیلدهای الزامی خالی هستند'}, 400
@@ -22,7 +24,7 @@ class UserRegistration(Resource):
         if User.find_by_username(username) or User.find_by_email(email):
             return {'message': 'کاربر با این نام کاربری یا ایمیل قبلاً ثبت‌نام کرده است'}, 409
 
-        new_user = User(username=username, email=email, password=password)
+        new_user = User(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
         new_user.save()
 
         return {'message': 'کاربر با موفقیت ایجاد شد'}, 201
@@ -43,7 +45,7 @@ class UserLogin(Resource):
             refresh_token = create_refresh_token(identity=user_data['username'])
             
             return {
-                'message': f'ورود موفقیت آمیز بود. خوش آمدید {user_data["username"]}!',
+                'message': f'ورود موفقیت آمیز بود. خوش آمدید {user_data.get("first_name", user_data["username"])}!',
                 'access_token': access_token,
                 'refresh_token': refresh_token
             }, 200
@@ -65,12 +67,13 @@ class UserProfile(Resource):
         return {
             'username': user_data['username'],
             'email': user_data['email'],
+            'first_name': user_data.get('first_name', ''),
+            'last_name': user_data.get('last_name', ''),
             'score': score,
             'level': user_data.get('level', 1),
             'correct_streak': user_data.get('correct_streak', 0),
             'league': league_info,
             'avatar_id': user_data.get('avatar_id', 'fleming'),
-            # --- موارد زیر اضافه شدند ---
             'badges_earned': user_data.get('badges_earned', []),
             'quizzes_completed': user_data.get('quizzes_completed', 0)
         }, 200
@@ -82,13 +85,11 @@ class UpdateAvatar(Resource):
         data = request.get_json()
         avatar_id = data.get('avatar_id')
 
-        # لیست آواتارهای مجاز برای امنیت بیشتر
         valid_avatars = ['fleming', 'waksman', 'domagk', 'florey', 'hodgkin', 'bugie', 'youyou']
         
         if avatar_id not in valid_avatars:
             return {'message': 'آواتار نامعتبر است'}, 400
 
-        # آپدیت کردن فیلد avatar_id در دیتابیس
         mongo.db.users.update_one(
             {'username': current_user_username},
             {'$set': {'avatar_id': avatar_id}}

@@ -26,11 +26,11 @@
               <h3>دکتر شعله ابراهیم‌پور</h3>
               <span class="team-role">ناظر علمی و طراح آموزشی</span>
               <p class="team-desc">
-                استادیار داروسازی بالینی با دیدگاهی نوآورانه در آموزش پزشکی. ایشان با نظارت دقیق بر محتوا، تضمین‌کننده اعتبار علمی تمام ماژول‌های این پلتفرم هستند.
+                طراحی آموزشی این پلتفرم را به عهده داشتند. ایشان با تجربه بالینی گسترده در حوزه داروسازی بالینی و آموزش پزشکی، چارچوب علمی و آموزشی محتوای ما را شکل داده‌اند.
               </p>
               <div class="badges">
-                <span class="badge">Clinical Pharmacy</span>
-                <span class="badge">Supervisor</span>
+                <span class="badge">Pharm.D</span>
+                <span class="badge">Clinical Pharmacist</span>
               </div>
             </div>
           </div>
@@ -43,11 +43,11 @@
               <h3>دکتر مهدی محمدی</h3>
               <span class="team-role">ناظر علمی و استراتژیست</span>
               <p class="team-desc">
-                عضو هیئت علمی و متخصص فارماکوتراپی (iBCPS). تجربیات ارزشمند ایشان در بالین، راهنمای اصلی ما در پیاده‌سازی کیس‌های واقعی و کاربردی بوده است.
+                تجربیات ارزشمند ایشان در بالین، راهنمای اصلی ما در پیاده‌سازی سؤالات کاربردی بوده است.
               </p>
               <div class="badges">
                 <span class="badge">Pharm.D</span>
-                <span class="badge">iBCPS</span>
+                <span class="badge">Clinical Pharmacist</span>
               </div>
             </div>
           </div>
@@ -60,11 +60,11 @@
               <h3>عارف اسدی</h3>
               <span class="team-role">توسعه‌دهنده Full-Stack</span>
               <p class="team-desc">
-                دانشجوی داروسازی و برنامه‌نویس. خالق زیرساخت فنی و تجربه کاربری (UX) سایت که پل میان دنیای کدنویسی و علوم دارویی را بنا کرده است.
+                دانشجوی سال آخر داروسازی و برنامه‌نویس که مسئولیت توسعه فنی پلتفرم را بر عهده داشته است.
               </p>
               <div class="badges">
                 <span class="badge">Developer</span>
-                <span class="badge">Designer</span>
+                <span class="badge">Pharm D Student</span>
               </div>
             </div>
           </div>

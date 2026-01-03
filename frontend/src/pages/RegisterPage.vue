@@ -15,13 +15,35 @@
 
       <form @submit.prevent="handleRegister" class="duo-form">
         
+        <div style="display: flex; gap: 1rem;">
+          <div class="input-group">
+            <input 
+              type="text" 
+              class="duo-input" 
+              placeholder="نام" 
+              v-model="firstName" 
+              required 
+            />
+          </div>
+          <div class="input-group">
+            <input 
+              type="text" 
+              class="duo-input" 
+              placeholder="نام خانوادگی" 
+              v-model="lastName" 
+              required 
+            />
+          </div>
+        </div>
+
         <div class="input-group">
           <input 
             type="text" 
             class="duo-input" 
-            placeholder="نام (نام کاربری)" 
+            placeholder="نام کاربری (انگلیسی)" 
             v-model="username" 
             required 
+            dir="ltr"
           />
         </div>
 
@@ -32,6 +54,7 @@
             placeholder="ایمیل" 
             v-model="email" 
             required 
+            dir="ltr"
           />
         </div>
 
@@ -42,6 +65,7 @@
             placeholder="رمز عبور" 
             v-model="password" 
             required 
+            dir="ltr"
           />
         </div>
 
@@ -72,6 +96,8 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 library.add(faTimes);
 
 const authStore = useAuthStore();
+const firstName = ref('');
+const lastName = ref('');
 const username = ref('');
 const email = ref('');
 const password = ref('');
@@ -82,9 +108,13 @@ const handleRegister = async () => {
   loading.value = true;
   error.value = null;
   try {
-    await authStore.register(username.value, email.value, password.value);
+    await authStore.register(username.value, email.value, password.value, firstName.value, lastName.value);
   } catch (err) {
-    error.value = 'ثبت نام ناموفق بود. ممکن است این نام کاربری قبلاً گرفته شده باشد.';
+    if (err.response && err.response.status === 409) {
+       error.value = 'این نام کاربری یا ایمیل قبلاً ثبت شده است.';
+    } else {
+       error.value = 'خطا در برقراری ارتباط با سرور.';
+    }
   } finally {
     loading.value = false;
   }

@@ -11,8 +11,8 @@
       <div class="profile-avatar-section">
         <img :src="currentAvatarUrl" alt="Avatar" class="avatar-img-lg" />
         <div class="profile-names">
-          <h2>{{ authStore.user?.username }}</h2>
-          <span class="email-text">{{ authStore.user?.email }}</span>
+          <h2>{{ authStore.fullName }}</h2>
+          <span class="email-text">{{ authStore.user?.username }} | {{ authStore.user?.email }}</span>
         </div>
       </div>
       
@@ -135,7 +135,6 @@ const isSaving = ref(false);
 const earnedBadgesList = ref([]);
 const userRank = ref(null);
 
-// لیست دانشمندان (آواتارها) - با مسیر صحیح
 const avatars = [
   { id: 'fleming', name: 'الکساندر فلمینگ', role: 'کاشف پنی‌سیلین', image: '/avatars/avatar_fleming.png' },
   { id: 'waksman', name: 'سلمان واکسمن', role: 'کاشف استرپتومایسین', image: '/avatars/avatar_waksman.png' },
@@ -153,25 +152,19 @@ const currentAvatarUrl = computed(() => {
 });
 
 onMounted(async () => {
-  // 1. تنظیم آواتار فعلی در متغیر لوکال
   if (authStore.user) {
     selectedAvatar.value = authStore.user.avatar_id || 'fleming';
   }
 
-  // 2. دریافت مجدد پروفایل برای اطمینان از سینک بودن داده‌ها
   await authStore.fetchUser();
 
-  // 3. دریافت نشان‌ها
   try {
-    // اگر در بک‌اند لیست نشان‌ها را در آبجکت کاربر برگرداندیم که عالی است
-    // اما برای اطمینان از badgeService هم استفاده می‌کنیم تا جزئیات (icon, name) را داشته باشیم
     const response = await badgeService.getEarnedBadges();
     earnedBadgesList.value = response.data;
   } catch (error) {
     console.error('Error fetching badges:', error);
   }
 
-  // 4. دریافت رتبه کاربر
   try {
     const currentLeagueId = authStore.userLeague?.name === 'الماس' ? 'diamond' : 
                             authStore.userLeague?.name === 'طلا' ? 'gold' :
@@ -203,7 +196,6 @@ const saveAvatar = async () => {
     if (authStore.user) {
       authStore.user.avatar_id = selectedAvatar.value;
     }
-    // آپدیت کردن لوکال استوریج
     localStorage.setItem('user', JSON.stringify(authStore.user));
     alert('آواتار شما با موفقیت تغییر کرد!');
   } catch (error) {

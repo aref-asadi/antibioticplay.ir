@@ -2,22 +2,27 @@ from app import mongo
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User:
-    def __init__(self, username, email, password):
+    def __init__(self, username, email, password, first_name, last_name):
         self.username = username
         self.email = email
         self.password_hash = generate_password_hash(password)
+        self.first_name = first_name
+        self.last_name = last_name
 
     def save(self):
         mongo.db.users.insert_one({
             'username': self.username,
             'email': self.email,
             'password_hash': self.password_hash,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
             'score': 0,
             'level': 1,
             'badges_earned': [], 
             'quizzes_completed': 0, 
             'correct_streak': 0,
-            'quiz_progress': {} 
+            'quiz_progress': {},
+            'avatar_id': 'fleming'
         })
 
     @staticmethod

@@ -56,11 +56,22 @@
             </div>
 
             <div class="col-user">
-              <div class="avatar-circle" :style="{ backgroundColor: currentLeagueColor }">
-                {{ user.username.charAt(0).toUpperCase() }}
+              <div class="avatar-circle-img">
+                 <img 
+                   :src="`/avatars/avatar_${user.avatar_id || 'fleming'}.png`" 
+                   alt="avatar" 
+                   class="lb-avatar-img"
+                 />
               </div>
               <div class="user-details">
-                <span class="username-text">{{ user.username }}</span>
+                <span class="username-text">
+                  {{ (user.first_name && user.last_name) ? (user.first_name + ' ' + user.last_name) : user.username }}
+                </span>
+                
+                <span class="username-sub" v-if="user.first_name && user.last_name">
+                   @{{ user.username }}
+                </span>
+
                 <span v-if="isCurrentUser(user.username)" class="me-badge">شما</span>
               </div>
             </div>
@@ -86,18 +97,16 @@ library.add(faTrophy, faMedal, faGem);
 const authStore = useAuthStore();
 const leaderboard = ref([]);
 const loading = ref(false);
-const selectedLeague = ref('diamond'); // پیش‌فرض
+const selectedLeague = ref('diamond');
 
 const leagues = [
   { id: 'bronze', name: 'برنز', color: '#cd7f32', icon: 'medal' },
-  { id: 'silver', name: 'نقره', color: '#a0a0a0', icon: 'medal' }, // کمی تیره‌تر برای دیده شدن روی سفید
-  { id: 'gold', name: 'طلا', color: '#e6c200', icon: 'trophy' }, // طلایی تیره‌تر
-  { id: 'diamond', name: 'الماس', color: '#ce82ff', icon: 'gem' } // بنفش
+  { id: 'silver', name: 'نقره', color: '#a0a0a0', icon: 'medal' },
+  { id: 'gold', name: 'طلا', color: '#e6c200', icon: 'trophy' },
+  { id: 'diamond', name: 'الماس', color: '#ce82ff', icon: 'gem' }
 ];
 
-// تشخیص لیگ فعلی کاربر برای انتخاب پیش‌فرض
 onMounted(() => {
-  // اگر کاربر لیگ مشخصی دارد، همان را انتخاب کن، وگرنه الماس
   const userLeagueName = authStore.userLeague?.name;
   if (userLeagueName) {
     const found = leagues.find(l => l.name === userLeagueName);
@@ -138,7 +147,7 @@ const fetchData = async () => {
 <style scoped>
 .leaderboard-layout {
   min-height: 100vh;
-  transition: background-color 0.5s ease; /* انیمیشن تغییر رنگ */
+  transition: background-color 0.5s ease;
   display: flex;
   flex-direction: column;
 }
@@ -168,7 +177,7 @@ const fetchData = async () => {
   background: rgba(0,0,0,0.2);
   border-radius: 16px;
   padding: 4px;
-  overflow-x: auto; /* اسکرول در موبایل */
+  overflow-x: auto;
 }
 .league-tab-btn {
   background: transparent;
@@ -186,7 +195,7 @@ const fetchData = async () => {
 }
 .league-tab-btn.active {
   background: white;
-  color: var(--color-text); /* متن تیره روی تب سفید */
+  color: var(--color-text);
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .league-tab-btn:hover:not(.active) { color: white; }
@@ -213,8 +222,35 @@ const fetchData = async () => {
 .rank-2 { color: #c0c0c0; }
 .rank-3 { color: #cd7f32; }
 
-.avatar-circle { width: 40px; height: 40px; color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; }
-.username-text { font-weight: 700; }
+.avatar-circle-img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #eee;
+  margin-left: 0.8rem;
+  flex-shrink: 0;
+  background-color: white;
+}
+.lb-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.username-sub {
+  font-size: 0.75rem;
+  color: #aaa;
+  font-weight: normal;
+  display: block;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .me-badge { font-size: 0.7rem; background: var(--color-secondary); color: white; padding: 2px 6px; border-radius: 6px; margin-right: 0.5rem; }
 
 .loading-state, .empty-state { padding: 3rem; text-align: center; color: #999; }
@@ -228,7 +264,6 @@ const fetchData = async () => {
 
 @media (max-width: 850px) {
   .leaderboard-body {
-    /* فضای خالی برای نوار پایین */
     padding-bottom: 100px; 
   }
 }

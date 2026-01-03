@@ -9,15 +9,16 @@ export default {
       password: password,
     });
   },
-  register(username, email, password) {
+  register(username, email, password, firstName, lastName) {
     return apiClient.post('/auth/register', {
       username,
       email,
       password,
+      first_name: firstName,
+      last_name: lastName
     });
   },
   getProfile() {
     return apiClient.get('/auth/profile');
   },
-  // در آینده تابع گرفتن پروفایل را هم اضافه می‌کنیم
 };

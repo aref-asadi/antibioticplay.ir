@@ -13,9 +13,14 @@ export const useAuthStore = defineStore('auth', {
   getters: {
     isAuthenticated: (state) => !!state.token,
     username: (state) => state.user?.username,
+    fullName: (state) => {
+      if (state.user && state.user.first_name && state.user.last_name) {
+        return `${state.user.first_name} ${state.user.last_name}`;
+      }
+      return state.user?.username || 'کاربر';
+    },
     score: (state) => state.user?.score || 0,
     level: (state) => state.user?.level || 1,
-    // --- *** اضافه شده برای دسترسی راحت‌تر *** ---
     userLeague: (state) => state.user?.league || { name: 'برنز', color: '#cd7f32', icon: 'fas fa-medal' },
     correctStreak: (state) => state.user?.correct_streak || 0,
   },
@@ -47,9 +52,9 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async register(username, email, password) {
+    async register(username, email, password, firstName, lastName) {
       try {
-        await authService.register(username, email, password);
+        await authService.register(username, email, password, firstName, lastName);
         await this.login(username, password);
       } catch (error) {
         console.error('Registration failed:', error);

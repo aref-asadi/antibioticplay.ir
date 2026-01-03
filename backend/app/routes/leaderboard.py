@@ -32,12 +32,15 @@ class Leaderboard(Resource):
 
             cursor = mongo.db.users.find(
                 {"score": {"$gte": min_score, "$lte": max_score}},
-                {"username": 1, "score": 1, "_id": 0}
+                {"username": 1, "score": 1, "first_name": 1, "last_name": 1, "avatar_id": 1, "_id": 0}
             ).sort("score", pymongo.DESCENDING).limit(20)
 
             leaderboard_data = []
             for user in cursor:
                 user['league'] = User.get_league_info(user.get('score', 0))
+                user['first_name'] = user.get('first_name', '')
+                user['last_name'] = user.get('last_name', '')
+                user['avatar_id'] = user.get('avatar_id', 'fleming')
                 leaderboard_data.append(user)
 
             return leaderboard_data, 200

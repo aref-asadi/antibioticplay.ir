@@ -24,14 +24,14 @@
         <div class="hero-content">
           <div class="badge-pill">
             <span class="badge-icon">🛡️</span>
-            <span>مبارزه با مقاومت میکروبی</span>
+            <span>ایران؛ صدرنشین مصرف آنتی بیوتیک در جهان</span>
           </div>
           <h1 class="hero-title">
-            آگاهی، خط اول دفاع در <br />
-            <span class="highlight-text">دنیای آنتی‌بیوتیک‌ها</span>
+            افزایش آگاهی، سد اول دفاعی در <br />
+            <span class="highlight-text">پیشگیری از مقاومت های میکروبی</span>
           </h1>
           <p class="hero-subtitle">
-            ما در AntibioticPlay به کادر درمان کمک می‌کنیم تا با تسلط بر اصول تجویز و فارماکولوژی، سدی محکم در برابر مقاومت میکروبی بسازند. دانش شما، نجات‌بخش آینده است.
+            ماژول‌های کوتاه و متمرکز که پیچیده‌ترین مباحث دارودرمانی آنتی‌بیوتیک‌ها را به لقمه‌های قابل‌هضم تبدیل می‌کنند. با سیستم امتیازدهی و لیدربورد، انگیزه خود را حفظ کنید و جایگاه دانشی خود را در میان همکلاسی‌ها و همکاران بسنجید.
           </p>
           <div class="hero-actions">
             <router-link v-if="authStore.isAuthenticated" to="/dashboard" class="btn btn-primary btn-lg">
@@ -44,7 +44,7 @@
             </template>
           </div>
           <div class="hero-stats">
-            <div class="stat-item"><strong>+۵</strong><span>ماژول تخصصی</span></div>
+            <div class="stat-item"><strong>۳</strong><span>ماژول تخصصی</span></div>
             <div class="stat-separator"></div>
             <div class="stat-item"><strong>سطح‌بندی</strong><span>گیمیفیکیشن</span></div>
           </div>
@@ -211,7 +211,7 @@
         <div class="footer-column">
           <h4>درباره AntibioticPlay</h4>
           <ul>
-            <li><router-link to="/about">درباره ما & تیم</router-link></li>
+            <li><router-link to="/about">درباره ما</router-link></li>
             <li><router-link to="/terms">قوانین و مقررات</router-link></li>
             <li><router-link to="/contact">تماس با پشتیبانی</router-link></li>
           </ul>
