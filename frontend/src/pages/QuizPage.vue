@@ -91,7 +91,13 @@
           </div>
           
           <div class="modal-body">
-            <p>{{ currentQuestion?.hint || 'راهنمایی برای این سوال موجود نیست.' }}</p>
+            <div v-if="isImageHint" class="hint-image-wrapper">
+              <img :src="currentQuestion.hint" alt="Hint Image" class="hint-img-content" />
+            </div>
+            
+            <p v-else>
+              {{ currentQuestion?.hint || 'راهنمایی برای این سوال موجود نیست.' }}
+            </p>
           </div>
         </div>
       </div>
@@ -183,7 +189,13 @@ const applyShake = ref(false);
 const explanationText = ref('');
 const questionStartTime = ref(Date.now());
 const hintsRemaining = ref(3);
-const showHintModal = ref(false); // تغییر نام متغیر برای وضوح بیشتر
+const showHintModal = ref(false);
+const isImageHint = computed(() => {
+  const hint = currentQuestion.value?.hint;
+  if (!hint) return false;
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+  return imageExtensions.some(ext => hint.toLowerCase().endsWith(ext));
+});
 
 // --- Theme & Style Logic ---
 const themeColor = computed(() => route.query.theme || '#58cc02');
@@ -399,6 +411,22 @@ const confirmExit = () => {
   font-size: 0.75rem; width: 20px; height: 20px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold;
 }
 
+.hint-image-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.hint-img-content {
+  max-width: 100%;
+  max-height: 300px; /* محدودیت ارتفاع برای جلوگیری از اسکرول زیاد */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  object-fit: contain;
+}
+
 /* Progress Bar */
 .progress-container { flex-grow: 1; height: 16px; background-color: rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; margin-left: 1rem; margin-right: 1rem; }
 .progress-bar { height: 100%; border-radius: 10px; position: relative; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -457,6 +485,7 @@ const confirmExit = () => {
   background: #f0f0f0; border: none; width: 32px; height: 32px; border-radius: 50%;
   cursor: pointer; color: #666; display: flex; justify-content: center; align-items: center;
   font-size: 1rem; transition: background 0.2s; z-index: 10;
+  min-width: auto !important;
 }
 .modal-close-icon:hover { background: #e0e0e0; }
 

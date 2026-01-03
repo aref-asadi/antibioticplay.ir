@@ -346,6 +346,7 @@ const startQuiz = (level, unitIndex = 0) => {
   color: var(--color-text-light);
   font-weight: 600;
   text-decoration: none;
+  min-width: auto !important;
 }
 
 .header-btn:hover {
