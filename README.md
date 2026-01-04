@@ -1,107 +1,102 @@
-# 💊 بازی آموزش آنتی‌بیوتیک (Antibiotic Play)
+# Antibiotic Play
 
 ![Project Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![Vue.js](https://img.shields.io/badge/Frontend-Vue.js_3-4FC08D?logo=vue.js)
 ![Flask](https://img.shields.io/badge/Backend-Flask-000000?logo=flask)
 ![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb)
 
-یک پلتفرم وب گیمیفیکیشن (Gamified) برای دانشجویان داروسازی جهت یادگیری و تمرین مباحث مربوط به آنتی‌بیوتیک‌ها، دوزینگ، مکانیسم اثر و طبقه‌بندی داروها.
+A gamified web platform designed for pharmacy students to learn and practice topics related to antibiotics, dosing, mechanisms of action, and drug classifications.
 
 
-## ✨ ویژگی‌ها
+## Features
 
-### 🎮 بخش آزمون و گیمیفیکیشن
-- **انواع سوالات تعاملی:** Drag & Drop، انتخاب چندگزینه‌ای، پر کردن جاهای خالی و برچسب‌گذاری تصاویر.
-- **سیستم امتیازدهی:** کسب امتیاز، ارتقای سطح (Level Up) و نمایش نوار پیشرفت.
-- **نشان‌ها (Badges):** دریافت مدال‌های افتخار با تکمیل دستاوردهای خاص.
-- **لیدربرد (Leaderboard):** رقابت در لیگ‌های برنز، نقره، طلا و الماس.
-
-### 🛠 امکانات فنی
-- احراز هویت امن با **JWT**.
-- ذخیره‌سازی پیشرفت کاربران در **MongoDB**.
-- پنل مدیریت و گزارش‌گیری (خروجی Excel).
+### Gamification & Quiz Engine
+- **Interactive Question Types:** Drag & Drop (Categorization/Fill-in-the-blanks), Multiple Select (Card Style), Image Labeling, and True/False.
+- **Scoring System:** Earn points, level up, and track progress via dynamic progress bars.
+- **Badges:** Unlock achievements and medals for completing specific milestones.
+- **Leaderboard:** Compete with peers in Bronze, Silver, Gold, and Diamond leagues.
 
 
-## 🚀 تکنولوژی‌های استفاده شده
+## Tech Stack
 
-- **Frontend:** Vue.js 3, Vite, Pinia, Vue Router, Tailwind CSS, Axios.
-- **Backend:** Python, Flask, Flask-RESTful, PyMongo.
-- **Database:** MongoDB.
+- **Frontend:** Vue.js 3 (Composition API), Vite, Pinia, Vue Router, Tailwind CSS, Axios.
+- **Backend:** Python, Flask, Flask-RESTful, PyMongo, Flask-JWT-Extended.
+- **Database:** MongoDB (NoSQL).
 
 
-## 🛠 راهنمای نصب و اجرا (Local Development)
+## Installation & Local Development
 
-برای اجرای این پروژه روی سیستم خودتان، مراحل زیر را دنبال کنید.
+Follow these steps to run the project locally on your machine.
 
-### پیش‌نیازها
-1. نصب [Node.js](https://nodejs.org/) (نسخه 16 به بالا).
-2. نصب [Python](https://www.python.org/) (نسخه 3.8 به بالا).
-3. نصب و اجرای سرویس [MongoDB](https://www.mongodb.com/try/download/community) روی پورت پیش‌فرض (27017).
+### Prerequisites
+1. [Node.js](https://nodejs.org/) (v16 or higher).
+2. [Python](https://www.python.org/) (v3.8 or higher).
+3. [MongoDB](https://www.mongodb.com/try/download/community) installed and running on port `27017`.
 
-### ۱. دریافت پروژه
+### 1. Clone the Repository
 
 ```bash
 git clone [https://github.com/aref-asadi/antibioticplay.git](https://github.com/aref-asadi/antibioticplay.git)
 cd antibioticplay
 ```
 
-### ۲. راه‌اندازی Backend
+### 2. Setup Backend
 
-وارد پوشه بک‌اند شوید و محیط مجازی را بسازید:
+Navigate to the backend directory and set up the virtual environment:
 
 ```bash
 cd backend
 
-# ساخت محیط مجازی (Virtual Environment)
+# Create Virtual Environment
 python -m venv venv
 
-# فعال‌سازی محیط مجازی
-# در ویندوز:
+# Activate Virtual Environment
+# On Windows:
 venv\Scripts\activate
-# در مک/لینوکس:
+# On macOS/Linux:
 source venv/bin/activate
 ```
 
-نصب وابستگی‌ها و تنظیمات اولیه:
+Install dependencies and seed the database:
 
 ```bash
-# نصب پکیج‌های پایتون
+# Install Python packages
 pip install -r requirements.txt
 
-# (اختیاری) پر کردن دیتابیس با داده‌های اولیه
+# (Optional) Seed database with initial quiz data
 python seed_db.py
 
-# اجرای سرور
+# Run the server
 python run.py
 ```
 
-سرور بک‌اند اکنون روی آدرس `http://localhost:5000` در حال اجراست.
+The backend server will start at `http://localhost:5000`.
 
-> **نکته:** تنظیمات دیتابیس در فایل `backend/config.py` قرار دارد. به صورت پیش‌فرض به `mongodb://localhost:27017/antibiotic-game` متصل می‌شود.
+> **Note:** Database configuration is located in `backend/config.py`. By default, it connects to `mongodb://localhost:27017/antibiotic-game`.
 
-### ۳. راه‌اندازی Frontend
+### 3. Setup Frontend
 
-یک ترمینال جدید باز کنید (ترمینال قبلی را نبندید) و وارد پوشه فرانت‌اند شوید:
+Open a new terminal (keep the backend running) and navigate to the frontend directory:
 
 ```bash
 cd frontend
 
-# نصب پکیج‌های جاوااسکریپت
+# Install JavaScript dependencies
 npm install
 
-# اجرای برنامه در حالت توسعه
+# Run the development server
 npm run dev
 ```
 
-برنامه اکنون روی آدرس `http://localhost:5173` در دسترس است.
+The application will be accessible at `http://localhost:5173`.
 
 
-## 👥 مشارکت (Contributing)
+## Contributing
 
-ما از مشارکت شما استقبال می‌کنیم! برای همکاری:
+Contributions are welcome!
 
-1. این مخزن را Fork کنید.
-2. یک شاخه (Branch) جدید برای ویژگی خود بسازید (`git checkout -b feature/AmazingFeature`).
-3. تغییرات را Commit کنید (`git commit -m 'Add some AmazingFeature'`).
-4. به شاخه اصلی Push کنید (`git push origin feature/AmazingFeature`).
-5. یک Pull Request باز کنید.
+1. Fork the project.
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
