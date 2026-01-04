@@ -1,47 +1,107 @@
-# AntibioticPlay 💊
+# 💊 بازی آموزش آنتی‌بیوتیک (Antibiotic Play)
 
-**AntibioticPlay** یک پلتفرم گیمیفیکیشن و آزمون تعاملی برای دانشجویان داروسازی است. هدف این پروژه آموزش مباحث پیچیده آنتی‌بیوتیک‌ها از طریق آزمون‌های جذاب، رقابت در لیدربورد و کسب نشان‌های افتخار است.
+![Project Status](https://img.shields.io/badge/Status-Active-brightgreen)
+![Vue.js](https://img.shields.io/badge/Frontend-Vue.js_3-4FC08D?logo=vue.js)
+![Flask](https://img.shields.io/badge/Backend-Flask-000000?logo=flask)
+![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb)
 
-## 🚀 ویژگی‌ها
+یک پلتفرم وب گیمیفیکیشن (Gamified) برای دانشجویان داروسازی جهت یادگیری و تمرین مباحث مربوط به آنتی‌بیوتیک‌ها، دوزینگ، مکانیسم اثر و طبقه‌بندی داروها.
 
-* **آزمون‌های تعاملی:** شامل سوالات چندگزینه‌ای، جای خالی (Drag & Drop) و وصل‌کردنی.
-* **گیمیفیکیشن:** سیستم امتیازدهی هوشمند، سطح‌بندی (Leveling) و استریک (Streak).
-* **لیدربورد (لیگ):** رقابت با سایر کاربران در لیگ‌های برنز تا الماس.
-* **نشان‌ها (Badges):** اهدای مدال برای دستاوردهای خاص.
-* **طراحی واکنش‌گرا:** قابل استفاده در موبایل و دسکتاپ با رابط کاربری مدرن.
 
-## 🛠 تکنولوژی‌های استفاده شده
+## ✨ ویژگی‌ها
 
-* **Frontend:** Vue.js 3 (Vite), Pinia, Axios
-* **Backend:** Python (Flask), Flask-RESTful, Flask-JWT-Extended
-* **Database:** MongoDB
-* **Design:** Custom CSS (Duolingo-inspired style), FontAwesome
+### 🎮 بخش آزمون و گیمیفیکیشن
+- **انواع سوالات تعاملی:** Drag & Drop، انتخاب چندگزینه‌ای، پر کردن جاهای خالی و برچسب‌گذاری تصاویر.
+- **سیستم امتیازدهی:** کسب امتیاز، ارتقای سطح (Level Up) و نمایش نوار پیشرفت.
+- **نشان‌ها (Badges):** دریافت مدال‌های افتخار با تکمیل دستاوردهای خاص.
+- **لیدربرد (Leaderboard):** رقابت در لیگ‌های برنز، نقره، طلا و الماس.
 
-## 📦 نصب و راه‌اندازی (لوکال)
+### 🛠 امکانات فنی
+- احراز هویت امن با **JWT**.
+- ذخیره‌سازی پیشرفت کاربران در **MongoDB**.
+- پنل مدیریت و گزارش‌گیری (خروجی Excel).
 
-برای اجرای پروژه روی سیستم خودتان مراحل زیر را طی کنید:
 
-### ۱. پیش‌نیازها
-* Python 3.8+
-* Node.js 16+
-* MongoDB (نصب شده یا استفاده از سرویس ابری مثل Atlas/Liara)
+## 🚀 تکنولوژی‌های استفاده شده
 
-### ۲. تنظیمات Backend
+- **Frontend:** Vue.js 3, Vite, Pinia, Vue Router, Tailwind CSS, Axios.
+- **Backend:** Python, Flask, Flask-RESTful, PyMongo.
+- **Database:** MongoDB.
+
+
+## 🛠 راهنمای نصب و اجرا (Local Development)
+
+برای اجرای این پروژه روی سیستم خودتان، مراحل زیر را دنبال کنید.
+
+### پیش‌نیازها
+1. نصب [Node.js](https://nodejs.org/) (نسخه 16 به بالا).
+2. نصب [Python](https://www.python.org/) (نسخه 3.8 به بالا).
+3. نصب و اجرای سرویس [MongoDB](https://www.mongodb.com/try/download/community) روی پورت پیش‌فرض (27017).
+
+### ۱. دریافت پروژه
+
+```bash
+git clone [https://github.com/aref-asadi/antibioticplay.git](https://github.com/aref-asadi/antibioticplay.git)
+cd antibioticplay
+```
+
+### ۲. راه‌اندازی Backend
+
+وارد پوشه بک‌اند شوید و محیط مجازی را بسازید:
+
 ```bash
 cd backend
-# ساخت محیط مجازی
-python -m venv venv
-# فعال‌سازی (ویندوز)
-venv\Scripts\activate
-# فعال‌سازی (مک/لینوکس)
-source venv/bin/activate
 
-# نصب پکیج‌ها
+# ساخت محیط مجازی (Virtual Environment)
+python -m venv venv
+
+# فعال‌سازی محیط مجازی
+# در ویندوز:
+venv\Scripts\activate
+# در مک/لینوکس:
+source venv/bin/activate
+```
+
+نصب وابستگی‌ها و تنظیمات اولیه:
+
+```bash
+# نصب پکیج‌های پایتون
 pip install -r requirements.txt
 
-# ساخت فایل .env و تنظیم متغیرهای محیطی (SECRET_KEY, MONGO_URI, JWT_SECRET_KEY)
-# سپس برای پر کردن دیتابیس با سوالات اولیه:
+# (اختیاری) پر کردن دیتابیس با داده‌های اولیه
 python seed_db.py
 
 # اجرای سرور
 python run.py
+```
+
+سرور بک‌اند اکنون روی آدرس `http://localhost:5000` در حال اجراست.
+
+> **نکته:** تنظیمات دیتابیس در فایل `backend/config.py` قرار دارد. به صورت پیش‌فرض به `mongodb://localhost:27017/antibiotic-game` متصل می‌شود.
+
+### ۳. راه‌اندازی Frontend
+
+یک ترمینال جدید باز کنید (ترمینال قبلی را نبندید) و وارد پوشه فرانت‌اند شوید:
+
+```bash
+cd frontend
+
+# نصب پکیج‌های جاوااسکریپت
+npm install
+
+# اجرای برنامه در حالت توسعه
+npm run dev
+```
+
+برنامه اکنون روی آدرس `http://localhost:5173` در دسترس است.
+
+
+## 👥 مشارکت (Contributing)
+
+ما از مشارکت شما استقبال می‌کنیم! برای همکاری:
+
+1. این مخزن را Fork کنید.
+2. یک شاخه (Branch) جدید برای ویژگی خود بسازید (`git checkout -b feature/AmazingFeature`).
+3. تغییرات را Commit کنید (`git commit -m 'Add some AmazingFeature'`).
+4. به شاخه اصلی Push کنید (`git push origin feature/AmazingFeature`).
+5. یک Pull Request باز کنید.
