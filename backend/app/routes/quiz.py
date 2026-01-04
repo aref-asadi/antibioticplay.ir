@@ -147,11 +147,17 @@ class QuizSubmit(Resource):
                 total_stmts = len(statements)
                 points_per_stmt = points_total / total_stmts if total_stmts > 0 else 0
                 
+                # --- اصلاح شده: دریافت دیکشنری جواب‌های صحیح از ریشه سوال ---
+                solution_dict = question.get('solution', {})
+                
                 correct_count = 0
                 if isinstance(user_answer, dict):
                     for stmt in statements:
                         stmt_id = stmt['id']
-                        expected = stmt['solution']
+                        
+                        # تغییر مهم: خواندن جواب صحیح از دیکشنری کلی solution با استفاده از ID
+                        expected = solution_dict.get(stmt_id)
+                        
                         actual = user_answer.get(stmt_id)
                         
                         if actual == expected:
@@ -220,27 +226,6 @@ class QuizSubmit(Resource):
                             feedback[zone_id] = 'incorrect'
                 
                 is_correct = (correct_zones_count == total_zones)
-
-            # هک خاص برای سوال سفتریاکسون (در صورت وجود)
-            if question.get('id') == 'ceftriaxone_calcium_admin' and 'solution_reversed' in question:
-                 sol_rev = question.get('solution_reversed')
-                 score_earned = 0
-                 points_per_cat = points_total / len(sol_rev) if len(sol_rev) > 0 else 0
-                 correct_cnt = 0
-                 
-                 if isinstance(user_answer, dict):
-                    for cat_id, correct_item in sol_rev.items():
-                        user_item = user_answer.get(cat_id)
-                        # هندل کردن اگر آبجکت باشد
-                        if isinstance(user_item, dict): user_item = user_item.get('id')
-                        
-                        if user_item == correct_item:
-                            feedback[cat_id] = 'correct'
-                            score_earned += points_per_cat
-                            correct_cnt += 1
-                        else:
-                            feedback[cat_id] = 'incorrect'
-                    is_correct = (correct_cnt == len(sol_rev))
 
         except Exception as e:
             print(f"Error calculating score: {e}")
