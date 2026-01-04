@@ -164,23 +164,31 @@ class QuizSubmit(Resource):
                 is_correct = (correct_count == total_stmts)
 
             elif question_type == "drag-drop-fill":
-                blanks = question.get('blanks', [])
-                total_blanks = len(blanks)
+                # استفاده از دیکشنری solution به جای لیست blanks
+                solution = question.get('solution', {})
+                total_blanks = len(solution)
                 points_per_blank = points_total / total_blanks if total_blanks > 0 else 0
                 
                 correct_count = 0
                 if isinstance(user_answer, dict):
-                    for blank in blanks:
-                        b_id = blank['id']
-                        expected = blank['solution_id']
-                        actual = user_answer.get(b_id)
+                    for blank_id, expected_val in solution.items():
+                        actual_val = user_answer.get(blank_id)
                         
-                        if actual == expected:
-                            feedback[b_id] = 'correct'
+                        # بررسی درستی جواب (پشتیبانی از حالت چند جوابی/جابجایی)
+                        is_match = False
+                        if isinstance(expected_val, list):
+                            # اگر لیست باشد، یعنی هر کدام از این‌ها درست است
+                            is_match = actual_val in expected_val
+                        else:
+                            # مقایسه عادی
+                            is_match = actual_val == expected_val
+                            
+                        if is_match:
+                            feedback[blank_id] = 'correct'
                             score_earned += points_per_blank
                             correct_count += 1
                         else:
-                            feedback[b_id] = 'incorrect'
+                            feedback[blank_id] = 'incorrect'
                 
                 is_correct = (correct_count == total_blanks)
 

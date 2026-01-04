@@ -258,7 +258,15 @@ const isAnswerComplete = computed(() => {
     if (type === 'drag-drop-match' || type === 'drag-drop-ordering') return answer.bank && answer.bank.length === 0;
     if (type === 'multiple-select') return Array.isArray(answer) && answer.length > 0;
     if (type === 'true-false') return currentQuestion.value.statements.length === Object.keys(answer).length;
-    if (type === 'drag-drop-fill') return currentQuestion.value.blanks.length === Object.values(answer).filter(Boolean).length;
+    if (type === 'drag-drop-fill') {
+        // شمارش تعداد جاهای خالی (_BLANKx_) در متن سوال با استفاده از Regex
+        const template = currentQuestion.value.instruction_template || '';
+        const matches = template.match(/_BLANK[0-9]+_/g);
+        const totalBlanks = matches ? matches.length : 0;
+        
+        // مقایسه تعداد جواب‌های پر شده با تعداد کل جاهای خالی
+        return totalBlanks > 0 && totalBlanks === Object.values(answer).filter(Boolean).length;
+    }
     if (type === 'image-labeling') {
         if (!answer || typeof answer !== 'object') return false;
         const placedItemsCount = Object.values(answer).reduce((count, items) => count + (Array.isArray(items) ? items.length : 0), 0);

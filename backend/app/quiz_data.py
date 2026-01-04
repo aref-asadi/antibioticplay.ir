@@ -272,8 +272,8 @@ QUIZZES = {
                     {"id": "opt_total", "text": "مجموع آمپی سیلین و سولباکتام"}
                 ],
                 "solution": {
-                    "_BLANK1_": "opt_1_5",
-                    "_BLANK2_": "opt_3",
+                    "_BLANK1_": ["opt_1_5", "opt_3"],
+                    "_BLANK2_": ["opt_1_5", "opt_3"],
                     "_BLANK3_": "opt_2_1",
                     "_BLANK4_": "opt_total"
                 },
