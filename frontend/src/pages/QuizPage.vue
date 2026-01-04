@@ -255,7 +255,16 @@ const isAnswerComplete = computed(() => {
     const type = currentQuestion.value.type;
     const answer = userAnswer.value;
 
-    if (type === 'drag-drop-match' || type === 'drag-drop-ordering') return answer.bank && answer.bank.length === 0;
+    if (type === 'drag-drop-match' || type === 'drag-drop-ordering') {
+        // شرط قبلی: return answer.bank && answer.bank.length === 0;
+        
+        // شرط جدید: اگر تعداد آیتم‌های موجود در بانک کمتر از کل آیتم‌ها باشد
+        // (یعنی حداقل یک آیتم به دسته‌بندی‌ها منتقل شده باشد)، دکمه فعال شود.
+        const totalItems = currentQuestion.value.items ? currentQuestion.value.items.length : 0;
+        const currentBankCount = answer.bank ? answer.bank.length : 0;
+        
+        return totalItems > 0 && currentBankCount < totalItems;
+    }
     if (type === 'multiple-select') return Array.isArray(answer) && answer.length > 0;
     if (type === 'true-false') return currentQuestion.value.statements.length === Object.keys(answer).length;
     if (type === 'drag-drop-fill') {
