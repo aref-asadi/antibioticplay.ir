@@ -658,9 +658,9 @@ QUIZZES = {
                 "image": "/images/questions/pkpd_chart.png", 
                 "points_per_correct": 10,
                 "zones": [
-                    {"id": "z_conc", "label": "Concentration Dependent", "x": 5, "y": 75, "width": 25, "height": 20},
-                    {"id": "z_time", "label": "Time Dependent", "x": 35, "y": 75, "width": 25, "height": 20},
-                    {"id": "z_auc", "label": "AUC/MIC (Time & Conc)", "x": 65, "y": 75, "width": 30, "height": 20}
+                    {"id": "z_conc", "label": "Concentration Dependent", "x": 68.5, "y": 5, "width": 20, "height": 10},
+                    {"id": "z_time", "label": "Time Dependent", "x": 68.5, "y": 70, "width": 20, "height": 10},
+                    {"id": "z_auc", "label": "AUC/MIC (Time & Conc)", "x": 68.5, "y": 37.5, "width": 20, "height": 10}
                 ],
                 "options": [
                     {"id": "opt_ami", "text": "آمیکاسین"},
@@ -681,7 +681,7 @@ QUIZZES = {
                 "id": "q_pkpd_conc_fill",
                 "type": "drag-drop-fill",
                 "title": "وابسته به غلظت (Concentration Dependent)",
-                "instruction_template": "داروهایی که رفتار فارماکودینامیک Concentration dependent دارند مانند _BLANK1_، اثربخشی آن‌ها وابسته به _BLANK2_ است که تا چه حد بالاتر از MIC قرار می‌گیرد و توصیه می‌شود به صورت once daily dose تجویز شوند.",
+                "instruction_template": "داروهایی که رفتار فارماکودینامیک Concentration dependent دارند مانند _BLANK1_، اثربخشی آن‌ها وابسته به _BLANK2_ است که تا چه حد بالاتر از MIC قرار می‌گیرد و توصیه می‌شود به صورت _BLANK3_ تجویز شوند.",
                 "instruction": "جاهای خالی را با کلمات مناسب پر کنید.",
                 "hint": "آمینوگلیکوزیدها (آمیکاسین) نماینده این گروه هستند. هدف رسیدن به پیک غلظت بالا (Cmax) است، بنابراین دوزهای بزرگ با فواصل طولانی (یک بار در روز) ترجیح داده می‌شود.",
                 "options": [
@@ -695,7 +695,8 @@ QUIZZES = {
                 ],
                 "solution": {
                     "_BLANK1_": "o_ami",
-                    "_BLANK2_": "o_cmax"
+                    "_BLANK2_": "o_cmax",
+                    "_BLANK3_": "o_once"
                 },
                 "explanation": "داروهایی که  رفتار فارماکودینامیک concentration dependent دارند مانند آمیکاسین اثربخشی آن ها وابسته به غلظت بیشینه است که تا چه حد بالاتر از MIC قرار میگیرد و توصیه می شود به صورت once daily dose در روز تجویزشوند."
             },
@@ -773,8 +774,8 @@ QUIZZES = {
                 "instruction": "پنی‌سیلین‌ها را بر اساس قابلیت تزریق (صرفاً وریدی یا قابلیت عضلانی) طبقه‌بندی کنید.",
                 "hint": "پنی‌سیلین جی سدیم و پتاسیم محلول در آب بوده و وریدی تزریق می‌شوند. فرم‌های دارای پروکائین یا بنزاتین برای آزادسازی آهسته طراحی شده‌اند و سوسپانسیون هستند، لذا هرگز نباید وریدی تزریق شوند (خطر ایست قلبی/تشنج) و فقط عضلانی‌اند.",
                 "categories": [
-                    {"id": "route_iv", "text": "صرفاً وریدی (IV)"},
-                    {"id": "route_im", "text": "قابلیت تزریق عضلانی (IM)"}
+                    {"id": "route_iv", "text": "وریدی (IV)"},
+                    {"id": "route_im", "text": "تزریق عضلانی (IM)"}
                 ],
                 "items": [
                     {"id": "p_g_na", "text": "پنی‌سیلین جی سدیم"},
@@ -892,7 +893,7 @@ QUIZZES = {
             {
                 # Page 2: CF Drug Order
                 "id": "q_cf_order",
-                "type": "drag-drop-sort", # New type: Sorting/Ordering (Needs frontend support or use match with 'Step 1', 'Step 2') -> Using Match for simplicity here or imply order
+                "type": "drag-drop-match",
                 # Let's use Match to "Step 1", "Step 2"...
                 "title": "ترتیب داروها در سیستیک فیبروزیس",
                 "instruction": "ترتیب صحیح مصرف داروهای تنفسی در بیماران CF را مشخص کنید (از اولین دارو به آخرین).",
