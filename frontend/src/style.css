@@ -64,6 +64,28 @@ body {
   overflow-x: hidden;
 }
 
+/* --- Global Drag & Select Prevention (App-Like Feel) --- */
+img, a, button, .logo-container, .stat-item {
+  /* جلوگیری از درگ شدن تصاویر و لینک‌ها توسط مرورگر */
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  
+  /* جلوگیری از آبی شدن متن هنگام کلیک یا درگ */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* اجازه انتخاب متن در اینپوت‌ها (بسیار مهم) */
+input, textarea {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
 /* --- Typography --- */
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
