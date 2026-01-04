@@ -79,26 +79,43 @@ class QuizSubmit(Resource):
         feedback = {}
         
         try:
+            # --- FIX: اصلاح منطق درگ اند دراپ ---
             if question_type in ["drag-drop-match", "drag-drop-ordering"]:
-                total_items = len(solution)
-                points_per_item = points_total / total_items if total_items > 0 else 0
+                # ۱. محاسبه تعداد کل آیتم‌های موجود در پاسخنامه (نه تعداد دسته‌ها)
+                total_items_count = sum(len(items) for items in solution.values())
+                points_per_item = points_total / total_items_count if total_items_count > 0 else 0
                 
-                correct_count = 0
-                for item_id, correct_val in solution.items():
-                    user_category_list = user_answer.get(correct_val, []) if isinstance(user_answer, dict) else []
-                    
-                    found = False
-                    if isinstance(user_category_list, list):
-                        found = any(item.get('id') == item_id for item in user_category_list if isinstance(item, dict))
-                    
-                    if found:
-                        feedback[item_id] = 'correct'
-                        score_earned += points_per_item
-                        correct_count += 1
-                    else:
-                        feedback[item_id] = 'incorrect'
+                correct_matches_count = 0
                 
-                is_correct = (correct_count == total_items)
+                # ۲. پیمایش روی دسته‌بندی‌های پاسخنامه
+                # cat_id: شناسه دسته (مثلاً cat_clav)
+                # correct_item_ids: لیست آیتم‌های درستی که باید در این دسته باشند
+                for cat_id, correct_item_ids in solution.items():
+                    
+                    # گرفتن لیست آیتم‌هایی که کاربر در این دسته قرار داده
+                    # اگر کاربر چیزی نذاشته بود، لیست خالی برگردان
+                    user_items_in_cat = user_answer.get(cat_id, []) if isinstance(user_answer, dict) else []
+                    
+                    # استخراج ID آیتم‌های کاربر (چون فرانت‌اند معمولاً آبجکت کامل می‌فرستد)
+                    user_item_ids = []
+                    if isinstance(user_items_in_cat, list):
+                        for ui in user_items_in_cat:
+                            if isinstance(ui, dict):
+                                user_item_ids.append(ui.get('id'))
+                            else:
+                                user_item_ids.append(ui) # اگر فقط ID فرستاده بود
+                    
+                    # ۳. بررسی صحت آیتم‌ها
+                    for c_item_id in correct_item_ids:
+                        if c_item_id in user_item_ids:
+                            feedback[c_item_id] = 'correct'
+                            score_earned += points_per_item
+                            correct_matches_count += 1
+                        else:
+                            feedback[c_item_id] = 'incorrect'
+                            
+                # اگر همه آیتم‌ها درست جایگذاری شده بودند
+                is_correct = (correct_matches_count == total_items_count)
 
             elif question_type == "multiple-select":
                 if isinstance(user_answer, list):
@@ -181,7 +198,13 @@ class QuizSubmit(Resource):
                         if not isinstance(user_vals, list):
                             user_vals = []
                             
-                        if set(user_vals) == set(correct_vals):
+                        # استخراج ID ها برای مقایسه دقیق
+                        user_val_ids = []
+                        for val in user_vals:
+                            if isinstance(val, dict): user_val_ids.append(val.get('id'))
+                            else: user_val_ids.append(val)
+
+                        if set(user_val_ids) == set(correct_vals):
                             feedback[zone_id] = 'correct'
                             score_earned += points_per_zone
                             correct_zones_count += 1
@@ -190,6 +213,7 @@ class QuizSubmit(Resource):
                 
                 is_correct = (correct_zones_count == total_zones)
 
+            # هک خاص برای سوال سفتریاکسون (در صورت وجود)
             if question.get('id') == 'ceftriaxone_calcium_admin' and 'solution_reversed' in question:
                  sol_rev = question.get('solution_reversed')
                  score_earned = 0
@@ -199,6 +223,9 @@ class QuizSubmit(Resource):
                  if isinstance(user_answer, dict):
                     for cat_id, correct_item in sol_rev.items():
                         user_item = user_answer.get(cat_id)
+                        # هندل کردن اگر آبجکت باشد
+                        if isinstance(user_item, dict): user_item = user_item.get('id')
+                        
                         if user_item == correct_item:
                             feedback[cat_id] = 'correct'
                             score_earned += points_per_cat
